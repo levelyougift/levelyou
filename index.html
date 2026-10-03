@@ -506,7 +506,49 @@ $('#previewBackBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#preview
 $('#editQuestionBtn').onclick=()=>{const item=game[currentIndex];if(!item)return;$('#editQuestion').value=item.q;$('#editA1').value=item.a[0];$('#editA2').value=item.a[1];$('#editA3').value=item.a[2];$('#editCorrect').value=String(item.correct);$('#questionEditor').classList.toggle('hidden')};
 $('#saveQuestionBtn').onclick=()=>{const q=clean($('#editQuestion').value),a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];if(!q||a.some(x=>!x)){alert(tr('errEdit'));return}game[currentIndex]={...game[currentIndex],q,a,correct:Number($('#editCorrect').value),edited:true,selected:null};renderGame()};
 $('#editMemoriesBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#previewFlow').classList.add('hidden');$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');fullEditIndex=Math.min(currentIndex,4);renderFullEditor()}else{$('#previewFlow').classList.remove('hidden')}};
-$('#interestBtn').onclick=()=>show('#success');
+const CHECKOUT_URL =
+  'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smooth-action';
+
+$('#interestBtn').onclick = async () => {
+  const btn = $('#interestBtn');
+  const originalText = btn.textContent;
+
+  btn.disabled = true;
+  btn.textContent =
+    lang === 'ca' ? 'Obrint pagament…' :
+    lang === 'en' ? 'Opening payment…' :
+    'Abriendo pago…';
+
+  try {
+    const response = await fetch(CHECKOUT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: '{}'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.url) {
+      throw new Error(data.error || 'Checkout error');
+    }
+
+    window.location.href = data.url;
+
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      lang === 'ca' ? 'No hem pogut obrir el pagament. Torna-ho a provar.' :
+      lang === 'en' ? 'We could not open the payment. Please try again.' :
+      'No hemos podido abrir el pago. Inténtalo de nuevo.'
+    );
+
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
 $('#instagramBtn').onclick=()=>window.open('https://www.instagram.com/levelyougift/','_blank','noopener');
 $('#restartBtn').onclick=()=>{mode='preview';memoryCount=1;memories=[];game=[];currentIndex=0;fullPhotoData=[];previewMemory={image:'',context:''};$('#name').value='';$('#age').value='';show('#landing')};
 
