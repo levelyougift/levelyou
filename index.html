@@ -19,37 +19,19 @@ body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(105,225,207,.13),
 .language-native{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
 .language-native select{width:auto;min-width:104px;border:0;background:transparent;color:#f7f8fc;padding:2px 20px 2px 0;font-size:13px;font-weight:700;box-shadow:none;outline:none;appearance:auto}
 .language-native select:focus{border:0;box-shadow:none}
-.flag{
-  width:24px;
-  height:16px;
-  border-radius:3px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  flex:0 0 auto;
-  overflow:hidden;
-  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset;
-  font-size:20px;
-  line-height:1;
-}
-.flag-es{
-  background:linear-gradient(to bottom,
-    #aa151b 0 25%,
-    #f1bf00 25% 75%,
-    #aa151b 75% 100%);
-}
-.flag-ca{
-  background:repeating-linear-gradient(to bottom,
-    #f4c430 0 2px,
-    #f4c430 2px 3px,
-    #d5232f 3px 5px);
-}
-.flag-en{
-  width:24px;
-  height:18px;
-  background:transparent;
-  box-shadow:none;
-}
+.flag{width:28px;height:19px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.16)}
+.flag svg{display:block;width:100%;height:100%}
+.photo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.photo-slot{position:relative;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:#111426;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center}
+.photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-slot .num{position:absolute;left:6px;top:6px;background:rgba(14,16,32,.82);color:#fff;border-radius:999px;padding:3px 6px;font-size:10px;font-weight:800}
+.multi-upload{position:relative;display:flex;min-height:120px;align-items:center;justify-content:center;text-align:center;border:1px dashed rgba(255,255,255,.24);border-radius:18px;background:#111426;padding:20px;cursor:pointer}
+.multi-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.countline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+.editor-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:16px;border:1px solid var(--line);background:#111426}
+.editor-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0 12px}
+.editor-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.section-title{font-size:18px;font-weight:800;margin:8px 0 4px}
 .hero{text-align:center;padding:14px 6px 8px}
 h1{font-size:42px;line-height:1.02;margin:8px 0 14px;letter-spacing:-.035em}
 h2{margin:0 0 6px}
@@ -83,23 +65,25 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
 .question{font-size:24px;line-height:1.18;font-weight:800;margin:12px 0 16px;clear:both}
 .answer{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#1c2034;color:#fff;border-radius:14px;padding:13px 14px;margin:8px 0;font-size:15px}
 .answer.correct{border-color:rgba(105,225,207,.7);background:rgba(105,225,207,.09)}
+.answer.wrong{border-color:rgba(255,142,157,.72);background:rgba(255,142,157,.10)}
+.answer:disabled{opacity:1;cursor:default}
 .navrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .price{display:flex;justify-content:space-between;align-items:end;gap:12px}.price strong{font-size:36px;letter-spacing:-.04em}
 .checks{margin:14px 0 18px;padding:0;list-style:none}.checks li{margin:9px 0;color:#d9dde9;font-size:14px}
 .notice{padding:12px 14px;border-radius:14px;background:rgba(143,167,255,.09);border:1px solid rgba(143,167,255,.18);color:#dfe4ff;font-size:13px}
 .footer{text-align:center;color:#7f879e;font-size:12px;margin-top:26px}
 .success{text-align:center;padding:18px 6px}.success .emoji{font-size:52px}
-@media(max-width:430px){h1{font-size:35px}.grid{grid-template-columns:1fr}.wrap{padding-left:14px;padding-right:14px}.topbar{align-items:flex-start}.language-label{font-size:10px}.language-native{padding:6px 8px}.language-native select{min-width:92px;font-size:12px}}
+@media(max-width:430px){h1{font-size:35px}.grid{grid-template-columns:1fr}.wrap{padding-left:14px;padding-right:14px}.topbar{align-items:flex-start}.language-label{font-size:10px}.language-native{padding:6px 8px}.language-native select{min-width:92px;font-size:12px}.photo-grid{gap:5px}.photo-slot .num{left:4px;top:4px}}
 </style>
 </head>
-<body data-levelyou-build="2026-10-03-r6">
+<body data-levelyou-build="2026-10-03-r7">
 <div class="wrap">
 <div class="topbar">
   <div class="brand"><span class="dot"></span> LEVELYOU</div>
   <div class="language-wrap">
     <span class="language-label">LANGUAGE</span>
     <div class="language-native">
-      <span class="flag flag-es" id="currentFlag" aria-hidden="true"></span>
+      <span class="flag" id="currentFlag" aria-hidden="true"></span>
       <select id="languageSelect" aria-label="Language" onchange="changeLanguage(this.value)">
         <option value="es">Español</option>
         <option value="ca">Català</option>
@@ -143,18 +127,59 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
 
 <section id="builder" class="hidden">
   <div class="card">
-    <button type="button" class="btn secondary" id="backBtn" onclick="show('#landing')" style="width:auto;padding:10px 14px;margin-bottom:10px" data-i18n="back">← Volver</button>
+    <button type="button" class="btn secondary" id="backBtn" style="width:auto;padding:10px 14px;margin-bottom:10px">← Volver</button>
     <h2 id="builderTitle"></h2>
     <p class="small" id="builderDesc" style="font-size:14px"></p>
+
     <label data-i18n="nameLabel">Nombre de la persona</label>
     <input id="name" maxlength="28">
     <label><span data-i18n="ageLabel">Edad que cumple</span> <span class="small" data-i18n="optional">(opcional)</span></label>
     <input id="age" inputmode="numeric" maxlength="3">
 
-    <div id="memories"></div>
+    <div id="previewFlow" class="hidden">
+      <div class="memory">
+        <label data-i18n="photoLabel">Sube una foto</label>
+        <label class="upload">
+          <div class="placeholder" id="previewPhotoPH">📷 Toca aquí para elegir una foto</div>
+          <img class="preview hidden" id="previewPhotoImg" alt="">
+          <input id="previewPhoto" type="file" accept="image/*">
+        </label>
+        <label data-i18n="contextLabel">¿Qué representa este recuerdo?</label>
+        <textarea id="previewContext" rows="3"></textarea>
+      </div>
+      <div style="height:14px"></div>
+      <button type="button" class="btn primary" id="generatePreviewBtn"></button>
+    </div>
 
-    <div style="height:14px"></div>
-    <button type="button" class="btn primary" id="generateBtn"></button>
+    <div id="fullUploadFlow" class="hidden">
+      <div class="section-title" id="choose5Title"></div>
+      <p class="small" id="choose5Desc" style="font-size:14px"></p>
+      <label class="multi-upload">
+        <div id="batchPickerText"></div>
+        <input id="photoBatch" type="file" accept="image/*" multiple>
+      </label>
+      <div class="countline"><span class="small" id="batchCount"></span><button type="button" class="btn ghost hidden" id="clearBatchBtn" style="width:auto;padding:8px 12px;font-size:13px"></button></div>
+      <div class="photo-grid" id="photoGrid"></div>
+      <div style="height:14px"></div>
+      <button type="button" class="btn primary" id="continueEditBtn" disabled></button>
+    </div>
+
+    <div id="fullEditFlow" class="hidden">
+      <button type="button" class="btn ghost" id="backToPhotosBtn" style="width:auto;padding:9px 12px;margin-bottom:12px"></button>
+      <div class="editor-head"><div><div class="section-title" id="editMemoryTitle"></div><div class="small" id="editMemoryDesc"></div></div><span class="pill" id="memoryCounter"></span></div>
+      <img class="editor-photo" id="editMemoryImg" alt="">
+      <label id="editContextLabel"></label>
+      <textarea id="editMemoryContext" rows="4"></textarea>
+      <label id="replacePhotoLabel"></label>
+      <input id="replaceMemoryPhoto" type="file" accept="image/*">
+      <div class="editor-nav">
+        <button type="button" class="btn ghost" id="prevMemoryBtn"></button>
+        <button type="button" class="btn ghost" id="nextMemoryBtn"></button>
+      </div>
+      <div style="height:14px"></div>
+      <button type="button" class="btn primary" id="generateFullBtn"></button>
+    </div>
+
     <div id="loading" class="hidden">
       <div class="progress"><div class="bar" id="bar"></div></div>
       <p class="small" style="text-align:center" data-i18n="creating">Creando las preguntas…</p>
@@ -204,7 +229,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
     <div style="height:10px"></div>
     <button type="button" class="btn secondary" id="editQuestionBtn" data-i18n="editQuestion">Editar pregunta y respuestas</button>
     <div style="height:10px"></div>
-    <button type="button" class="btn secondary" id="editMemoriesBtn" onclick="show('#builder')" data-i18n="editMemories">Editar recuerdos</button>
+    <button type="button" class="btn secondary" id="editMemoriesBtn" data-i18n="editMemories">Editar recuerdos</button>
     <div class="notice" style="margin-top:14px" data-i18n="earlyAccess"><b>Acceso anticipado:</b> todavía no se realizará ningún cargo.</div>
   </div>
 </section>
@@ -278,142 +303,212 @@ escape:'A special getaway',work:'A work meeting',ordinary:'An ordinary day',dinn
 }
 };
 
-function tr(key,vars={}){let s=T[lang][key]||key;Object.entries(vars).forEach(([k,v])=>s=s.replaceAll(`{${k}}`,v));return s}
+const UX={
+es:{
+ choose5Title:'Selecciona primero tus 5 fotos',choose5Desc:'Elige las cinco imágenes de una vez. Después podrás revisar y describir cada recuerdo, uno a uno.',batchPicker:'📷 Seleccionar 5 fotos',selectedCount:'{n} de 5 fotos seleccionadas',clearSelection:'Cambiar selección',continueEdit:'Continuar y editar recuerdos',needFive:'Selecciona exactamente 5 fotos para continuar.',
+ editMemoryTitle:'Describe cada recuerdo',editMemoryDesc:'Revisa las fotos una a una y explica brevemente qué representa cada momento.',replacePhoto:'Cambiar esta foto',backToPhotos:'← Volver a las 5 fotos',prevMemory:'← Recuerdo anterior',nextMemory:'Siguiente recuerdo →',generateFull:'Crear las 5 preguntas',
+ previewPhotoPH:'📷 Toca aquí para elegir una foto',previewContextPH:'Ej. Nuestro viaje a Mallorca, una cena especial, un día con amigos...',
+ qBirthday:'{name}, ¿qué celebrábamos en este recuerdo?',birthday:'Un cumpleaños especial',holiday:'Un día de vacaciones',
+ qConcert:'{name}, ¿qué tipo de momento era este?',concert:'Un concierto o espectáculo',quietPlan:'Un plan tranquilo'
+},
+ca:{
+ choose5Title:'Selecciona primer les 5 fotos',choose5Desc:'Tria les cinc imatges de cop. Després podràs revisar i descriure cada record, un per un.',batchPicker:'📷 Seleccionar 5 fotos',selectedCount:'{n} de 5 fotos seleccionades',clearSelection:'Canviar selecció',continueEdit:'Continuar i editar records',needFive:'Selecciona exactament 5 fotos per continuar.',
+ editMemoryTitle:'Descriu cada record',editMemoryDesc:'Revisa les fotos una per una i explica breument què representa cada moment.',replacePhoto:'Canviar aquesta foto',backToPhotos:'← Tornar a les 5 fotos',prevMemory:'← Record anterior',nextMemory:'Record següent →',generateFull:'Crear les 5 preguntes',
+ previewPhotoPH:'📷 Toca aquí per triar una foto',previewContextPH:'Ex. El nostre viatge a Mallorca, un sopar especial, un dia amb amics...',
+ qBirthday:'{name}, què celebràvem en aquest record?',birthday:'Un aniversari especial',holiday:'Un dia de vacances',
+ qConcert:'{name}, quin tipus de moment era aquest?',concert:'Un concert o espectacle',quietPlan:'Un pla tranquil'
+},
+en:{
+ choose5Title:'Select your 5 photos first',choose5Desc:'Choose all five images at once. Then review and describe each memory, one by one.',batchPicker:'📷 Select 5 photos',selectedCount:'{n} of 5 photos selected',clearSelection:'Change selection',continueEdit:'Continue and edit memories',needFive:'Select exactly 5 photos to continue.',
+ editMemoryTitle:'Describe each memory',editMemoryDesc:'Review the photos one by one and briefly explain what each moment represents.',replacePhoto:'Change this photo',backToPhotos:'← Back to the 5 photos',prevMemory:'← Previous memory',nextMemory:'Next memory →',generateFull:'Create the 5 questions',
+ previewPhotoPH:'📷 Tap here to choose a photo',previewContextPH:'e.g. Our trip to Mallorca, a special dinner, a day with friends...',
+ qBirthday:'{name}, what were we celebrating in this memory?',birthday:'A special birthday',holiday:'A day on holiday',
+ qConcert:'{name}, what kind of moment was this?',concert:'A concert or show',quietPlan:'A quiet plan'
+}
+};
+
+const FLAG_SVG={
+ es:`<svg viewBox="0 0 27 18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="España"><rect width="27" height="18" fill="#AA151B"/><rect y="4.5" width="27" height="9" fill="#F1BF00"/></svg>`,
+ ca:`<svg viewBox="0 0 27 18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Catalunya"><rect width="27" height="18" fill="#FCDD09"/><rect y="2" width="27" height="2" fill="#DA121A"/><rect y="6" width="27" height="2" fill="#DA121A"/><rect y="10" width="27" height="2" fill="#DA121A"/><rect y="14" width="27" height="2" fill="#DA121A"/></svg>`,
+ en:`<svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="United Kingdom"><rect width="60" height="30" fill="#012169"/><path d="M0 0L60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0L60 30M60 0L0 30" stroke="#C8102E" stroke-width="3.6"/><path d="M30 0V30M0 15H60" stroke="#fff" stroke-width="10"/><path d="M30 0V30M0 15H60" stroke="#C8102E" stroke-width="6"/></svg>`
+};
+
+function tr(key,vars={}){let s=(UX[lang]&&UX[lang][key])||(T[lang]&&T[lang][key])||key;Object.entries(vars).forEach(([k,v])=>s=s.replaceAll(`{${k}}`,v));return s}
+function clean(s){return(s||'').trim()}
+function renderFlag(){const flag=$('#currentFlag');if(flag){flag.innerHTML=FLAG_SVG[lang]||FLAG_SVG.es;flag.dataset.flag=lang}}
 function applyLang(){
  document.documentElement.lang=lang;
- const languageSelect=$('#languageSelect'); if(languageSelect) languageSelect.value=lang;
- const flag=$('#currentFlag');
- if(flag){
-   flag.className='flag';
-   flag.textContent='';
-   if(lang==='es'){ flag.classList.add('flag-es'); }
-   else if(lang==='ca'){ flag.classList.add('flag-ca'); }
-   else if(lang==='en'){ flag.classList.add('flag-en'); flag.textContent='🇬🇧'; }
- }
+ const languageSelect=$('#languageSelect');if(languageSelect)languageSelect.value=lang;
+ renderFlag();
  $$('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));
- $$('[data-dyn-i18n]').forEach(el=>el.textContent=tr(el.dataset.dynI18n));
- $$('[data-placeholder-i18n]').forEach(el=>el.placeholder=tr(el.dataset.placeholderI18n));
- $('#name').placeholder=tr('namePH'); $('#age').placeholder=tr('agePH');
- renderBuilderTexts();
+ $('#name').placeholder=tr('namePH');$('#age').placeholder=tr('agePH');
+ $('#previewPhotoPH').textContent=tr('previewPhotoPH');$('#previewContext').placeholder=tr('previewContextPH');
+ renderBuilderTexts();renderFullUpload();if(mode==='full'&&!$('#fullEditFlow').classList.contains('hidden'))renderFullEditor();
  if(game.length){
    const name=$('#levelBadge').dataset.name||clean($('#name').value);
    game=game.map((item,i)=>item.edited?item:{...makeQuestion(name,memories[i]?.context||''),image:item.image,edited:false});
+   $('#previewHeading').textContent=tr(game.length===5?'previewHeading5':'previewHeading1');
+   $('#previewDesc').textContent=tr(game.length===5?'previewDesc5':'previewDesc1');
    renderGame();
  }
 }
-function changeLanguage(value){ lang=value; applyLang(); }
-
+function changeLanguage(value){lang=value;applyLang()}
 function show(id){sections.forEach(s=>$(s).classList.add('hidden'));$(id).classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+
+let previewMemory={image:'',context:''};
+let fullPhotoData=[];
+let fullEditIndex=0;
+
+function validIdentity(){
+ const name=clean($('#name').value),age=clean($('#age').value);
+ if(!name){alert(tr('errName'));return null}
+ if(age&&(!/^\d{1,3}$/.test(age)||Number(age)<1||Number(age)>120)){alert(tr('errAge'));return null}
+ return{name,age};
+}
 function renderBuilderTexts(){
- if(!$('#builderTitle'))return;
+ $('#backBtn').textContent=tr('back');
  $('#builderTitle').textContent=tr(mode==='full'?'builderFullTitle':'builderPreviewTitle');
- $('#builderDesc').textContent=tr(mode==='full'?'builderFullDesc':'builderPreviewDesc');
- $('#generateBtn').textContent=tr(mode==='full'?'generateFull':'generatePreview');
-}
-function memoryTemplate(i){
- return `<div class="memory" data-memory="${i}">
-   <div class="memory-head"><span class="memory-num"><span data-dyn-i18n="memory">${tr('memory')}</span> ${i+1}</span><span class="pill">${i+1}/${memoryCount}</span></div>
-   <label data-dyn-i18n="photoLabel">${tr('photoLabel')}</label>
-   <label class="upload">
-     <div class="placeholder" id="ph${i}" data-dyn-i18n="photoPH">${tr('photoPH')}</div>
-     <img class="preview hidden" id="img${i}" alt="">
-     <input type="file" accept="image/*" data-photo="${i}">
-   </label>
-   <label data-dyn-i18n="contextLabel">${tr('contextLabel')}</label>
-   <textarea rows="3" data-context="${i}" data-placeholder-i18n="contextPH" placeholder="${tr('contextPH').replaceAll('"','&quot;')}"></textarea>
- </div>`;
-}
-function buildMemoryInputs(){
- memories=Array.from({length:memoryCount},()=>({image:'',context:''}));
- $('#memories').innerHTML=Array.from({length:memoryCount},(_,i)=>memoryTemplate(i)).join('');
- $$('input[data-photo]').forEach(inp=>inp.addEventListener('change',e=>{
-   const i=Number(e.target.dataset.photo),f=e.target.files?.[0]; if(!f)return;
-   const r=new FileReader();r.onload=()=>{memories[i].image=r.result;$('#img'+i).src=r.result;$('#img'+i).classList.remove('hidden');$('#ph'+i).classList.add('hidden')};r.readAsDataURL(f);
- }));
- $$('textarea[data-context]').forEach(t=>t.addEventListener('input',e=>memories[Number(e.target.dataset.context)].context=e.target.value));
+ $('#builderDesc').textContent=mode==='full'?tr('choose5Desc'):tr('builderPreviewDesc');
+ $('#generatePreviewBtn').textContent=tr('generatePreview');
+ $('#choose5Title').textContent=tr('choose5Title');$('#choose5Desc').textContent=tr('choose5Desc');$('#batchPickerText').textContent=tr('batchPicker');
+ $('#clearBatchBtn').textContent=tr('clearSelection');$('#continueEditBtn').textContent=tr('continueEdit');
+ $('#editMemoryTitle').textContent=tr('editMemoryTitle');$('#editMemoryDesc').textContent=tr('editMemoryDesc');$('#editContextLabel').textContent=tr('contextLabel');
+ $('#replacePhotoLabel').textContent=tr('replacePhoto');$('#backToPhotosBtn').textContent=tr('backToPhotos');$('#prevMemoryBtn').textContent=tr('prevMemory');$('#nextMemoryBtn').textContent=tr('nextMemory');$('#generateFullBtn').textContent=tr('generateFull');
 }
 function startBuilder(nextMode){
- mode=nextMode; memoryCount=mode==='full'?5:1; game=[]; currentIndex=0;
- $('#name').value='';$('#age').value='';buildMemoryInputs();renderBuilderTexts();show('#builder');
+ mode=nextMode;memoryCount=mode==='full'?5:1;game=[];currentIndex=0;fullEditIndex=0;
+ $('#name').value='';$('#age').value='';
+ $('#previewFlow').classList.toggle('hidden',mode!=='preview');
+ $('#fullUploadFlow').classList.toggle('hidden',mode!=='full');
+ $('#fullEditFlow').classList.add('hidden');
+ if(mode==='preview'){previewMemory={image:'',context:''};$('#previewPhoto').value='';$('#previewPhotoImg').src='';$('#previewPhotoImg').classList.add('hidden');$('#previewPhotoPH').classList.remove('hidden');$('#previewContext').value='';}
+ else {fullPhotoData=[];memories=Array.from({length:5},()=>({image:'',context:''}));$('#photoBatch').value='';renderFullUpload();}
+ renderBuilderTexts();show('#builder');
 }
+$('#backBtn').onclick=()=>show('#landing');
 
+$('#previewPhoto').addEventListener('change',e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ const r=new FileReader();r.onload=()=>{previewMemory.image=r.result;$('#previewPhotoImg').src=r.result;$('#previewPhotoImg').classList.remove('hidden');$('#previewPhotoPH').classList.add('hidden')};r.readAsDataURL(f);
+});
+$('#previewContext').addEventListener('input',e=>previewMemory.context=e.target.value);
 
+function readFiles(files){return Promise.all(files.map(f=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(f)})))}
+$('#photoBatch').addEventListener('change',async e=>{
+ const files=[...(e.target.files||[])].filter(f=>f.type.startsWith('image/'));
+ if(!files.length)return;
+ if(files.length>5){alert(tr('needFive'));e.target.value='';return}
+ fullPhotoData=await readFiles(files);
+ memories=Array.from({length:5},(_,i)=>({image:fullPhotoData[i]||'',context:''}));
+ renderFullUpload();
+});
+$('#clearBatchBtn').onclick=()=>{fullPhotoData=[];memories=Array.from({length:5},()=>({image:'',context:''}));$('#photoBatch').value='';renderFullUpload()};
+function renderFullUpload(){
+ if(!$('#photoGrid'))return;
+ const n=fullPhotoData.length;
+ $('#batchCount').textContent=tr('selectedCount',{n});
+ $('#clearBatchBtn').classList.toggle('hidden',n===0);
+ $('#continueEditBtn').disabled=n!==5;$('#continueEditBtn').style.opacity=n===5?1:.48;
+ $('#photoGrid').innerHTML=Array.from({length:5},(_,i)=>`<div class="photo-slot">${fullPhotoData[i]?`<img src="${fullPhotoData[i]}" alt="${tr('memory')} ${i+1}">`:`<span>${i+1}</span>`}<span class="num">${i+1}</span></div>`).join('');
+}
+$('#continueEditBtn').onclick=()=>{
+ const identity=validIdentity();if(!identity)return;
+ if(fullPhotoData.length!==5){alert(tr('needFive'));return}
+ memories=Array.from({length:5},(_,i)=>({image:fullPhotoData[i],context:memories[i]?.context||''}));
+ fullEditIndex=0;$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');renderFullEditor();
+};
+$('#backToPhotosBtn').onclick=()=>{$('#fullEditFlow').classList.add('hidden');$('#fullUploadFlow').classList.remove('hidden');renderFullUpload()};
+function saveCurrentMemoryContext(){if(mode==='full'&&memories[fullEditIndex])memories[fullEditIndex].context=$('#editMemoryContext').value}
+function renderFullEditor(){
+ if(!memories.length)return;
+ const m=memories[fullEditIndex];
+ $('#memoryCounter').textContent=tr('qOf',{n:fullEditIndex+1,total:5}).replace(tr('questionLabel'),tr('memory'));
+ // Above replace is language-dependent; set directly for clarity:
+ $('#memoryCounter').textContent=`${tr('memory')} ${fullEditIndex+1} / 5`;
+ $('#editMemoryImg').src=m.image;$('#editMemoryContext').value=m.context||'';$('#editMemoryContext').placeholder=tr('contextPH');
+ $('#prevMemoryBtn').disabled=fullEditIndex===0;$('#nextMemoryBtn').disabled=fullEditIndex===4;
+ $('#prevMemoryBtn').style.opacity=fullEditIndex===0?.45:1;$('#nextMemoryBtn').style.opacity=fullEditIndex===4?.45:1;
+}
+$('#editMemoryContext').addEventListener('input',saveCurrentMemoryContext);
+$('#prevMemoryBtn').onclick=()=>{saveCurrentMemoryContext();if(fullEditIndex>0){fullEditIndex--;renderFullEditor()}};
+$('#nextMemoryBtn').onclick=()=>{saveCurrentMemoryContext();if(fullEditIndex<4){fullEditIndex++;renderFullEditor()}};
+$('#replaceMemoryPhoto').addEventListener('change',e=>{
+ const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{memories[fullEditIndex].image=r.result;fullPhotoData[fullEditIndex]=r.result;$('#editMemoryImg').src=r.result};r.readAsDataURL(f);e.target.value='';
+});
 
-
-
-
-function clean(s){return(s||'').trim()}
 function shuffleQuestion(q,correct,distractors){
  const arr=[correct,...distractors].map((x,i)=>({x,correct:i===0})).sort(()=>Math.random()-.5);
  return{q,a:arr.map(z=>z.x),correct:arr.findIndex(z=>z.correct)};
 }
 function makeQuestion(name,ctx){
  const lc=ctx.toLowerCase();
- const locations=[['mallorca','Mallorca'],['menorca','Menorca'],['ibiza','Ibiza']];
- const found=locations.find(([key])=>lc.includes(key));
+ const locations=[
+  {keys:['mallorca'],labels:{es:'Mallorca',ca:'Mallorca',en:'Mallorca'},d:['menorca','ibiza']},
+  {keys:['menorca'],labels:{es:'Menorca',ca:'Menorca',en:'Menorca'},d:['mallorca','ibiza']},
+  {keys:['ibiza','eivissa'],labels:{es:'Ibiza',ca:'Eivissa',en:'Ibiza'},d:['mallorca','menorca']},
+  {keys:['barcelona'],labels:{es:'Barcelona',ca:'Barcelona',en:'Barcelona'},d:['madrid','valencia']},
+  {keys:['madrid'],labels:{es:'Madrid',ca:'Madrid',en:'Madrid'},d:['barcelona','valencia']},
+  {keys:['valencia','valència'],labels:{es:'Valencia',ca:'València',en:'Valencia'},d:['barcelona','madrid']},
+  {keys:['parís','paris'],labels:{es:'París',ca:'París',en:'Paris'},d:['london','roma']},
+  {keys:['roma','rome'],labels:{es:'Roma',ca:'Roma',en:'Rome'},d:['paris','lisboa']},
+  {keys:['londres','london'],labels:{es:'Londres',ca:'Londres',en:'London'},d:['paris','madrid']},
+  {keys:['lisboa','lisbon'],labels:{es:'Lisboa',ca:'Lisboa',en:'Lisbon'},d:['roma','madrid']}
+ ];
+ const found=locations.find(x=>x.keys.some(key=>lc.includes(key)));
  if(found){
-   const correct=found[1],d=['Mallorca','Menorca','Ibiza'].filter(x=>x!==correct);
-   return shuffleQuestion(tr('qWhere',{name}),correct,d);
+   const byKey=k=>locations.find(x=>x.keys.includes(k));
+   const correct=found.labels[lang]||found.labels.es;
+   const distractors=found.d.map(k=>{const x=byKey(k);return x?(x.labels[lang]||x.labels.es):k});
+   return shuffleQuestion(tr('qWhere',{name}),correct,distractors);
  }
- if(/viaje|viatge|trip|playa|platja|beach|cala/.test(lc))return shuffleQuestion(tr('qPlan',{name}),tr('escape'),[tr('work'),tr('ordinary')]);
+ if(/cumple|aniversari|birthday/.test(lc))return shuffleQuestion(tr('qBirthday',{name}),tr('birthday'),[tr('holiday'),tr('ordinary')]);
+ if(/concierto|concert|festival|espectáculo|espectacle|show/.test(lc))return shuffleQuestion(tr('qConcert',{name}),tr('concert'),[tr('quietPlan'),tr('work')]);
  if(/cena|sopar|dinner|restaurante|restaurant|comida|menjar|meal/.test(lc))return shuffleQuestion(tr('qDinner',{name}),tr('dinner'),[tr('breakfast'),tr('work')]);
  if(/amigo|amiga|amics|amigues|friend|friends|familia|family/.test(lc))return shuffleQuestion(tr('qPeople',{name}),tr('yourPeople'),[tr('coworkers'),tr('unknown')]);
+ if(/viaje|viatge|trip|playa|platja|beach|cala|vacaciones|vacances|holiday/.test(lc))return shuffleQuestion(tr('qPlan',{name}),tr('escape'),[tr('work'),tr('ordinary')]);
  return shuffleQuestion(tr('qGeneric',{name}),tr('unforgettable'),[tr('ordinary'),tr('random')]);
 }
-function validate(){
- const name=clean($('#name').value),age=clean($('#age').value);
- if(!name){alert(tr('errName'));return null}
- if(age&&(!/^\d{1,3}$/.test(age)||Number(age)<1||Number(age)>120)){alert(tr('errAge'));return null}
- for(let i=0;i<memoryCount;i++){
-   const ctx=clean($(`textarea[data-context="${i}"]`).value);memories[i].context=ctx;
-   if(!memories[i].image){alert(tr('errPhoto',{n:i+1}));return null}
-   if(!ctx){alert(tr('errContext',{n:i+1}));return null}
- }
- return{name,age};
+function startLoading(){
+ $('#generatePreviewBtn').classList.add('hidden');$('#generateFullBtn').classList.add('hidden');$('#loading').classList.remove('hidden');$('#bar').style.width='20%';setTimeout(()=>$('#bar').style.width='60%',250);setTimeout(()=>$('#bar').style.width='100%',650);
 }
-$('#generateBtn').onclick=()=>{
- const v=validate();if(!v)return;
- $('#generateBtn').classList.add('hidden');$('#loading').classList.remove('hidden');$('#bar').style.width='20%';
- setTimeout(()=>$('#bar').style.width='60%',250);setTimeout(()=>$('#bar').style.width='100%',650);
- setTimeout(()=>{
-   game=memories.map(m=>({...makeQuestion(v.name,m.context),image:m.image,edited:false}));
-   currentIndex=0;
-   $('#levelBadge').dataset.name=v.name;$('#levelBadge').dataset.age=v.age;
-   $('#loading').classList.add('hidden');$('#generateBtn').classList.remove('hidden');$('#bar').style.width='0';
-   $('#previewHeading').textContent=tr(game.length===5?'previewHeading5':'previewHeading1');
-   $('#previewDesc').textContent=tr(game.length===5?'previewDesc5':'previewDesc1');
-   $('#questionNav').classList.toggle('hidden',game.length===1);
-   renderGame();show('#previewSection');
- },900);
+function stopLoading(){
+ $('#loading').classList.add('hidden');$('#generatePreviewBtn').classList.remove('hidden');$('#generateFullBtn').classList.remove('hidden');$('#bar').style.width='0';
+}
+function finalizeGame(identity){
+ game=memories.map(m=>({...makeQuestion(identity.name,m.context),image:m.image,edited:false,selected:null}));currentIndex=0;
+ $('#levelBadge').dataset.name=identity.name;$('#levelBadge').dataset.age=identity.age;
+ $('#previewHeading').textContent=tr(game.length===5?'previewHeading5':'previewHeading1');$('#previewDesc').textContent=tr(game.length===5?'previewDesc5':'previewDesc1');$('#questionNav').classList.toggle('hidden',game.length===1);
+ renderGame();show('#previewSection');
+}
+$('#generatePreviewBtn').onclick=()=>{
+ const identity=validIdentity();if(!identity)return;
+ previewMemory.context=clean($('#previewContext').value);
+ if(!previewMemory.image){alert(tr('errPhoto',{n:1}));return}
+ if(!previewMemory.context){alert(tr('errContext',{n:1}));return}
+ memories=[{...previewMemory}];startLoading();setTimeout(()=>{stopLoading();finalizeGame(identity)},850);
 };
+$('#generateFullBtn').onclick=()=>{
+ saveCurrentMemoryContext();const identity=validIdentity();if(!identity)return;
+ for(let i=0;i<5;i++){if(!memories[i]?.image){alert(tr('errPhoto',{n:i+1}));return}if(!clean(memories[i].context)){fullEditIndex=i;renderFullEditor();alert(tr('errContext',{n:i+1}));return}}
+ startLoading();setTimeout(()=>{stopLoading();finalizeGame(identity)},850);
+};
+
 function renderGame(){
- if(!game.length)return;
- const item=game[currentIndex],name=$('#levelBadge').dataset.name||'',age=$('#levelBadge').dataset.age||'';
- $('#gameImg').src=item.image;
- $('#levelBadge').textContent=age?`${name.toUpperCase()} · LEVEL ${age}`:`${name.toUpperCase()} · LEVELYOU`;
- $('#qcounter').textContent=tr('qOf',{n:currentIndex+1,total:game.length});
- $('#questionText').textContent=item.q;
- ['#a1','#a2','#a3'].forEach((sel,i)=>{$(sel).textContent=item.a[i]+(i===item.correct?'  ✓':'');$(sel).classList.toggle('correct',i===item.correct)});
- $('#prevQ').textContent=tr('prev');$('#nextQ').textContent=tr('next');
- $('#prevQ').disabled=currentIndex===0;$('#nextQ').disabled=currentIndex===game.length-1;
- $('#prevQ').style.opacity=currentIndex===0?.45:1;$('#nextQ').style.opacity=currentIndex===game.length-1?.45:1;
- $('#questionEditor').classList.add('hidden');
+ if(!game.length)return;const item=game[currentIndex],name=$('#levelBadge').dataset.name||'',age=$('#levelBadge').dataset.age||'';
+ $('#gameImg').src=item.image;$('#levelBadge').textContent=age?`${name.toUpperCase()} · LEVEL ${age}`:`${name.toUpperCase()} · LEVELYOU`;$('#qcounter').textContent=tr('qOf',{n:currentIndex+1,total:game.length});$('#questionText').textContent=item.q;
+ ['#a1','#a2','#a3'].forEach((sel,i)=>{const b=$(sel),answered=item.selected!==null&&item.selected!==undefined;let mark='';if(answered&&i===item.correct)mark='  ✓';else if(answered&&i===item.selected&&i!==item.correct)mark='  ✕';b.textContent=item.a[i]+mark;b.classList.toggle('correct',answered&&i===item.correct);b.classList.toggle('wrong',answered&&i===item.selected&&i!==item.correct);b.disabled=answered});
+ $('#prevQ').textContent=tr('prev');$('#nextQ').textContent=tr('next');$('#prevQ').disabled=currentIndex===0;$('#nextQ').disabled=currentIndex===game.length-1;$('#prevQ').style.opacity=currentIndex===0?.45:1;$('#nextQ').style.opacity=currentIndex===game.length-1?.45:1;$('#questionEditor').classList.add('hidden');
 }
+['#a1','#a2','#a3'].forEach((sel,i)=>{$(sel).onclick=()=>{if(!game.length)return;const item=game[currentIndex];if(item.selected!==null&&item.selected!==undefined)return;item.selected=i;renderGame()}});
 $('#prevQ').onclick=()=>{if(currentIndex>0){currentIndex--;renderGame()}};
 $('#nextQ').onclick=()=>{if(currentIndex<game.length-1){currentIndex++;renderGame()}};
-$('#editQuestionBtn').onclick=()=>{
- const item=game[currentIndex];if(!item)return;
- $('#editQuestion').value=item.q;$('#editA1').value=item.a[0];$('#editA2').value=item.a[1];$('#editA3').value=item.a[2];$('#editCorrect').value=String(item.correct);
- $('#questionEditor').classList.toggle('hidden');
-};
-$('#saveQuestionBtn').onclick=()=>{
- const q=clean($('#editQuestion').value),a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];
- if(!q||a.some(x=>!x)){alert(tr('errEdit'));return}
- game[currentIndex]={...game[currentIndex],q,a,correct:Number($('#editCorrect').value),edited:true};renderGame();
-};
+$('#previewBackBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#previewFlow').classList.add('hidden');$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');fullEditIndex=Math.min(currentIndex,4);renderFullEditor()}else{$('#previewFlow').classList.remove('hidden')}};
+$('#editQuestionBtn').onclick=()=>{const item=game[currentIndex];if(!item)return;$('#editQuestion').value=item.q;$('#editA1').value=item.a[0];$('#editA2').value=item.a[1];$('#editA3').value=item.a[2];$('#editCorrect').value=String(item.correct);$('#questionEditor').classList.toggle('hidden')};
+$('#saveQuestionBtn').onclick=()=>{const q=clean($('#editQuestion').value),a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];if(!q||a.some(x=>!x)){alert(tr('errEdit'));return}game[currentIndex]={...game[currentIndex],q,a,correct:Number($('#editCorrect').value),edited:true,selected:null};renderGame()};
+$('#editMemoriesBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#previewFlow').classList.add('hidden');$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');fullEditIndex=Math.min(currentIndex,4);renderFullEditor()}else{$('#previewFlow').classList.remove('hidden')}};
 $('#interestBtn').onclick=()=>show('#success');
 $('#instagramBtn').onclick=()=>window.open('https://www.instagram.com/levelyougift/','_blank','noopener');
-$('#restartBtn').onclick=()=>{mode='preview';memoryCount=1;memories=[];game=[];currentIndex=0;$('#name').value='';$('#age').value='';$('#memories').innerHTML='';show('#landing')};
+$('#restartBtn').onclick=()=>{mode='preview';memoryCount=1;memories=[];game=[];currentIndex=0;fullPhotoData=[];previewMemory={image:'',context:''};$('#name').value='';$('#age').value='';show('#landing')};
 
 applyLang();
 </script>
