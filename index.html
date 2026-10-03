@@ -506,43 +506,159 @@ $('#previewBackBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#preview
 $('#editQuestionBtn').onclick=()=>{const item=game[currentIndex];if(!item)return;$('#editQuestion').value=item.q;$('#editA1').value=item.a[0];$('#editA2').value=item.a[1];$('#editA3').value=item.a[2];$('#editCorrect').value=String(item.correct);$('#questionEditor').classList.toggle('hidden')};
 $('#saveQuestionBtn').onclick=()=>{const q=clean($('#editQuestion').value),a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];if(!q||a.some(x=>!x)){alert(tr('errEdit'));return}game[currentIndex]={...game[currentIndex],q,a,correct:Number($('#editCorrect').value),edited:true,selected:null};renderGame()};
 $('#editMemoriesBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#previewFlow').classList.add('hidden');$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');fullEditIndex=Math.min(currentIndex,4);renderFullEditor()}else{$('#previewFlow').classList.remove('hidden')}};
+const CREATE_ORDER_URL =
+  'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/super-api';
+
 const CHECKOUT_URL =
   'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smooth-action';
+
+async function dataUrlToBlob(dataUrl) {
+  const response = await fetch(dataUrl);
+  return await response.blob();
+}
+
+async function uploadSignedPhoto(upload, blob) {
+  const formData = new FormData();
+
+  formData.append('cacheControl', '3600');
+  formData.append('', blob);
+
+  const response = await fetch(upload.signedUrl, {
+    method: 'PUT',
+    body: formData
+  });
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(
+      `Photo upload failed: ${response.status} ${detail}`
+    );
+  }
+}
 
 $('#interestBtn').onclick = async () => {
   const btn = $('#interestBtn');
   const originalText = btn.textContent;
 
+  if (mode !== 'full' || memories.length !== 5) {
+    alert(
+      lang === 'ca'
+        ? 'Per crear el LevelYou complet, selecciona primer els 5 records.'
+        : lang === 'en'
+        ? 'To create the full LevelYou, first select your 5 memories.'
+        : 'Para crear el LevelYou completo, selecciona primero los 5 recuerdos.'
+    );
+    return;
+  }
+
+  const identity = validIdentity();
+  if (!identity) return;
+
   btn.disabled = true;
+
   btn.textContent =
-    lang === 'ca' ? 'Obrint pagament…' :
-    lang === 'en' ? 'Opening payment…' :
-    'Abriendo pago…';
+    lang === 'ca'
+      ? 'Preparant el teu LevelYou…'
+      : lang === 'en'
+      ? 'Preparing your LevelYou…'
+      : 'Preparando tu LevelYou…';
 
   try {
-    const response = await fetch(CHECKOUT_URL, {
+    // 1. Convertimos las 5 imágenes que ya tiene la web a archivos
+    const blobs = await Promise.all(
+      memories.map(memory => dataUrlToBlob(memory.image))
+    );
+
+    const contentTypes = blobs.map(blob => {
+      if (blob.type === 'image/jpg') return 'image/jpeg';
+      return blob.type || 'image/jpeg';
+    });
+
+    // 2. Guardamos solo los datos necesarios del juego
+    const gameData = {
+      memories: memories.map(memory => ({
+        context: clean(memory.context)
+      })),
+      questions: game.map(item => ({
+        question: item.q,
+        answers: item.a,
+        correct: item.correct
+      }))
+    };
+
+    // 3. Creamos el pedido en Supabase
+    const orderResponse = await fetch(CREATE_ORDER_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: '{}'
+      body: JSON.stringify({
+        personName: identity.name,
+        age: identity.age ? Number(identity.age) : null,
+        language: lang,
+        gameData,
+        contentTypes
+      })
     });
 
-    const data = await response.json();
+    const orderData = await orderResponse.json();
 
-    if (!response.ok || !data.url) {
-      throw new Error(data.error || 'Checkout error');
+    if (
+      !orderResponse.ok ||
+      !orderData.orderId ||
+      !Array.isArray(orderData.uploads) ||
+      orderData.uploads.length !== 5
+    ) {
+      throw new Error(
+        orderData.error || 'Could not create order'
+      );
     }
 
-    window.location.href = data.url;
+    // 4. Subimos las 5 fotos al Storage privado
+    await Promise.all(
+      orderData.uploads.map((upload, index) =>
+        uploadSignedPhoto(upload, blobs[index])
+      )
+    );
+
+    // 5. Creamos Stripe Checkout vinculado a ese pedido
+    btn.textContent =
+      lang === 'ca'
+        ? 'Obrint pagament…'
+        : lang === 'en'
+        ? 'Opening payment…'
+        : 'Abriendo pago…';
+
+    const checkoutResponse = await fetch(CHECKOUT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        orderId: orderData.orderId
+      })
+    });
+
+    const checkoutData = await checkoutResponse.json();
+
+    if (!checkoutResponse.ok || !checkoutData.url) {
+      throw new Error(
+        checkoutData.error || 'Checkout error'
+      );
+    }
+
+    // 6. Abrimos Stripe
+    window.location.href = checkoutData.url;
 
   } catch (error) {
     console.error(error);
 
     alert(
-      lang === 'ca' ? 'No hem pogut obrir el pagament. Torna-ho a provar.' :
-      lang === 'en' ? 'We could not open the payment. Please try again.' :
-      'No hemos podido abrir el pago. Inténtalo de nuevo.'
+      lang === 'ca'
+        ? 'No hem pogut preparar el teu LevelYou. Torna-ho a provar.'
+        : lang === 'en'
+        ? 'We could not prepare your LevelYou. Please try again.'
+        : 'No hemos podido preparar tu LevelYou. Inténtalo de nuevo.'
     );
 
     btn.disabled = false;
