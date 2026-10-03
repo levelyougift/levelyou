@@ -21,8 +21,12 @@ body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(105,225,207,.13),
 .language-native select:focus{border:0;box-shadow:none}
 .flag{width:22px;height:15px;border-radius:3px;display:inline-block;flex:0 0 auto;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;overflow:hidden}
 .flag-es{background:linear-gradient(to bottom,#aa151b 0 25%,#f1bf00 25% 75%,#aa151b 75% 100%)}
-.flag-en{background:#21468b;position:relative}
-.flag-en:before,.flag-en:after{content:"";position:absolute;background:#fff}.flag-en:before{width:100%;height:3px;left:0;top:6px}.flag-en:after{height:100%;width:3px;top:0;left:9px}
+.flag-en{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3CclipPath id='s'%3E%3Cpath d='M0 0v30h60V0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23s)'%3E%3Cpath d='M0 0v30h60V0z' fill='%23012169'/%3E%3Cpath d='m0 0 60 30m0-30L0 30' stroke='%23fff' stroke-width='6'/%3E%3Cpath d='m0 0 60 30m0-30L0 30' stroke='%23C8102E' stroke-width='4'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23fff' stroke-width='10'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23C8102E' stroke-width='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
 .flag-ca{background:repeating-linear-gradient(to bottom,#f4c430 0 3px,#d5232f 3px 5px)}
 .hero{text-align:center;padding:14px 6px 8px}
 h1{font-size:42px;line-height:1.02;margin:8px 0 14px;letter-spacing:-.035em}
@@ -66,7 +70,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
 @media(max-width:430px){h1{font-size:35px}.grid{grid-template-columns:1fr}.wrap{padding-left:14px;padding-right:14px}.topbar{align-items:flex-start}.language-label{font-size:10px}.language-native{padding:6px 8px}.language-native select{min-width:92px;font-size:12px}}
 </style>
 </head>
-<body data-levelyou-build="2026-10-03-r3">
+<body data-levelyou-build="2026-10-03-r4">
 <div class="wrap">
 <div class="topbar">
   <div class="brand"><span class="dot"></span> LEVELYOU</div>
