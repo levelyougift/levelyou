@@ -4,202 +4,386 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>LevelYou — Un regalo que se juega</title>
-<meta name="description" content="Convierte 5 recuerdos en un juego personalizado y un vídeo final. Prueba gratis con 1 foto.">
+<meta name="description" content="Convierte 5 recuerdos en un juego personalizado y un vídeo final para guardar y compartir.">
+<meta name="theme-color" content="#0e1020">
 <style>
-:root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09)}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(105,225,207,.13),transparent 35%),radial-gradient(circle at 100% 20%,rgba(143,167,255,.13),transparent 35%),var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-.wrap{max-width:560px;margin:0 auto;padding:20px 18px 44px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.06em;margin:8px 0 26px}.dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 24px rgba(105,225,207,.6)}
-.hero{text-align:center;padding:18px 6px 8px}h1{font-size:42px;line-height:1.02;margin:8px 0 14px;letter-spacing:-.035em}.sub{font-size:18px;color:#d6d9e5;line-height:1.45;margin:0 auto;max-width:470px}.pill{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:13px;color:#dfe3ef}
-.card{background:rgba(23,26,45,.88);border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:18px;box-shadow:0 14px 50px rgba(0,0,0,.24)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.step{padding:14px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid var(--line)}.step b{display:block;margin-bottom:6px}.step span{font-size:13px;color:var(--muted);line-height:1.35}
-.btn{appearance:none;border:0;border-radius:16px;padding:16px 18px;width:100%;font-size:17px;font-weight:800;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#8ce8d9);color:#0d1720}.btn.secondary{background:#24283f;color:#fff;border:1px solid var(--line)}.small{font-size:12px;color:var(--muted);line-height:1.45}.hidden{display:none!important}
-label{display:block;font-size:13px;color:#cbd0df;margin:14px 0 7px}input,textarea,select{width:100%;background:#111426;color:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font:inherit;outline:none}input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-shadow:0 0 0 3px rgba(105,225,207,.08)}
-.upload{position:relative;display:block;border:1px dashed rgba(255,255,255,.22);border-radius:18px;overflow:hidden;min-height:180px;background:#111426}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}.upload .placeholder{display:flex;min-height:180px;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:24px}.preview{width:100%;display:block;max-height:340px;object-fit:cover}
-.progress{height:7px;border-radius:999px;background:#22263b;overflow:hidden;margin:16px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s ease}.game{overflow:hidden;border-radius:20px;background:#111426;border:1px solid var(--line)}.game img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.gamebody{padding:16px}.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(105,225,207,.12);color:#a8f3e7;font-weight:700;font-size:12px}.question{font-size:24px;line-height:1.18;font-weight:800;margin:12px 0 16px}.answer{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#1c2034;color:#fff;border-radius:14px;padding:13px 14px;margin:8px 0;font-size:15px}.answer.correct{border-color:rgba(105,225,207,.7);background:rgba(105,225,207,.09)}
-.price{display:flex;justify-content:space-between;align-items:end;gap:12px}.price strong{font-size:36px;letter-spacing:-.04em}.checks{margin:14px 0 18px;padding:0;list-style:none}.checks li{margin:9px 0;color:#d9dde9;font-size:14px}.notice{padding:12px 14px;border-radius:14px;background:rgba(143,167,255,.09);border:1px solid rgba(143,167,255,.18);color:#dfe4ff;font-size:13px}.footer{text-align:center;color:#7f879e;font-size:12px;margin-top:26px}.success{text-align:center;padding:18px 6px}.success .emoji{font-size:52px}
-@media(max-width:430px){h1{font-size:36px}.grid{grid-template-columns:1fr}.wrap{padding-left:14px;padding-right:14px}}
+:root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(105,225,207,.13),transparent 35%),radial-gradient(circle at 100% 20%,rgba(143,167,255,.13),transparent 35%),var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:620px;margin:0 auto;padding:18px 18px 44px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:6px 0 22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.06em}
+.dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 24px rgba(105,225,207,.6)}
+.language-wrap{display:flex;align-items:center;gap:8px}
+.language-label{font-size:11px;font-weight:800;letter-spacing:.08em;color:#aeb6cc}
+.language-native{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
+.language-native select{width:auto;min-width:104px;border:0;background:transparent;color:#f7f8fc;padding:2px 20px 2px 0;font-size:13px;font-weight:700;box-shadow:none;outline:none;appearance:auto}
+.language-native select:focus{border:0;box-shadow:none}
+.flag{width:22px;height:15px;border-radius:3px;display:inline-block;flex:0 0 auto;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;overflow:hidden}
+.flag-es{background:linear-gradient(to bottom,#aa151b 0 25%,#f1bf00 25% 75%,#aa151b 75% 100%)}
+.flag-en{background:#21468b;position:relative}
+.flag-en:before,.flag-en:after{content:"";position:absolute;background:#fff}.flag-en:before{width:100%;height:3px;left:0;top:6px}.flag-en:after{height:100%;width:3px;top:0;left:9px}
+.flag-ca{background:repeating-linear-gradient(to bottom,#f4c430 0 3px,#d5232f 3px 5px)}
+.hero{text-align:center;padding:14px 6px 8px}
+h1{font-size:42px;line-height:1.02;margin:8px 0 14px;letter-spacing:-.035em}
+h2{margin:0 0 6px}
+.sub{font-size:18px;color:#d6d9e5;line-height:1.45;margin:0 auto;max-width:500px}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:13px;color:#dfe3ef}
+.card{background:rgba(23,26,45,.88);border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:18px;box-shadow:0 14px 50px rgba(0,0,0,.24)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.step{padding:14px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
+.step b{display:block;margin-bottom:6px}.step span{font-size:13px;color:var(--muted);line-height:1.35}
+.btn{appearance:none;border:0;border-radius:16px;padding:16px 18px;width:100%;font-size:17px;font-weight:800;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#8ce8d9);color:#0d1720}
+.btn.secondary{background:#24283f;color:#fff;border:1px solid var(--line)}
+.btn.ghost{background:transparent;color:#dfe3ef;border:1px solid var(--line)}
+.small{font-size:12px;color:var(--muted);line-height:1.45}
+.hidden{display:none!important}
+label{display:block;font-size:13px;color:#cbd0df;margin:14px 0 7px}
+input,textarea,select{width:100%;background:#111426;color:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font:inherit;outline:none}
+input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-shadow:0 0 0 3px rgba(105,225,207,.08)}
+.memory{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.025);margin-top:14px}
+.memory-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.memory-num{font-weight:800}
+.upload{position:relative;display:block;border:1px dashed rgba(255,255,255,.22);border-radius:18px;overflow:hidden;min-height:150px;background:#111426}
+.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload .placeholder{display:flex;min-height:150px;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:24px}
+.preview{width:100%;display:block;max-height:300px;object-fit:cover}
+.progress{height:7px;border-radius:999px;background:#22263b;overflow:hidden;margin:16px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s ease}
+.game{overflow:hidden;border-radius:20px;background:#111426;border:1px solid var(--line)}
+.game img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.gamebody{padding:16px}.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(105,225,207,.12);color:#a8f3e7;font-weight:700;font-size:12px}
+.qcounter{float:right;color:var(--muted);font-size:12px;margin-top:6px}
+.question{font-size:24px;line-height:1.18;font-weight:800;margin:12px 0 16px;clear:both}
+.answer{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#1c2034;color:#fff;border-radius:14px;padding:13px 14px;margin:8px 0;font-size:15px}
+.answer.correct{border-color:rgba(105,225,207,.7);background:rgba(105,225,207,.09)}
+.navrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.price{display:flex;justify-content:space-between;align-items:end;gap:12px}.price strong{font-size:36px;letter-spacing:-.04em}
+.checks{margin:14px 0 18px;padding:0;list-style:none}.checks li{margin:9px 0;color:#d9dde9;font-size:14px}
+.notice{padding:12px 14px;border-radius:14px;background:rgba(143,167,255,.09);border:1px solid rgba(143,167,255,.18);color:#dfe4ff;font-size:13px}
+.footer{text-align:center;color:#7f879e;font-size:12px;margin-top:26px}
+.success{text-align:center;padding:18px 6px}.success .emoji{font-size:52px}
+@media(max-width:430px){h1{font-size:35px}.grid{grid-template-columns:1fr}.wrap{padding-left:14px;padding-right:14px}.topbar{align-items:flex-start}.language-label{font-size:10px}.language-native{padding:6px 8px}.language-native select{min-width:92px;font-size:12px}}
 </style>
 </head>
-<body>
+<body data-levelyou-build="2026-10-03-r3">
 <div class="wrap">
-<div class="brand"><span class="dot"></span> LEVELYOU</div>
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> LEVELYOU</div>
+  <div class="language-wrap">
+    <span class="language-label">LANGUAGE</span>
+    <div class="language-native">
+      <span class="flag flag-es" id="currentFlag" aria-hidden="true"></span>
+      <select id="languageSelect" aria-label="Language" onchange="changeLanguage(this.value)">
+        <option value="es">Español</option>
+        <option value="ca">Català</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </div>
+</div>
 
 <section id="landing">
-<div class="hero">
-<span class="pill">🎁 Un regalo que se juega</span>
-<h1>Convierte sus recuerdos en un juego personalizado.</h1>
-<p class="sub">Sube una foto y prueba gratis cómo quedaría. Sin instalar nada.</p>
-</div>
+  <div class="hero">
+    <span class="pill" data-i18n="tagline">🎁 Un regalo que se juega</span>
+    <h1 data-i18n="hero">Convierte sus recuerdos en un juego personalizado.</h1>
+    <p class="sub" data-i18n="sub">Prueba con una foto o crea directamente una experiencia con 5 recuerdos. Sin instalar nada.</p>
+  </div>
 
-<div class="card">
-<div class="grid">
-<div class="step"><b>1. Sube recuerdos</b><span>Fotos, lugares, amigos y momentos.</span></div>
-<div class="step"><b>2. Creamos el juego</b><span>Preguntas hechas para esa persona.</span></div>
-<div class="step"><b>3. Se lo envías</b><span>Recibe un enlace privado en el móvil.</span></div>
-<div class="step"><b>4. Guarda el vídeo</b><span>Termina con un recuerdo descargable.</span></div>
-</div>
-<div style="height:14px"></div>
-<button class="btn primary" id="startBtn">Probar gratis con 1 foto</button>
-<p class="small" style="text-align:center;margin-bottom:0">La prueba no requiere pago.</p>
-</div>
+  <div class="card">
+    <div class="grid">
+      <div class="step"><b data-i18n="step1t">1. Sube recuerdos</b><span data-i18n="step1d">Fotos, lugares, amigos y momentos.</span></div>
+      <div class="step"><b data-i18n="step2t">2. Creamos el juego</b><span data-i18n="step2d">Una pregunta para cada recuerdo.</span></div>
+      <div class="step"><b data-i18n="step3t">3. Se lo envías</b><span data-i18n="step3d">Se juega desde un enlace en el móvil.</span></div>
+      <div class="step"><b data-i18n="step4t">4. Guarda el vídeo</b><span data-i18n="step4d">La experiencia termina con un recuerdo para guardar.</span></div>
+    </div>
+    <div style="height:14px"></div>
+    <button type="button" class="btn primary" id="previewBtn" data-i18n="previewBtn" onclick="startBuilder('preview')">Probar gratis con 1 foto</button>
+    <div style="height:10px"></div>
+    <button type="button" class="btn secondary" id="fullBtn" data-i18n="fullBtn" onclick="startBuilder('full')">Crear con 5 recuerdos</button>
+    <p class="small" style="text-align:center;margin-bottom:0" data-i18n="privacy">Las fotos se procesan solo en tu dispositivo durante esta prueba.</p>
+  </div>
 
-<div class="card">
-<div class="price"><div><div class="small">Juego completo</div><strong>14,90 €</strong></div><span class="pill">5 recuerdos</span></div>
-<ul class="checks">
-<li>✓ 5 fotos + 5 preguntas personalizadas</li>
-<li>✓ Juego móvil sin instalar nada</li>
-<li>✓ Vídeo final para guardar y compartir</li>
-<li>✓ Enlace privado para enviar por WhatsApp</li>
-</ul>
-</div>
+  <div class="card">
+    <div class="price"><div><div class="small" data-i18n="launchPrice">Precio de lanzamiento</div><strong>14,90 €</strong></div><span class="pill" data-i18n="fiveMemories">5 recuerdos</span></div>
+    <ul class="checks">
+      <li data-i18n="c1">✓ 5 fotos + 5 preguntas personalizadas</li>
+      <li data-i18n="c2">✓ Juego móvil sin instalar nada</li>
+      <li data-i18n="c3">✓ Vídeo final para guardar y compartir</li>
+      <li data-i18n="c4">✓ Enlace privado para enviar por WhatsApp</li>
+    </ul>
+  </div>
 </section>
 
 <section id="builder" class="hidden">
-<div class="card">
-<button class="btn secondary" id="backBtn" style="width:auto;padding:10px 14px;margin-bottom:6px">← Volver</button>
-<h2 style="margin-bottom:4px">Crea una muestra</h2>
-<p class="small" style="font-size:14px">Con una sola foto verás cómo sería una pregunta del juego.</p>
-<label>Nombre de la persona</label>
-<input id="name" placeholder="Ej. Cristina" maxlength="28">
-<label>Edad que cumple</label>
-<input id="age" inputmode="numeric" placeholder="Ej. 48" maxlength="3">
-<label>Sube una foto</label>
-<label class="upload">
-<div id="ph" class="placeholder">📷 Toca aquí para elegir una foto</div>
-<img id="imgPreview" class="preview hidden" alt="Foto de prueba">
-<input id="photo" type="file" accept="image/*">
-</label>
-<label>¿Qué representa este recuerdo?</label>
-<textarea id="context" rows="3" placeholder="Ej. Nuestro viaje a Menorca, puesta de sol en Cala Morell..."></textarea>
-<div style="height:14px"></div>
-<button class="btn primary" id="generateBtn">Generar mi prueba</button>
-<div id="loading" class="hidden">
-<div class="progress"><div class="bar" id="bar"></div></div>
-<p class="small" style="text-align:center">Creando una pregunta personalizada…</p>
-</div>
-</div>
+  <div class="card">
+    <button type="button" class="btn secondary" id="backBtn" onclick="show('#landing')" style="width:auto;padding:10px 14px;margin-bottom:10px" data-i18n="back">← Volver</button>
+    <h2 id="builderTitle"></h2>
+    <p class="small" id="builderDesc" style="font-size:14px"></p>
+    <label data-i18n="nameLabel">Nombre de la persona</label>
+    <input id="name" maxlength="28">
+    <label><span data-i18n="ageLabel">Edad que cumple</span> <span class="small" data-i18n="optional">(opcional)</span></label>
+    <input id="age" inputmode="numeric" maxlength="3">
+
+    <div id="memories"></div>
+
+    <div style="height:14px"></div>
+    <button type="button" class="btn primary" id="generateBtn"></button>
+    <div id="loading" class="hidden">
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <p class="small" style="text-align:center" data-i18n="creating">Creando las preguntas…</p>
+    </div>
+  </div>
 </section>
 
 <section id="previewSection" class="hidden">
-<div class="card">
-<span class="pill">✨ Tu muestra</span>
-<h2 style="margin-bottom:6px">Así podría empezar su LevelYou</h2>
-<p class="small" style="font-size:14px">Esta demo es solo una pregunta. El juego completo tendrá 5.</p>
-<div class="game" style="margin-top:14px">
-<img id="gameImg" alt="">
-<div class="gamebody">
-<span class="badge" id="levelBadge">LEVELYOU</span>
-<div class="question" id="questionText"></div>
-<button class="answer" id="a1"></button>
-<button class="answer correct" id="a2"></button>
-<button class="answer" id="a3"></button>
-</div>
-</div>
-<div id="questionEditor" class="hidden" style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)">
-<label>Pregunta</label><input id="editQuestion">
-<label>Respuesta 1</label><input id="editA1">
-<label>Respuesta 2</label><input id="editA2">
-<label>Respuesta 3</label><input id="editA3">
-<label>Respuesta correcta</label>
-<select id="editCorrect"><option value="0">Respuesta 1</option><option value="1">Respuesta 2</option><option value="2">Respuesta 3</option></select>
-<div style="height:10px"></div>
-<button class="btn primary" id="saveQuestionBtn">Guardar cambios</button>
-</div>
-<div style="height:14px"></div>
-<button class="btn primary" id="buyBtn">Crear el juego completo · 14,90 €</button>
-<div style="height:10px"></div>
-<button class="btn secondary" id="editQuestionBtn">Editar pregunta y respuestas</button>
-<div style="height:10px"></div>
-<button class="btn secondary" id="editBtn">Editar recuerdo / foto</button>
-<div class="notice" style="margin-top:14px"><b>Modo prueba:</b> el pago todavía no está conectado. Este botón servirá para Stripe cuando activemos la venta real.</div>
-</div>
+  <div class="card">
+    <button type="button" class="btn secondary" id="previewBackBtn" onclick="show('#builder')" style="width:auto;padding:10px 14px;margin-bottom:10px" data-i18n="back">← Volver</button>
+    <span class="pill" data-i18n="yourGame">✨ Tu LevelYou</span>
+    <h2 id="previewHeading" style="margin:10px 0 6px"></h2>
+    <p class="small" id="previewDesc" style="font-size:14px"></p>
+
+    <div class="game" style="margin-top:14px">
+      <img id="gameImg" alt="">
+      <div class="gamebody">
+        <span class="badge" id="levelBadge">LEVELYOU</span>
+        <span class="qcounter" id="qcounter"></span>
+        <div class="question" id="questionText"></div>
+        <button type="button" class="answer" id="a1"></button>
+        <button type="button" class="answer" id="a2"></button>
+        <button type="button" class="answer" id="a3"></button>
+      </div>
+    </div>
+
+    <div class="navrow" id="questionNav">
+      <button type="button" class="btn ghost" id="prevQ"></button>
+      <button type="button" class="btn ghost" id="nextQ"></button>
+    </div>
+
+    <div id="questionEditor" class="hidden" style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)">
+      <label data-i18n="questionLabel">Pregunta</label><input id="editQuestion">
+      <label data-i18n="answer1">Respuesta 1</label><input id="editA1">
+      <label data-i18n="answer2">Respuesta 2</label><input id="editA2">
+      <label data-i18n="answer3">Respuesta 3</label><input id="editA3">
+      <label data-i18n="correctAnswer">Respuesta correcta</label>
+      <select id="editCorrect">
+        <option value="0">1</option><option value="1">2</option><option value="2">3</option>
+      </select>
+      <div style="height:10px"></div>
+      <button type="button" class="btn primary" id="saveQuestionBtn" data-i18n="saveChanges">Guardar cambios</button>
+    </div>
+
+    <div style="height:14px"></div>
+    <button type="button" class="btn primary" id="interestBtn" data-i18n="wantLevelYou">Quiero mi LevelYou · 14,90 €</button>
+    <div style="height:10px"></div>
+    <button type="button" class="btn secondary" id="editQuestionBtn" data-i18n="editQuestion">Editar pregunta y respuestas</button>
+    <div style="height:10px"></div>
+    <button type="button" class="btn secondary" id="editMemoriesBtn" onclick="show('#builder')" data-i18n="editMemories">Editar recuerdos</button>
+    <div class="notice" style="margin-top:14px" data-i18n="earlyAccess"><b>Acceso anticipado:</b> todavía no se realizará ningún cargo.</div>
+  </div>
 </section>
 
 <section id="success" class="hidden">
-<div class="card success">
-<div class="emoji">🎉</div>
-<h2>La prueba funciona.</h2>
-<p class="sub" style="font-size:16px">Este es el punto exacto donde conectaremos Stripe y el flujo de las otras 4 fotos.</p>
-<div style="height:14px"></div>
-<button class="btn primary" id="restartBtn">Hacer otra prueba</button>
-</div>
+  <div class="card success">
+    <div class="emoji">🎉</div>
+    <h2 data-i18n="successTitle">Tu LevelYou ya tiene forma.</h2>
+    <p class="sub" style="font-size:16px" data-i18n="successText">Estamos abriendo el acceso por fases. Escríbenos LEVEL por Instagram y te avisaremos para completar la experiencia.</p>
+    <div style="height:14px"></div>
+    <button type="button" class="btn primary" id="instagramBtn" data-i18n="instagramBtn">Ir a @levelyougift</button>
+    <div style="height:10px"></div>
+    <button type="button" class="btn secondary" id="restartBtn" data-i18n="restart">Crear otro LevelYou</button>
+  </div>
 </section>
 
-<div class="footer">LevelYou MVP · Prueba privada</div>
+<div class="footer">LevelYou · <span data-i18n="footer">Regalos personalizados</span></div>
 </div>
 
 <script>
 const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
 const sections=['#landing','#builder','#previewSection','#success'];
-function show(id){sections.forEach(s=>$(s).classList.add('hidden'));$(id).classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
-$('#startBtn').onclick=()=>show('#builder');
-$('#backBtn').onclick=()=>show('#landing');
-$('#editBtn').onclick=()=>show('#builder');
-$('#restartBtn').onclick=()=>{['#name','#age','#context'].forEach(s=>$(s).value='');$('#photo').value='';$('#imgPreview').src='';$('#imgPreview').classList.add('hidden');$('#ph').classList.remove('hidden');show('#landing')};
+let lang='es', mode='preview', memoryCount=1, memories=[], game=[], currentIndex=0;
 
-let uploadedDataUrl='';
-$('#photo').addEventListener('change',e=>{
- const f=e.target.files?.[0]; if(!f)return;
- const r=new FileReader();
- r.onload=()=>{uploadedDataUrl=r.result;$('#imgPreview').src=r.result;$('#imgPreview').classList.remove('hidden');$('#ph').classList.add('hidden')};
- r.readAsDataURL(f);
-});
+const T={
+es:{
+tagline:'🎁 Un regalo que se juega',hero:'Convierte sus recuerdos en un juego personalizado.',sub:'Prueba con una foto o crea directamente una experiencia con 5 recuerdos. Sin instalar nada.',
+step1t:'1. Sube recuerdos',step1d:'Fotos, lugares, amigos y momentos.',step2t:'2. Creamos el juego',step2d:'Una pregunta para cada recuerdo.',step3t:'3. Se lo envías',step3d:'Se juega desde un enlace en el móvil.',step4t:'4. Guarda el vídeo',step4d:'La experiencia termina con un recuerdo para guardar.',
+previewBtn:'Probar gratis con 1 foto',fullBtn:'Crear con 5 recuerdos',privacy:'Las fotos se procesan solo en tu dispositivo durante esta prueba.',launchPrice:'Precio de lanzamiento',fiveMemories:'5 recuerdos',
+c1:'✓ 5 fotos + 5 preguntas personalizadas',c2:'✓ Juego móvil sin instalar nada',c3:'✓ Vídeo final para guardar y compartir',c4:'✓ Enlace privado para enviar por WhatsApp',
+back:'← Volver',nameLabel:'Nombre de la persona',ageLabel:'Edad que cumple',optional:'(opcional)',namePH:'Ej. Cristina',agePH:'Ej. 48',memory:'Recuerdo',photoLabel:'Sube una foto',photoPH:'📷 Toca aquí para elegir una foto',contextLabel:'¿Qué representa este recuerdo?',contextPH:'Ej. Nuestro viaje a Mallorca, una cena especial, un día con amigos...',
+builderPreviewTitle:'Crea una muestra',builderPreviewDesc:'Con una foto verás cómo sería una pregunta del juego.',builderFullTitle:'Crea su LevelYou',builderFullDesc:'Añade 5 recuerdos. Crearemos una pregunta para cada uno.',generatePreview:'Generar mi prueba',generateFull:'Crear las 5 preguntas',creating:'Creando las preguntas…',
+yourGame:'✨ Tu LevelYou',previewHeading1:'Así podría empezar su LevelYou',previewDesc1:'Esta es una muestra con una pregunta.',previewHeading5:'Vista previa del juego',previewDesc5:'Revisa las 5 preguntas antes de continuar.',
+questionLabel:'Pregunta',answer1:'Respuesta 1',answer2:'Respuesta 2',answer3:'Respuesta 3',correctAnswer:'Respuesta correcta',saveChanges:'Guardar cambios',wantLevelYou:'Quiero mi LevelYou · 14,90 €',editQuestion:'Editar pregunta y respuestas',editMemories:'Editar recuerdos',
+earlyAccess:'Acceso anticipado: todavía no se realizará ningún cargo.',successTitle:'Tu LevelYou ya tiene forma.',successText:'Estamos abriendo el acceso por fases. Escríbenos LEVEL por Instagram y te avisaremos para completar la experiencia.',instagramBtn:'Ir a @levelyougift',restart:'Crear otro LevelYou',footer:'Regalos personalizados',
+prev:'← Anterior',next:'Siguiente →',qOf:'Pregunta {n} de {total}',
+errName:'Escribe el nombre de la persona.',errAge:'Introduce una edad válida entre 1 y 120, o déjala en blanco.',errPhoto:'Falta la foto del recuerdo {n}.',errContext:'Explica brevemente qué representa el recuerdo {n}.',errEdit:'Completa la pregunta y las tres respuestas.',
+qWhere:'{name}, ¿dónde fue este momento?',qPlan:'{name}, ¿qué tipo de plan representa este recuerdo?',qDinner:'{name}, ¿qué plan representa este recuerdo?',qPeople:'{name}, ¿quién estaba contigo en este recuerdo?',qGeneric:'{name}, ¿qué recuerdo es este?',
+escape:'Una escapada especial',work:'Una reunión de trabajo',ordinary:'Un día cualquiera',dinner:'Una cena especial',breakfast:'Un desayuno rápido',yourPeople:'Tu gente de siempre',coworkers:'Compañeros de trabajo',unknown:'Nadie conocido',unforgettable:'Uno de esos momentos que no se olvidan',random:'Una foto al azar'
+},
+ca:{
+tagline:'🎁 Un regal que es juga',hero:'Converteix els seus records en un joc personalitzat.',sub:'Prova-ho amb una foto o crea directament una experiència amb 5 records. Sense instal·lar res.',
+step1t:'1. Puja records',step1d:'Fotos, llocs, amics i moments.',step2t:'2. Creem el joc',step2d:'Una pregunta per a cada record.',step3t:'3. L’hi envies',step3d:'Es juga des d’un enllaç al mòbil.',step4t:'4. Guarda el vídeo',step4d:'L’experiència acaba amb un record per guardar.',
+previewBtn:'Prova-ho gratis amb 1 foto',fullBtn:'Crea’l amb 5 records',privacy:'Les fotos es processen només al teu dispositiu durant aquesta prova.',launchPrice:'Preu de llançament',fiveMemories:'5 records',
+c1:'✓ 5 fotos + 5 preguntes personalitzades',c2:'✓ Joc mòbil sense instal·lar res',c3:'✓ Vídeo final per guardar i compartir',c4:'✓ Enllaç privat per enviar per WhatsApp',
+back:'← Tornar',nameLabel:'Nom de la persona',ageLabel:'Edat que fa',optional:'(opcional)',namePH:'Ex. Cristina',agePH:'Ex. 48',memory:'Record',photoLabel:'Puja una foto',photoPH:'📷 Toca aquí per triar una foto',contextLabel:'Què representa aquest record?',contextPH:'Ex. El nostre viatge a Mallorca, un sopar especial, un dia amb amics...',
+builderPreviewTitle:'Crea una mostra',builderPreviewDesc:'Amb una foto veuràs com seria una pregunta del joc.',builderFullTitle:'Crea el seu LevelYou',builderFullDesc:'Afegeix 5 records. Crearem una pregunta per a cadascun.',generatePreview:'Genera la meva prova',generateFull:'Crea les 5 preguntes',creating:'Creant les preguntes…',
+yourGame:'✨ El teu LevelYou',previewHeading1:'Així podria començar el seu LevelYou',previewDesc1:'Aquesta és una mostra amb una pregunta.',previewHeading5:'Vista prèvia del joc',previewDesc5:'Revisa les 5 preguntes abans de continuar.',
+questionLabel:'Pregunta',answer1:'Resposta 1',answer2:'Resposta 2',answer3:'Resposta 3',correctAnswer:'Resposta correcta',saveChanges:'Desa els canvis',wantLevelYou:'Vull el meu LevelYou · 14,90 €',editQuestion:'Edita la pregunta i les respostes',editMemories:'Edita els records',
+earlyAccess:'Accés anticipat: encara no es farà cap càrrec.',successTitle:'El teu LevelYou ja té forma.',successText:'Estem obrint l’accés per fases. Escriu-nos LEVEL per Instagram i t’avisarem per completar l’experiència.',instagramBtn:'Anar a @levelyougift',restart:'Crear un altre LevelYou',footer:'Regals personalitzats',
+prev:'← Anterior',next:'Següent →',qOf:'Pregunta {n} de {total}',
+errName:'Escriu el nom de la persona.',errAge:'Introdueix una edat vàlida entre 1 i 120, o deixa-la en blanc.',errPhoto:'Falta la foto del record {n}.',errContext:'Explica breument què representa el record {n}.',errEdit:'Completa la pregunta i les tres respostes.',
+qWhere:'{name}, on va ser aquest moment?',qPlan:'{name}, quin tipus de pla representa aquest record?',qDinner:'{name}, quin pla representa aquest record?',qPeople:'{name}, qui era amb tu en aquest record?',qGeneric:'{name}, quin record és aquest?',
+escape:'Una escapada especial',work:'Una reunió de feina',ordinary:'Un dia qualsevol',dinner:'Un sopar especial',breakfast:'Un esmorzar ràpid',yourPeople:'La teva gent de sempre',coworkers:'Companys de feina',unknown:'Ningú conegut',unforgettable:'Un d’aquells moments que no s’obliden',random:'Una foto a l’atzar'
+},
+en:{
+tagline:'🎁 A gift you can play',hero:'Turn their memories into a personalized game.',sub:'Try it with one photo or create a 5-memory experience straight away. No app required.',
+step1t:'1. Add memories',step1d:'Photos, places, friends and moments.',step2t:'2. We create the game',step2d:'One question for each memory.',step3t:'3. Send it',step3d:'They play from a private mobile link.',step4t:'4. Keep the video',step4d:'The experience ends with a memory to keep.',
+previewBtn:'Try it free with 1 photo',fullBtn:'Create with 5 memories',privacy:'Photos are processed only on your device during this test.',launchPrice:'Launch price',fiveMemories:'5 memories',
+c1:'✓ 5 photos + 5 personalized questions',c2:'✓ Mobile game, no app required',c3:'✓ Final video to save and share',c4:'✓ Private link to send on WhatsApp',
+back:'← Back',nameLabel:'Person’s name',ageLabel:'Age they are turning',optional:'(optional)',namePH:'e.g. Cristina',agePH:'e.g. 48',memory:'Memory',photoLabel:'Upload a photo',photoPH:'📷 Tap here to choose a photo',contextLabel:'What does this memory represent?',contextPH:'e.g. Our trip to Mallorca, a special dinner, a day with friends...',
+builderPreviewTitle:'Create a preview',builderPreviewDesc:'With one photo you can see what a game question could look like.',builderFullTitle:'Create their LevelYou',builderFullDesc:'Add 5 memories. We will create one question for each.',generatePreview:'Generate my preview',generateFull:'Create the 5 questions',creating:'Creating the questions…',
+yourGame:'✨ Your LevelYou',previewHeading1:'This is how their LevelYou could start',previewDesc1:'This preview contains one question.',previewHeading5:'Game preview',previewDesc5:'Review the 5 questions before continuing.',
+questionLabel:'Question',answer1:'Answer 1',answer2:'Answer 2',answer3:'Answer 3',correctAnswer:'Correct answer',saveChanges:'Save changes',wantLevelYou:'I want my LevelYou · €14.90',editQuestion:'Edit question and answers',editMemories:'Edit memories',
+earlyAccess:'Early access: you will not be charged yet.',successTitle:'Your LevelYou is taking shape.',successText:'We are opening access in stages. Message us LEVEL on Instagram and we will let you know when you can complete the experience.',instagramBtn:'Go to @levelyougift',restart:'Create another LevelYou',footer:'Personalized gifts',
+prev:'← Previous',next:'Next →',qOf:'Question {n} of {total}',
+errName:'Enter the person’s name.',errAge:'Enter a valid age between 1 and 120, or leave it blank.',errPhoto:'Photo missing for memory {n}.',errContext:'Briefly explain what memory {n} represents.',errEdit:'Complete the question and all three answers.',
+qWhere:'{name}, where did this moment happen?',qPlan:'{name}, what kind of plan does this memory represent?',qDinner:'{name}, what kind of plan does this memory represent?',qPeople:'{name}, who was with you in this memory?',qGeneric:'{name}, what memory is this?',
+escape:'A special getaway',work:'A work meeting',ordinary:'An ordinary day',dinner:'A special dinner',breakfast:'A quick breakfast',yourPeople:'Your favorite people',coworkers:'Work colleagues',unknown:'Nobody you knew',unforgettable:'One of those unforgettable moments',random:'A random photo'
+}
+};
+
+function tr(key,vars={}){let s=T[lang][key]||key;Object.entries(vars).forEach(([k,v])=>s=s.replaceAll(`{${k}}`,v));return s}
+function applyLang(){
+ document.documentElement.lang=lang;
+ const languageSelect=$('#languageSelect'); if(languageSelect) languageSelect.value=lang;
+ const flag=$('#currentFlag');
+ if(flag){ flag.className='flag'; flag.classList.add('flag-'+lang); }
+ $$('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));
+ $$('[data-dyn-i18n]').forEach(el=>el.textContent=tr(el.dataset.dynI18n));
+ $$('[data-placeholder-i18n]').forEach(el=>el.placeholder=tr(el.dataset.placeholderI18n));
+ $('#name').placeholder=tr('namePH'); $('#age').placeholder=tr('agePH');
+ renderBuilderTexts();
+ if(game.length){
+   const name=$('#levelBadge').dataset.name||clean($('#name').value);
+   game=game.map((item,i)=>item.edited?item:{...makeQuestion(name,memories[i]?.context||''),image:item.image,edited:false});
+   renderGame();
+ }
+}
+function changeLanguage(value){ lang=value; applyLang(); }
+
+function show(id){sections.forEach(s=>$(s).classList.add('hidden'));$(id).classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+function renderBuilderTexts(){
+ if(!$('#builderTitle'))return;
+ $('#builderTitle').textContent=tr(mode==='full'?'builderFullTitle':'builderPreviewTitle');
+ $('#builderDesc').textContent=tr(mode==='full'?'builderFullDesc':'builderPreviewDesc');
+ $('#generateBtn').textContent=tr(mode==='full'?'generateFull':'generatePreview');
+}
+function memoryTemplate(i){
+ return `<div class="memory" data-memory="${i}">
+   <div class="memory-head"><span class="memory-num"><span data-dyn-i18n="memory">${tr('memory')}</span> ${i+1}</span><span class="pill">${i+1}/${memoryCount}</span></div>
+   <label data-dyn-i18n="photoLabel">${tr('photoLabel')}</label>
+   <label class="upload">
+     <div class="placeholder" id="ph${i}" data-dyn-i18n="photoPH">${tr('photoPH')}</div>
+     <img class="preview hidden" id="img${i}" alt="">
+     <input type="file" accept="image/*" data-photo="${i}">
+   </label>
+   <label data-dyn-i18n="contextLabel">${tr('contextLabel')}</label>
+   <textarea rows="3" data-context="${i}" data-placeholder-i18n="contextPH" placeholder="${tr('contextPH').replaceAll('"','&quot;')}"></textarea>
+ </div>`;
+}
+function buildMemoryInputs(){
+ memories=Array.from({length:memoryCount},()=>({image:'',context:''}));
+ $('#memories').innerHTML=Array.from({length:memoryCount},(_,i)=>memoryTemplate(i)).join('');
+ $$('input[data-photo]').forEach(inp=>inp.addEventListener('change',e=>{
+   const i=Number(e.target.dataset.photo),f=e.target.files?.[0]; if(!f)return;
+   const r=new FileReader();r.onload=()=>{memories[i].image=r.result;$('#img'+i).src=r.result;$('#img'+i).classList.remove('hidden');$('#ph'+i).classList.add('hidden')};r.readAsDataURL(f);
+ }));
+ $$('textarea[data-context]').forEach(t=>t.addEventListener('input',e=>memories[Number(e.target.dataset.context)].context=e.target.value));
+}
+function startBuilder(nextMode){
+ mode=nextMode; memoryCount=mode==='full'?5:1; game=[]; currentIndex=0;
+ $('#name').value='';$('#age').value='';buildMemoryInputs();renderBuilderTexts();show('#builder');
+}
+
+
+
+
+
+
 function clean(s){return(s||'').trim()}
-function shuffledQuestion(q,correct,distractors){
- const a=[correct,...distractors].sort(()=>Math.random()-.5);
- return{q,a,correct:a.indexOf(correct)};
+function shuffleQuestion(q,correct,distractors){
+ const arr=[correct,...distractors].map((x,i)=>({x,correct:i===0})).sort(()=>Math.random()-.5);
+ return{q,a:arr.map(z=>z.x),correct:arr.findIndex(z=>z.correct)};
 }
 function makeQuestion(name,ctx){
  const lc=ctx.toLowerCase();
  const locations=[['mallorca','Mallorca'],['menorca','Menorca'],['ibiza','Ibiza']];
  const found=locations.find(([key])=>lc.includes(key));
  if(found){
-  const correct=found[1];
-  const distractors=['Mallorca','Menorca','Ibiza'].filter(x=>x!==correct);
-  return shuffledQuestion(`${name}, ¿dónde vivimos este momento?`,correct,distractors);
+   const correct=found[1],d=['Mallorca','Menorca','Ibiza'].filter(x=>x!==correct);
+   return shuffleQuestion(tr('qWhere',{name}),correct,d);
  }
- if(lc.includes('viaje')||lc.includes('playa')||lc.includes('cala'))return shuffledQuestion(`${name}, ¿qué tipo de plan representa este recuerdo?`,'Una escapada especial',['Una reunión de trabajo','Un día cualquiera']);
- if(lc.includes('cena')||lc.includes('restaurante')||lc.includes('comida'))return shuffledQuestion(`${name}, ¿qué plan representa este recuerdo?`,'Una cena especial',['Un desayuno rápido','Una reunión de trabajo']);
- if(lc.includes('amigo')||lc.includes('amigos')||lc.includes('familia'))return shuffledQuestion(`${name}, ¿quién estaba contigo en este recuerdo?`,'Tu gente de siempre',['Compañeros de trabajo','Nadie conocido']);
- return shuffledQuestion(`${name}, ¿qué recuerdo es este?`,'Uno de esos momentos que no se olvidan',['Un día cualquiera','Una foto al azar']);
+ if(/viaje|viatge|trip|playa|platja|beach|cala/.test(lc))return shuffleQuestion(tr('qPlan',{name}),tr('escape'),[tr('work'),tr('ordinary')]);
+ if(/cena|sopar|dinner|restaurante|restaurant|comida|menjar|meal/.test(lc))return shuffleQuestion(tr('qDinner',{name}),tr('dinner'),[tr('breakfast'),tr('work')]);
+ if(/amigo|amiga|amics|amigues|friend|friends|familia|family/.test(lc))return shuffleQuestion(tr('qPeople',{name}),tr('yourPeople'),[tr('coworkers'),tr('unknown')]);
+ return shuffleQuestion(tr('qGeneric',{name}),tr('unforgettable'),[tr('ordinary'),tr('random')]);
 }
-let currentQuestion=null;
-function renderQuestion(data){
- currentQuestion=data;
- $('#questionText').textContent=data.q;
- ['#a1','#a2','#a3'].forEach((sel,i)=>{
-  const b=$(sel);b.textContent=data.a[i]+(i===data.correct?'  ✓':'');
-  b.classList.toggle('correct',i===data.correct);
- });
+function validate(){
+ const name=clean($('#name').value),age=clean($('#age').value);
+ if(!name){alert(tr('errName'));return null}
+ if(age&&(!/^\d{1,3}$/.test(age)||Number(age)<1||Number(age)>120)){alert(tr('errAge'));return null}
+ for(let i=0;i<memoryCount;i++){
+   const ctx=clean($(`textarea[data-context="${i}"]`).value);memories[i].context=ctx;
+   if(!memories[i].image){alert(tr('errPhoto',{n:i+1}));return null}
+   if(!ctx){alert(tr('errContext',{n:i+1}));return null}
+ }
+ return{name,age};
 }
 $('#generateBtn').onclick=()=>{
- const name=clean($('#name').value),age=clean($('#age').value),ctx=clean($('#context').value);
- if(!name){alert('Escribe el nombre de la persona.');return}
- if(!uploadedDataUrl){alert('Sube una foto para crear la prueba.');return}
- if(!ctx){alert('Cuenta brevemente qué representa este recuerdo.');return}
- $('#generateBtn').classList.add('hidden');$('#loading').classList.remove('hidden');$('#bar').style.width='18%';
- setTimeout(()=>$('#bar').style.width='58%',300);setTimeout(()=>$('#bar').style.width='100%',720);
+ const v=validate();if(!v)return;
+ $('#generateBtn').classList.add('hidden');$('#loading').classList.remove('hidden');$('#bar').style.width='20%';
+ setTimeout(()=>$('#bar').style.width='60%',250);setTimeout(()=>$('#bar').style.width='100%',650);
  setTimeout(()=>{
-  const data=makeQuestion(name,ctx);$('#gameImg').src=uploadedDataUrl;
-  $('#levelBadge').textContent=age?`${name.toUpperCase()} · LEVEL ${age}`:`${name.toUpperCase()} · LEVELYOU`;
-  renderQuestion(data);
-  $('#loading').classList.add('hidden');$('#generateBtn').classList.remove('hidden');$('#bar').style.width='0';show('#previewSection');
- },1150);
+   game=memories.map(m=>({...makeQuestion(v.name,m.context),image:m.image,edited:false}));
+   currentIndex=0;
+   $('#levelBadge').dataset.name=v.name;$('#levelBadge').dataset.age=v.age;
+   $('#loading').classList.add('hidden');$('#generateBtn').classList.remove('hidden');$('#bar').style.width='0';
+   $('#previewHeading').textContent=tr(game.length===5?'previewHeading5':'previewHeading1');
+   $('#previewDesc').textContent=tr(game.length===5?'previewDesc5':'previewDesc1');
+   $('#questionNav').classList.toggle('hidden',game.length===1);
+   renderGame();show('#previewSection');
+ },900);
 };
+function renderGame(){
+ if(!game.length)return;
+ const item=game[currentIndex],name=$('#levelBadge').dataset.name||'',age=$('#levelBadge').dataset.age||'';
+ $('#gameImg').src=item.image;
+ $('#levelBadge').textContent=age?`${name.toUpperCase()} · LEVEL ${age}`:`${name.toUpperCase()} · LEVELYOU`;
+ $('#qcounter').textContent=tr('qOf',{n:currentIndex+1,total:game.length});
+ $('#questionText').textContent=item.q;
+ ['#a1','#a2','#a3'].forEach((sel,i)=>{$(sel).textContent=item.a[i]+(i===item.correct?'  ✓':'');$(sel).classList.toggle('correct',i===item.correct)});
+ $('#prevQ').textContent=tr('prev');$('#nextQ').textContent=tr('next');
+ $('#prevQ').disabled=currentIndex===0;$('#nextQ').disabled=currentIndex===game.length-1;
+ $('#prevQ').style.opacity=currentIndex===0?.45:1;$('#nextQ').style.opacity=currentIndex===game.length-1?.45:1;
+ $('#questionEditor').classList.add('hidden');
+}
+$('#prevQ').onclick=()=>{if(currentIndex>0){currentIndex--;renderGame()}};
+$('#nextQ').onclick=()=>{if(currentIndex<game.length-1){currentIndex++;renderGame()}};
 $('#editQuestionBtn').onclick=()=>{
- if(!currentQuestion)return;
- $('#editQuestion').value=currentQuestion.q;
- $('#editA1').value=currentQuestion.a[0];$('#editA2').value=currentQuestion.a[1];$('#editA3').value=currentQuestion.a[2];
- $('#editCorrect').value=String(currentQuestion.correct);
+ const item=game[currentIndex];if(!item)return;
+ $('#editQuestion').value=item.q;$('#editA1').value=item.a[0];$('#editA2').value=item.a[1];$('#editA3').value=item.a[2];$('#editCorrect').value=String(item.correct);
  $('#questionEditor').classList.toggle('hidden');
 };
 $('#saveQuestionBtn').onclick=()=>{
- const q=clean($('#editQuestion').value);
- const a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];
- if(!q||a.some(x=>!x)){alert('Completa la pregunta y las tres respuestas.');return}
- renderQuestion({q,a,correct:Number($('#editCorrect').value)});
- $('#questionEditor').classList.add('hidden');
+ const q=clean($('#editQuestion').value),a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];
+ if(!q||a.some(x=>!x)){alert(tr('errEdit'));return}
+ game[currentIndex]={...game[currentIndex],q,a,correct:Number($('#editCorrect').value),edited:true};renderGame();
 };
-$('#buyBtn').onclick=()=>show('#success');
+$('#interestBtn').onclick=()=>show('#success');
+$('#instagramBtn').onclick=()=>window.open('https://www.instagram.com/levelyougift/','_blank','noopener');
+$('#restartBtn').onclick=()=>{mode='preview';memoryCount=1;memories=[];game=[];currentIndex=0;$('#name').value='';$('#age').value='';$('#memories').innerHTML='';show('#landing')};
+
+applyLang();
 </script>
 </body>
 </html>
