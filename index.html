@@ -12,7 +12,7 @@
 .hero{text-align:center;padding:18px 6px 8px}h1{font-size:42px;line-height:1.02;margin:8px 0 14px;letter-spacing:-.035em}.sub{font-size:18px;color:#d6d9e5;line-height:1.45;margin:0 auto;max-width:470px}.pill{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);font-size:13px;color:#dfe3ef}
 .card{background:rgba(23,26,45,.88);border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:18px;box-shadow:0 14px 50px rgba(0,0,0,.24)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.step{padding:14px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid var(--line)}.step b{display:block;margin-bottom:6px}.step span{font-size:13px;color:var(--muted);line-height:1.35}
 .btn{appearance:none;border:0;border-radius:16px;padding:16px 18px;width:100%;font-size:17px;font-weight:800;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#8ce8d9);color:#0d1720}.btn.secondary{background:#24283f;color:#fff;border:1px solid var(--line)}.small{font-size:12px;color:var(--muted);line-height:1.45}.hidden{display:none!important}
-label{display:block;font-size:13px;color:#cbd0df;margin:14px 0 7px}input,textarea{width:100%;background:#111426;color:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font:inherit;outline:none}input:focus,textarea:focus{border-color:rgba(105,225,207,.55);box-shadow:0 0 0 3px rgba(105,225,207,.08)}
+label{display:block;font-size:13px;color:#cbd0df;margin:14px 0 7px}input,textarea,select{width:100%;background:#111426;color:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font:inherit;outline:none}input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-shadow:0 0 0 3px rgba(105,225,207,.08)}
 .upload{position:relative;display:block;border:1px dashed rgba(255,255,255,.22);border-radius:18px;overflow:hidden;min-height:180px;background:#111426}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}.upload .placeholder{display:flex;min-height:180px;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:24px}.preview{width:100%;display:block;max-height:340px;object-fit:cover}
 .progress{height:7px;border-radius:999px;background:#22263b;overflow:hidden;margin:16px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s ease}.game{overflow:hidden;border-radius:20px;background:#111426;border:1px solid var(--line)}.game img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.gamebody{padding:16px}.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(105,225,207,.12);color:#a8f3e7;font-weight:700;font-size:12px}.question{font-size:24px;line-height:1.18;font-weight:800;margin:12px 0 16px}.answer{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#1c2034;color:#fff;border-radius:14px;padding:13px 14px;margin:8px 0;font-size:15px}.answer.correct{border-color:rgba(105,225,207,.7);background:rgba(105,225,207,.09)}
 .price{display:flex;justify-content:space-between;align-items:end;gap:12px}.price strong{font-size:36px;letter-spacing:-.04em}.checks{margin:14px 0 18px;padding:0;list-style:none}.checks li{margin:9px 0;color:#d9dde9;font-size:14px}.notice{padding:12px 14px;border-radius:14px;background:rgba(143,167,255,.09);border:1px solid rgba(143,167,255,.18);color:#dfe4ff;font-size:13px}.footer{text-align:center;color:#7f879e;font-size:12px;margin-top:26px}.success{text-align:center;padding:18px 6px}.success .emoji{font-size:52px}
@@ -94,10 +94,22 @@ label{display:block;font-size:13px;color:#cbd0df;margin:14px 0 7px}input,textare
 <button class="answer" id="a3"></button>
 </div>
 </div>
+<div id="questionEditor" class="hidden" style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)">
+<label>Pregunta</label><input id="editQuestion">
+<label>Respuesta 1</label><input id="editA1">
+<label>Respuesta 2</label><input id="editA2">
+<label>Respuesta 3</label><input id="editA3">
+<label>Respuesta correcta</label>
+<select id="editCorrect"><option value="0">Respuesta 1</option><option value="1">Respuesta 2</option><option value="2">Respuesta 3</option></select>
+<div style="height:10px"></div>
+<button class="btn primary" id="saveQuestionBtn">Guardar cambios</button>
+</div>
 <div style="height:14px"></div>
 <button class="btn primary" id="buyBtn">Crear el juego completo · 14,90 €</button>
 <div style="height:10px"></div>
-<button class="btn secondary" id="editBtn">Cambiar la foto</button>
+<button class="btn secondary" id="editQuestionBtn">Editar pregunta y respuestas</button>
+<div style="height:10px"></div>
+<button class="btn secondary" id="editBtn">Editar recuerdo / foto</button>
 <div class="notice" style="margin-top:14px"><b>Modo prueba:</b> el pago todavía no está conectado. Este botón servirá para Stripe cuando activemos la venta real.</div>
 </div>
 </section>
@@ -132,12 +144,32 @@ $('#photo').addEventListener('change',e=>{
  r.readAsDataURL(f);
 });
 function clean(s){return(s||'').trim()}
+function shuffledQuestion(q,correct,distractors){
+ const a=[correct,...distractors].sort(()=>Math.random()-.5);
+ return{q,a,correct:a.indexOf(correct)};
+}
 function makeQuestion(name,ctx){
  const lc=ctx.toLowerCase();
- if(lc.includes('menorca')||lc.includes('mallorca')||lc.includes('ibiza')||lc.includes('viaje')||lc.includes('playa')||lc.includes('cala'))return{q:`${name}, ¿dónde vivimos este momento?`,a:['Ibiza','Menorca','Mallorca']};
- if(lc.includes('cena')||lc.includes('restaurante')||lc.includes('comida'))return{q:`${name}, ¿qué celebrábamos aquí?`,a:['Un viaje de trabajo','Una noche especial','Un cumpleaños cualquiera']};
- if(lc.includes('amigo')||lc.includes('amigos')||lc.includes('familia'))return{q:`${name}, ¿quién estaba contigo en este recuerdo?`,a:['Compañeros de trabajo','Tu gente de siempre','Nadie conocido']};
- return{q:`${name}, ¿qué recuerdo es este?`,a:['Un día cualquiera','Uno de esos momentos que no se olvidan','Una foto al azar']};
+ const locations=[['mallorca','Mallorca'],['menorca','Menorca'],['ibiza','Ibiza']];
+ const found=locations.find(([key])=>lc.includes(key));
+ if(found){
+  const correct=found[1];
+  const distractors=['Mallorca','Menorca','Ibiza'].filter(x=>x!==correct);
+  return shuffledQuestion(`${name}, ¿dónde vivimos este momento?`,correct,distractors);
+ }
+ if(lc.includes('viaje')||lc.includes('playa')||lc.includes('cala'))return shuffledQuestion(`${name}, ¿qué tipo de plan representa este recuerdo?`,'Una escapada especial',['Una reunión de trabajo','Un día cualquiera']);
+ if(lc.includes('cena')||lc.includes('restaurante')||lc.includes('comida'))return shuffledQuestion(`${name}, ¿qué plan representa este recuerdo?`,'Una cena especial',['Un desayuno rápido','Una reunión de trabajo']);
+ if(lc.includes('amigo')||lc.includes('amigos')||lc.includes('familia'))return shuffledQuestion(`${name}, ¿quién estaba contigo en este recuerdo?`,'Tu gente de siempre',['Compañeros de trabajo','Nadie conocido']);
+ return shuffledQuestion(`${name}, ¿qué recuerdo es este?`,'Uno de esos momentos que no se olvidan',['Un día cualquiera','Una foto al azar']);
+}
+let currentQuestion=null;
+function renderQuestion(data){
+ currentQuestion=data;
+ $('#questionText').textContent=data.q;
+ ['#a1','#a2','#a3'].forEach((sel,i)=>{
+  const b=$(sel);b.textContent=data.a[i]+(i===data.correct?'  ✓':'');
+  b.classList.toggle('correct',i===data.correct);
+ });
 }
 $('#generateBtn').onclick=()=>{
  const name=clean($('#name').value),age=clean($('#age').value),ctx=clean($('#context').value);
@@ -149,9 +181,23 @@ $('#generateBtn').onclick=()=>{
  setTimeout(()=>{
   const data=makeQuestion(name,ctx);$('#gameImg').src=uploadedDataUrl;
   $('#levelBadge').textContent=age?`${name.toUpperCase()} · LEVEL ${age}`:`${name.toUpperCase()} · LEVELYOU`;
-  $('#questionText').textContent=data.q;$('#a1').textContent=data.a[0];$('#a2').textContent=data.a[1]+'  ✓';$('#a3').textContent=data.a[2];
+  renderQuestion(data);
   $('#loading').classList.add('hidden');$('#generateBtn').classList.remove('hidden');$('#bar').style.width='0';show('#previewSection');
  },1150);
+};
+$('#editQuestionBtn').onclick=()=>{
+ if(!currentQuestion)return;
+ $('#editQuestion').value=currentQuestion.q;
+ $('#editA1').value=currentQuestion.a[0];$('#editA2').value=currentQuestion.a[1];$('#editA3').value=currentQuestion.a[2];
+ $('#editCorrect').value=String(currentQuestion.correct);
+ $('#questionEditor').classList.toggle('hidden');
+};
+$('#saveQuestionBtn').onclick=()=>{
+ const q=clean($('#editQuestion').value);
+ const a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];
+ if(!q||a.some(x=>!x)){alert('Completa la pregunta y las tres respuestas.');return}
+ renderQuestion({q,a,correct:Number($('#editCorrect').value)});
+ $('#questionEditor').classList.add('hidden');
 };
 $('#buyBtn').onclick=()=>show('#success');
 </script>
