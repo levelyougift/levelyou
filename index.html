@@ -553,6 +553,17 @@ $('#instagramBtn').onclick=()=>window.open('https://www.instagram.com/levelyougi
 $('#restartBtn').onclick=()=>{mode='preview';memoryCount=1;memories=[];game=[];currentIndex=0;fullPhotoData=[];previewMemory={image:'',context:''};$('#name').value='';$('#age').value='';show('#landing')};
 
 applyLang();
+
+const paymentStatus = new URLSearchParams(window.location.search).get('payment');
+
+if (paymentStatus === 'success') {
+  show('#success');
+  history.replaceState({}, '', window.location.pathname);
+}
+
+if (paymentStatus === 'cancelled') {
+  history.replaceState({}, '', window.location.pathname);
+}
 </script>
 </body>
 </html>
