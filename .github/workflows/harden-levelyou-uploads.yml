@@ -14,8 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Patch upload reliability and production copy
-        shell: python
+        shell: bash
         run: |
+          python <<'PY'
           from pathlib import Path
 
           p = Path('index.html')
@@ -111,6 +112,7 @@ async function uploadPhotosReliably(uploads, blobs) {
             s = s.replace(old, new, 1)
 
           p.write_text(s, encoding='utf-8')
+          PY
       - name: Commit patch
         run: |
           if git diff --quiet; then
