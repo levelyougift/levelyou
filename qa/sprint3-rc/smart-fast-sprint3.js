@@ -143,7 +143,7 @@ function installDedication(){
 }
 
 let aiRequestSeq=0,aiBusy=false;
-let frameDraft={zoom:1,x:0,y:0},frameStart=null,framePointer=null;
+let frameMemoryIndex=-1,frameDraft={zoom:1,x:0,y:0},frameStart=null,framePointer=null;
 function renderFrameDraft(){
  const img=$('#frameImage');if(!img)return;
  applyFraming(img,frameDraft);
@@ -151,7 +151,8 @@ function renderFrameDraft(){
 }
 function openFrameModal(){
  saveFastFields();
- const m=memories[fullEditIndex];if(!m)return;
+ frameMemoryIndex=fullEditIndex;
+ const m=memories[frameMemoryIndex];if(!m)return;
  frameDraft=framingCopy(ensureFraming(m));
  $('#frameImage').src=m.image;
  $('#frameModal').classList.remove('hidden');
@@ -161,13 +162,14 @@ function openFrameModal(){
 function closeFrameModal(returnFocus=true){
  $('#frameModal')?.classList.add('hidden');
  document.body.classList.remove('frame-modal-open');
- framePointer=null;frameStart=null;
+ framePointer=null;frameStart=null;frameMemoryIndex=-1;
  if(returnFocus)$('#framePhotoBtn')?.focus();
 }
 function saveFrameModal(){
- const m=memories[fullEditIndex];if(!m)return closeFrameModal();
+ const target=frameMemoryIndex;
+ const m=memories[target];if(!m)return closeFrameModal();
  m.framing=framingCopy(frameDraft);
- applyFraming($('#editMemoryImg'),m.framing);
+ if(fullEditIndex===target)applyFraming($('#editMemoryImg'),m.framing);
  closeFrameModal();
 }
 function install(){
@@ -217,7 +219,7 @@ function closeAiModal(returnFocus=true,force=false){
 
 function setAiBusy(busy){
  aiBusy=busy;
- ['#prevMemoryBtn','#nextMemoryBtn','#backToPhotosBtn','#framePhotoBtn','#replaceMemoryPhoto','#generateFullBtn','#aiAssistBtn','#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect','#editMemoryContext','#questionTone','#languageSelect'].forEach(sel=>{
+ ['#prevMemoryBtn','#nextMemoryBtn','#backToPhotosBtn','#backBtn','#framePhotoBtn','#replaceMemoryPhoto','#generateFullBtn','#aiAssistBtn','#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect','#editMemoryContext','#questionTone','#languageSelect'].forEach(sel=>{
    const el=$(sel);if(el)el.disabled=busy;
  });
  const cancel=$('#aiCancelBtn');if(cancel)cancel.disabled=busy;
@@ -427,12 +429,18 @@ $('#generateFullBtn').onclick=showDraftGame;
 
 $('#replaceMemoryPhoto').onchange=e=>{
  const file=e.target.files?.[0];if(!file)return;
+ const replaceIndex=fullEditIndex;
  const reader=new FileReader();
  reader.onload=()=>{
-   memories[fullEditIndex].image=String(reader.result||'');
-   memories[fullEditIndex].framing={zoom:1,x:0,y:0};
-   fullPhotoData[fullEditIndex]=String(reader.result||'');
-   $('#editMemoryImg').src=String(reader.result||'');
+   const image=String(reader.result||'');
+   if(!memories[replaceIndex])return;
+   memories[replaceIndex].image=image;
+   memories[replaceIndex].framing={zoom:1,x:0,y:0};
+   fullPhotoData[replaceIndex]=image;
+   if(fullEditIndex===replaceIndex){
+     $('#editMemoryImg').src=image;
+     applyFraming($('#editMemoryImg'),memories[replaceIndex].framing);
+   }
  };
  reader.readAsDataURL(file);e.target.value='';
 };
