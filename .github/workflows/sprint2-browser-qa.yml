@@ -280,6 +280,39 @@ jobs:
           assert.equal(await page.locator('#share').isVisible(),true);
           assert.equal(await page.locator('#again').isVisible(),true);
 
+          // Final-video controls: simulate MediaRecorder/canvas capture so the UI path is exercised
+          // without depending on the CI machine's codec support.
+          await page.evaluate(()=>{
+            try{
+              HTMLCanvasElement.prototype.captureStream=()=>({getTracks:()=>[]});
+              class FakeMediaRecorder{
+                static isTypeSupported(){return true}
+                constructor(){this.mimeType='video/webm';this.ondataavailable=null;this.onstop=null;this.onerror=null}
+                start(){}
+                stop(){
+                  if(this.ondataavailable)this.ondataavailable({data:new Blob(['levelyou'],{type:'video/webm'})});
+                  setTimeout(()=>this.onstop&&this.onstop(),0);
+                }
+              }
+              window.MediaRecorder=FakeMediaRecorder;
+            }catch{}
+          });
+          await page.click('#createVideo');
+          await page.waitForSelector('#saveVideo:not(.hidden)',{timeout:20000});
+          assert.match(await page.locator('#videoStatus').innerText(),/listo|llest|ready/i);
+          assert.equal(await page.locator('#videoPreview').isVisible(),true);
+          assert.equal(await page.locator('#saveVideo').isVisible(),true);
+
+          // Save/share video control: use Web Share path to avoid filesystem dependence in CI.
+          await page.evaluate(()=>{
+            try{
+              navigator.canShare=()=>true;
+              navigator.share=async()=>{window.__videoShared=(window.__videoShared||0)+1};
+            }catch{}
+          });
+          await page.click('#saveVideo');
+          assert.equal(await page.evaluate(()=>window.__videoShared||0),1);
+
           // Share buttons are wired; mock native sharing to avoid opening external apps.
           await page.evaluate(()=>{ try{navigator.share=async()=>{window.__shared=(window.__shared||0)+1}}catch{} });
           await page.click('#share');
