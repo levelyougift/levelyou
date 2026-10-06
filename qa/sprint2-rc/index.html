@@ -318,6 +318,11 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 
     <div style="height:14px"></div>
     <button type="button" class="btn primary" id="interestBtn" data-i18n="wantLevelYou">Quiero mi LevelYou · 14,90 €</button>
+    <div id="qaFinalWrap" class="hidden">
+      <div style="height:10px"></div>
+      <button type="button" class="btn ghost" id="qaFinalBtn" data-i18n="qaFinal">🧪 Ver final y vídeo sin pagar (QA)</button>
+      <div class="small" style="text-align:center;margin-top:7px" data-i18n="qaFinalHelp">Solo para esta prueba. No crea ningún pedido ni realiza ningún cargo.</div>
+    </div>
     <div style="height:10px"></div>
     <button type="button" class="btn secondary" id="editQuestionBtn" data-i18n="editQuestion">Editar pregunta y respuestas</button>
     <div style="height:10px"></div>
@@ -429,7 +434,7 @@ es:{
  fullBtnPremium:'Crear su LevelYou · 14,90 €',previewBtnPremium:'Ver una muestra con 1 foto',includedTitle:'Tu LevelYou incluye',howItWorks:'La experiencia',
  storyTitle:'Tú eliges los recuerdos. LevelYou construye la sorpresa.',storyText:'La creación está guiada de principio a fin y puedes cambiar cada sugerencia antes de pagar.',
  storyStep1:'Elige 5 fotos especiales',storyStep2:'Revisa tono, recuerdos y dedicatoria',storyStep3:'Ve el juego antes de terminar',
- languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personaliza',journeyPersonalizeDesc:'Tono y recuerdos',journeyReview:'Revisa',journeyReviewDesc:'Juego final',reviewKicker:'Último vistazo antes de terminar',resumeKicker:'Tu LevelYou sigue guardado',resumeTitle:'No has perdido nada.',resumeText:'Tus recuerdos ya están preparados. Puedes volver al pago sin subir las fotos ni crear el juego otra vez.',resumePayment:'Volver al pago',restartFromCancel:'Empezar otro LevelYou'
+ languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personaliza',journeyPersonalizeDesc:'Tono y recuerdos',journeyReview:'Revisa',journeyReviewDesc:'Juego final',reviewKicker:'Último vistazo antes de terminar',resumeKicker:'Tu LevelYou sigue guardado',resumeTitle:'No has perdido nada.',resumeText:'Tus recuerdos ya están preparados. Puedes volver al pago sin subir las fotos ni crear el juego otra vez.',resumePayment:'Volver al pago',restartFromCancel:'Empezar otro LevelYou',qaFinal:'🧪 Ver final y vídeo sin pagar (QA)',qaFinalHelp:'Solo para esta prueba. No crea ningún pedido ni realiza ningún cargo.'
 },
 ca:{
  premiumTag:'Regal digital personalitzat',premiumHero:'Cinc records. Un joc fet per a aquella persona. Un final per guardar.',premiumSub:'Tria 5 fotos. LevelYou les converteix en preguntes, moments i un vídeo final que només pot pertànyer a aquella persona.',
@@ -437,7 +442,7 @@ ca:{
  fullBtnPremium:'Crea el seu LevelYou · 14,90 €',previewBtnPremium:'Veure una mostra amb 1 foto',includedTitle:'El teu LevelYou inclou',howItWorks:'L’experiència',
  storyTitle:'Tu tries els records. LevelYou construeix la sorpresa.',storyText:'La creació està guiada de principi a fi i pots canviar cada suggeriment abans de pagar.',
  storyStep1:'Tria 5 fotos especials',storyStep2:'Revisa to, records i dedicatòria',storyStep3:'Mira el joc abans d’acabar',
- languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personalitza',journeyPersonalizeDesc:'To i records',journeyReview:'Revisa',journeyReviewDesc:'Joc final',reviewKicker:'Últim cop d’ull abans d’acabar',resumeKicker:'El teu LevelYou continua guardat',resumeTitle:'No has perdut res.',resumeText:'Els teus records ja estan preparats. Pots tornar al pagament sense pujar les fotos ni crear el joc de nou.',resumePayment:'Tornar al pagament',restartFromCancel:'Començar un altre LevelYou'
+ languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personalitza',journeyPersonalizeDesc:'To i records',journeyReview:'Revisa',journeyReviewDesc:'Joc final',reviewKicker:'Últim cop d’ull abans d’acabar',resumeKicker:'El teu LevelYou continua guardat',resumeTitle:'No has perdut res.',resumeText:'Els teus records ja estan preparats. Pots tornar al pagament sense pujar les fotos ni crear el joc de nou.',resumePayment:'Tornar al pagament',restartFromCancel:'Començar un altre LevelYou',qaFinal:'🧪 Veure el final i el vídeo sense pagar (QA)',qaFinalHelp:'Només per a aquesta prova. No crea cap comanda ni fa cap càrrec.'
 },
 en:{
  premiumTag:'Personalized digital gift',premiumHero:'Five memories. A game made for them. A final moment to keep.',premiumSub:'Choose 5 photos. LevelYou turns them into questions, moments and a final video that could only belong to that person.',
@@ -445,7 +450,7 @@ en:{
  fullBtnPremium:'Create their LevelYou · €14.90',previewBtnPremium:'See a 1-photo sample',includedTitle:'Your LevelYou includes',howItWorks:'The experience',
  storyTitle:'You choose the memories. LevelYou builds the surprise.',storyText:'Creation is guided from start to finish, and you can change every suggestion before paying.',
  storyStep1:'Choose 5 special photos',storyStep2:'Review tone, memories and dedication',storyStep3:'Preview the game before finishing',
- languageLabel:'LANGUAGE',journeyCreate:'Create',journeyCreateDesc:'5 photos',journeyPersonalize:'Personalize',journeyPersonalizeDesc:'Tone and memories',journeyReview:'Review',journeyReviewDesc:'Final game',reviewKicker:'One last look before finishing',resumeKicker:'Your LevelYou is still saved',resumeTitle:'Nothing has been lost.',resumeText:'Your memories are already prepared. You can return to payment without uploading the photos or creating the game again.',resumePayment:'Return to payment',restartFromCancel:'Start another LevelYou'
+ languageLabel:'LANGUAGE',journeyCreate:'Create',journeyCreateDesc:'5 photos',journeyPersonalize:'Personalize',journeyPersonalizeDesc:'Tone and memories',journeyReview:'Review',journeyReviewDesc:'Final game',reviewKicker:'One last look before finishing',resumeKicker:'Your LevelYou is still saved',resumeTitle:'Nothing has been lost.',resumeText:'Your memories are already prepared. You can return to payment without uploading the photos or creating the game again.',resumePayment:'Return to payment',restartFromCancel:'Start another LevelYou',qaFinal:'🧪 View final and video without paying (QA)',qaFinalHelp:'For this test only. It does not create an order or charge anything.'
 }
 };
 
@@ -611,7 +616,9 @@ function finalizeGame(identity){
  game=memories.map(m=>({...makeQuestion(identity.name,m.context),image:m.image,edited:false,selected:null}));currentIndex=0;
  $('#levelBadge').dataset.name=identity.name;$('#levelBadge').dataset.age=identity.age;
  $('#previewHeading').textContent=tr(game.length===5?'previewHeading5':'previewHeading1');$('#previewDesc').textContent=tr(game.length===5?'previewDesc5':'previewDesc1');$('#questionNav').classList.toggle('hidden',game.length===1);
- renderGame();show('#previewSection');
+ renderGame();
+ const qaWrap=$('#qaFinalWrap');if(qaWrap)qaWrap.classList.toggle('hidden',!(mode==='full'&&game.length===5));
+ show('#previewSection');
 }
 $('#generatePreviewBtn').onclick=()=>{
  const identity=validIdentity();if(!identity)return;
@@ -639,6 +646,35 @@ $('#previewBackBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#preview
 $('#editQuestionBtn').onclick=()=>{const item=game[currentIndex];if(!item)return;$('#editQuestion').value=item.q;$('#editA1').value=item.a[0];$('#editA2').value=item.a[1];$('#editA3').value=item.a[2];$('#editCorrect').value=String(item.correct);$('#questionEditor').classList.toggle('hidden')};
 $('#saveQuestionBtn').onclick=()=>{const q=clean($('#editQuestion').value),a=[clean($('#editA1').value),clean($('#editA2').value),clean($('#editA3').value)];if(!q||a.some(x=>!x)){alert(tr('errEdit'));return}game[currentIndex]={...game[currentIndex],q,a,correct:Number($('#editCorrect').value),edited:true,selected:null};renderGame()};
 $('#editMemoriesBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#previewFlow').classList.add('hidden');$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');fullEditIndex=Math.min(currentIndex,4);renderFullEditor()}else{$('#previewFlow').classList.remove('hidden')}};
+
+function qaLoadImage(dataUrl){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=dataUrl})}
+async function qaCompactImage(dataUrl){
+ const im=await qaLoadImage(dataUrl),w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;
+ const scale=Math.min(1,1280/Math.max(w,h)),canvas=document.createElement('canvas');
+ canvas.width=Math.max(1,Math.round(w*scale));canvas.height=Math.max(1,Math.round(h*scale));
+ const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('QA_IMAGE');
+ ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(im,0,0,canvas.width,canvas.height);
+ return canvas.toDataURL('image/jpeg',.82);
+}
+$('#qaFinalBtn').onclick=async()=>{
+ const btn=$('#qaFinalBtn'),original=btn.textContent;
+ if(mode!=='full'||memories.length!==5||game.length!==5)return;
+ btn.disabled=true;btn.textContent=lang==='ca'?'Preparant el vídeo de prova…':lang==='en'?'Preparing test video…':'Preparando vídeo de prueba…';
+ try{
+   const images=[];for(const m of memories)images.push(await qaCompactImage(m.image));
+   const payload={
+     personName:clean($('#name').value),language:lang,
+     dedication:clean($('#dedication')?.value||''),
+     items:game.map((q,i)=>({photoUrl:images[i],context:clean(memories[i]?.context||''),question:q.q,answers:q.a,correct:Number(q.correct)}))
+   };
+   sessionStorage.setItem('levelyou_sprint2_qa_player',JSON.stringify(payload));
+   location.href='play.html?qa=1&finish=1';
+ }catch(error){
+   console.error('QA final preview',error);
+   alert(lang==='ca'?'No hem pogut preparar la previsualització del vídeo.':lang==='en'?'We could not prepare the video preview.':'No hemos podido preparar la previsualización del vídeo.');
+   btn.disabled=false;btn.textContent=original;
+ }
+};
 const CREATE_ORDER_URL =
   'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/super-api';
 
