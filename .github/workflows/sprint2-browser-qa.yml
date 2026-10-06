@@ -104,7 +104,7 @@ jobs:
 
           const response=await page.goto(base,{waitUntil:'networkidle'});
           assert.equal(response?.status(),200);
-          assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-fast-2.4');
+          assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-fast-2.4.1');
           assert.equal(await page.locator('#landing').isVisible(),true);
           assert.equal(await page.locator('#currentFlag').getAttribute('data-flag'),'es');
 
@@ -142,10 +142,29 @@ jobs:
           await page.click('#nextMemoryBtn');
           await page.click('#aiAssistBtn');
           assert.equal(await page.locator('#aiAssistPanel').isVisible(),true);
+          assert.equal(await page.locator('#aiAssistPanel').getAttribute('role'),'dialog');
+          assert.equal(await page.locator('#aiAssistPanel').getAttribute('aria-modal'),'true');
+          assert.equal(await page.locator('#aiModalTitle').innerText(),'Ayúdame con esta pregunta ✨');
+          assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('fast-modal-open')),true);
+
+          // Cancel closes the modal and restores the editor.
+          await page.click('#aiCancelBtn');
+          assert.equal(await page.locator('#aiAssistPanel').isVisible(),false);
+          assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('fast-modal-open')),false);
+
+          // Escape also closes it.
+          await page.click('#aiAssistBtn');
+          await page.keyboard.press('Escape');
+          assert.equal(await page.locator('#aiAssistPanel').isVisible(),false);
+
+          // Open again and generate the suggestion.
+          await page.click('#aiAssistBtn');
           await page.fill('#editMemoryContext','Fue nuestro primer viaje y perdimos las llaves.');
           await page.selectOption('#questionTone','complicit');
           await page.click('#aiGenerateBtn');
           await page.waitForFunction(()=>document.querySelector('#fastQuestion').value.includes('buena idea'));
+          assert.equal(await page.locator('#aiAssistPanel').isVisible(),false);
+          assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('fast-modal-open')),false);
           assert.equal(aiCalls,1);
           assert.equal(await page.locator('#fastA3').inputValue(),'Nadie lo admite');
 
