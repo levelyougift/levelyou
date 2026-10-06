@@ -72,6 +72,22 @@ jobs:
           print('checkout routing ok')
           PY
 
+      - name: Verify Sprint 1 dedication retrieval
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint1?token=cd8c5908-ca56-47e7-b4ac-d511d1584fcd"
+          status="$(curl -sS -o /tmp/game-sprint1.json -w '%{http_code}' -H 'Origin: https://levelyougift.github.io' "$url")"
+          test "$status" = "200"
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/game-sprint1.json'))
+          assert d.get('personName') == 'QA Sprint 1', d.get('personName')
+          assert d.get('dedication') == 'Dedicatoria QA Sprint 1', d.get('dedication')
+          assert len(d.get('items',[])) == 5, len(d.get('items',[]))
+          print('dedication retrieval ok')
+          PY
+
       - name: Verify real AI image analysis
         shell: bash
         run: |
