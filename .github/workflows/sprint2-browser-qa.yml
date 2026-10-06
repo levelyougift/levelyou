@@ -106,7 +106,12 @@ jobs:
           });
 
           // Landing + exact staging build
-          await page.goto(base,{waitUntil:'networkidle'});
+          const landingResponse = await page.goto(base,{waitUntil:'networkidle'});
+          console.log('LANDING_STATUS', landingResponse?.status());
+          console.log('LANDING_URL', page.url());
+          console.log('LANDING_TITLE', await page.title());
+          console.log('LANDING_BODY_PREFIX', (await page.locator('body').innerText()).slice(0,300).replace(/\\s+/g,' '));
+          assert.equal(landingResponse?.status(),200);
           assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-premium-2.1');
           assert.equal(await page.locator('#landing').isVisible(),true);
           assert.equal(await page.locator('#fullBtn').innerText(),'Crear su LevelYou · 14,90 €');
