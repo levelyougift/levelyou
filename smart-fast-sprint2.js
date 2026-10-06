@@ -141,12 +141,12 @@ function openAiModal(){
  document.body.classList.add('fast-modal-open');
  setTimeout(()=>$('#editMemoryContext')?.focus(),40);
 }
-function closeAiModal(){
+function closeAiModal(returnFocus=true){
  const panel=$('#aiAssistPanel');
  if(!panel)return;
  panel.classList.add('hidden');
  document.body.classList.remove('fast-modal-open');
- $('#aiAssistBtn')?.focus();
+ if(returnFocus)$('#aiAssistBtn')?.focus();
 }
 
 function updateFastDots(){
@@ -177,7 +177,7 @@ function renderEditor(){
  $('#fastA3').value=d.a[2]||'';
  $('#fastCorrect').value=String(d.correct||0);
  $('#editMemoryContext').value=m.context||'';
- closeAiModal();
+ closeAiModal(false);
  $('#prevMemoryBtn').disabled=fullEditIndex===0;
  $('#nextMemoryBtn').disabled=fullEditIndex===4;
  $('#prevMemoryBtn').style.opacity=fullEditIndex===0?.45:1;
@@ -255,7 +255,8 @@ async function generateSuggestion(){
    $('#fastCorrect').value=String(d.correct);
    const ded=$('#dedication');
    if(ded&&!clean(ded.value)&&clean(data.suggested_dedication))ded.value=clean(data.suggested_dedication);
-   closeAiModal();
+   closeAiModal(false);
+   setTimeout(()=>$('#fastQuestion')?.focus(),40);
    updateFastDots();updateReviewButton();
  }catch(error){
    console.error('Fast Creator AI suggestion',error);
