@@ -5,7 +5,7 @@ const AI_TIMEOUT=40000;
 const F={
  es:{
   question:'Pregunta',a1:'Respuesta 1',a2:'Respuesta 2',a3:'Respuesta 3',correct:'Respuesta correcta',
-  ai:'✨ Sugerirme una pregunta',hint:'Dale una pista a LevelYou (opcional)',hintHelp:'Cuéntanos qué hace especial este recuerdo. Sin pista, LevelYou se basará solo en lo que ve en la foto.',
+  ai:'✨ Sugerirme una pregunta',modalTitle:'Ayúdame con esta pregunta ✨',hint:'Cuéntanos qué hace especial este recuerdo',hintHelp:'Cuéntanos qué hace especial este recuerdo. Sin pista, LevelYou se basará solo en lo que ve en la foto.',
   tone:'Tono de la sugerencia',fun:'😊 Divertido',complicit:'😏 Cómplice',emotional:'❤️ Emotivo',elegant:'✨ Elegante',
   cancel:'Cancelar',generate:'Generar sugerencia',thinking:'✨ Pensando una pregunta…',
   dedication:'Mensaje final (opcional)',dedicationHelp:'Aparecerá al terminar el juego y cerrará también el vídeo.',
@@ -17,7 +17,7 @@ const F={
  },
  ca:{
   question:'Pregunta',a1:'Resposta 1',a2:'Resposta 2',a3:'Resposta 3',correct:'Resposta correcta',
-  ai:'✨ Sugerir-me una pregunta',hint:'Dona una pista a LevelYou (opcional)',hintHelp:'Explica què fa especial aquest record. Sense pista, LevelYou es basarà només en el que veu a la foto.',
+  ai:'✨ Sugerir-me una pregunta',modalTitle:'Ajuda’m amb aquesta pregunta ✨',hint:'Explica’ns què fa especial aquest record',hintHelp:'Explica què fa especial aquest record. Sense pista, LevelYou es basarà només en el que veu a la foto.',
   tone:'To del suggeriment',fun:'😊 Divertit',complicit:'😏 Còmplice',emotional:'❤️ Emotiu',elegant:'✨ Elegant',
   cancel:'Cancel·lar',generate:'Generar suggeriment',thinking:'✨ Pensant una pregunta…',
   dedication:'Missatge final (opcional)',dedicationHelp:'Apareixerà en acabar el joc i també tancarà el vídeo.',
@@ -29,7 +29,7 @@ const F={
  },
  en:{
   question:'Question',a1:'Answer 1',a2:'Answer 2',a3:'Answer 3',correct:'Correct answer',
-  ai:'✨ Suggest a question',hint:'Give LevelYou a hint (optional)',hintHelp:'Tell us what makes this memory special. Without a hint, LevelYou will rely only on what it can see in the photo.',
+  ai:'✨ Suggest a question',modalTitle:'Help me with this question ✨',hint:'Tell us what makes this memory special',hintHelp:'Tell us what makes this memory special. Without a hint, LevelYou will rely only on what it can see in the photo.',
   tone:'Suggestion tone',fun:'😊 Fun',complicit:'😏 Cheeky',emotional:'❤️ Emotional',elegant:'✨ Elegant',
   cancel:'Cancel',generate:'Generate suggestion',thinking:'✨ Thinking of a question…',
   dedication:'Final message (optional)',dedicationHelp:'It appears after the game and also closes the video.',
@@ -87,6 +87,7 @@ function renderFastTexts(){
  if($('#fastA3Label'))$('#fastA3Label').textContent=fx('a3');
  if($('#fastCorrectLabel'))$('#fastCorrectLabel').textContent=fx('correct');
  if($('#aiAssistBtn'))$('#aiAssistBtn').textContent=fx('ai');
+ if($('#aiModalTitle'))$('#aiModalTitle').textContent=fx('modalTitle');
  if($('#editContextLabel'))$('#editContextLabel').textContent=fx('hint');
  if($('#aiHintHelp'))$('#aiHintHelp').textContent=fx('hintHelp');
  if($('#fastToneLabel'))$('#fastToneLabel').textContent=fx('tone');
@@ -120,12 +121,32 @@ function install(){
  ['#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect','#editMemoryContext'].forEach(sel=>{
    const el=$(sel);if(el)el.addEventListener(sel==='#fastCorrect'?'change':'input',saveFastFields);
  });
- $('#aiAssistBtn').onclick=()=>{
-   saveFastFields();
-   $('#aiAssistPanel').classList.toggle('hidden');
- };
- $('#aiCancelBtn').onclick=()=>$('#aiAssistPanel').classList.add('hidden');
+ $('#aiAssistBtn').onclick=()=>openAiModal();
+ $('#aiCancelBtn').onclick=()=>closeAiModal();
  $('#aiGenerateBtn').onclick=generateSuggestion;
+ $('#aiAssistPanel').addEventListener('click',e=>e.stopPropagation());
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#aiAssistPanel').classList.contains('hidden'))closeAiModal()});
+ document.addEventListener('click',e=>{
+   const panel=$('#aiAssistPanel'),trigger=$('#aiAssistBtn');
+   if(panel.classList.contains('hidden'))return;
+   if(panel.contains(e.target)||trigger.contains(e.target))return;
+   closeAiModal();
+ });
+}
+
+function openAiModal(){
+ saveFastFields();
+ const panel=$('#aiAssistPanel');
+ panel.classList.remove('hidden');
+ document.body.classList.add('fast-modal-open');
+ setTimeout(()=>$('#editMemoryContext')?.focus(),40);
+}
+function closeAiModal(returnFocus=true){
+ const panel=$('#aiAssistPanel');
+ if(!panel)return;
+ panel.classList.add('hidden');
+ document.body.classList.remove('fast-modal-open');
+ if(returnFocus)$('#aiAssistBtn')?.focus();
 }
 
 function updateFastDots(){
@@ -156,7 +177,7 @@ function renderEditor(){
  $('#fastA3').value=d.a[2]||'';
  $('#fastCorrect').value=String(d.correct||0);
  $('#editMemoryContext').value=m.context||'';
- $('#aiAssistPanel').classList.add('hidden');
+ closeAiModal(false);
  $('#prevMemoryBtn').disabled=fullEditIndex===0;
  $('#nextMemoryBtn').disabled=fullEditIndex===4;
  $('#prevMemoryBtn').style.opacity=fullEditIndex===0?.45:1;
@@ -234,7 +255,8 @@ async function generateSuggestion(){
    $('#fastCorrect').value=String(d.correct);
    const ded=$('#dedication');
    if(ded&&!clean(ded.value)&&clean(data.suggested_dedication))ded.value=clean(data.suggested_dedication);
-   $('#aiAssistPanel').classList.add('hidden');
+   closeAiModal(false);
+   setTimeout(()=>$('#fastQuestion')?.focus(),40);
    updateFastDots();updateReviewButton();
  }catch(error){
    console.error('Fast Creator AI suggestion',error);
@@ -348,7 +370,7 @@ changeLanguage=function(value){
 };
 
 window.levelYouQuestionTone=()=>$('#questionTone')?.value||'fun';
-window.levelYouFastCreator={version:'2.4',completeCount:()=>completeCount()};
+window.levelYouFastCreator={version:'2.4.1',completeCount:()=>completeCount()};
 
 install();
 renderBuilderTexts();
