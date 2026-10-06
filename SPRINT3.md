@@ -1,6 +1,6 @@
 # LevelYou Sprint 3 — Video Memories
 
-**Status:** IN DEVELOPMENT  
+**Status:** DONE / FROZEN  
 **Started:** 2026-10-06  
 **Base:** `v2-sprint2-complete` at commit `0d98a87dea21d31d33d223d75f7475dec03bc92f`  
 **Development branch:** `sprint3-video-memories`
@@ -210,3 +210,30 @@ Static RC2 validation:
 - JS-to-DOM reference audit: PASS.
 
 Public QA assets were synchronized after these fixes. Physical iPad interaction remains the final acceptance gate.
+
+
+## Sprint 3 closure — 2026-10-07
+
+Sprint 3 is formally closed.
+
+Acceptance result:
+- Creator flow validated on iPad through checkout;
+- per-memory AI state bleed fixed;
+- final message timing fixed;
+- question layout and language/flag behavior validated;
+- Video Memories flow validated;
+- direct video generation validated on iPad;
+- video save/share path is functional;
+- current video quality is intentionally accepted as a baseline, not as the final premium experience.
+
+Product decision:
+- The Sprint 3 video workflow is correct and becomes the frozen functional baseline.
+- Visual quality is approximately MVP/baseline quality and is deliberately deferred to Sprint 4.
+- Sprint 4 owns music, rhythm, transitions, motion, stronger intro/outro, horizontal/vertical treatment and overall emotional/premium video quality.
+
+Frozen source-of-truth rules:
+- Do not modify the frozen Sprint 3 refs.
+- New development must start from the Sprint 3 frozen commit on the Sprint 4 branch.
+- If Sprint 4 destabilizes the product, rollback to the Sprint 3 frozen ref.
+
+The exact frozen commit and refs are recorded in `SPRINT4_HANDOFF.md`.
