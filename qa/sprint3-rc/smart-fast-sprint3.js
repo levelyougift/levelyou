@@ -217,7 +217,7 @@ function closeAiModal(returnFocus=true,force=false){
 
 function setAiBusy(busy){
  aiBusy=busy;
- ['#prevMemoryBtn','#nextMemoryBtn','#backToPhotosBtn','#framePhotoBtn','#replaceMemoryPhoto','#generateFullBtn','#aiAssistBtn','#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect'].forEach(sel=>{
+ ['#prevMemoryBtn','#nextMemoryBtn','#backToPhotosBtn','#framePhotoBtn','#replaceMemoryPhoto','#generateFullBtn','#aiAssistBtn','#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect','#editMemoryContext','#questionTone','#languageSelect'].forEach(sel=>{
    const el=$(sel);if(el)el.disabled=busy;
  });
  const cancel=$('#aiCancelBtn');if(cancel)cancel.disabled=busy;
