@@ -86,3 +86,29 @@ Sprint 2 is complete when:
 6. Sprint 1 functional QA still passes;
 7. iPad/Safari acceptance is successful;
 8. the result is credible as a €14.90 paid gift experience.
+
+
+## Checkpoint 2.1 — Premium Creator
+
+**Implemented:** 2026-10-06  
+**Commit:** `090dc22d3367ededf0084a6647c6316b3636ca20`
+
+Delivered:
+- premium visual layer over the existing Sprint 1 creator;
+- stronger emotional landing copy and value framing;
+- full €14.90 experience promoted to primary CTA;
+- one-photo demo moved to secondary CTA;
+- guided three-stage journey: Create → Personalise → Review;
+- upgraded cards, inputs, upload areas, loading state and game preview;
+- ES / CA / EN premium copy;
+- responsive/mobile polish with iPad/Safari preserved as a priority.
+
+Validation:
+- inline JavaScript syntax OK;
+- `smart-sprint1.js` syntax OK;
+- `smart-checkout-sprint1.js` syntax OK;
+- Smart Creator and checkout scripts remain referenced unchanged;
+- create-order and Stripe checkout endpoints remain unchanged;
+- diff from Sprint 1 is limited to `SPRINT2.md` and `index.html`.
+
+Next planned checkpoint: **2.2 Premium Game & Reveal Experience**.
