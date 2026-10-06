@@ -91,6 +91,48 @@ jobs:
           print('AI response schema ok')
           PY
 
+      - name: Verify text-only question regeneration
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory"
+          cat > /tmp/questions.json <<'JSON'
+          {
+            "mode":"questions",
+            "personName":"Alex",
+            "age":40,
+            "language":"es",
+            "tone":"complicit",
+            "memoryInputs":[
+              {"visual_summary":"Dos personas posan en una calle peatonal entre edificios claros.","suggested_context":"Paseo juntos por una calle con encanto","context":"Un viaje en el que acabamos perdidos buscando dónde comer"},
+              {"visual_summary":"Una persona está junto al mar en un día soleado.","suggested_context":"Un día junto al mar","context":"Ese día dijimos que solo estaríamos diez minutos en la playa"},
+              {"visual_summary":"Varias personas están sentadas alrededor de una mesa con comida.","suggested_context":"Una comida para recordar","context":"La comida se alargó muchísimo y nadie quería levantarse"},
+              {"visual_summary":"Dos personas sonríen en una terraza exterior.","suggested_context":"Una tarde de terraza","context":"La foto fue justo antes de pedir otra ronda"},
+              {"visual_summary":"Una persona posa delante de un paisaje de montaña.","suggested_context":"Una escapada entre montañas","context":"Nos equivocamos de camino antes de llegar aquí"}
+            ]
+          }
+          JSON
+          start="$(date +%s)"
+          status="$(curl -sS -o /tmp/questions-out.json -w '%{http_code}' -X POST             -H 'Origin: https://levelyougift.github.io'             -H 'Content-Type: application/json'             --data-binary @/tmp/questions.json "$url")"
+          elapsed="$(( $(date +%s) - start ))"
+          cat /tmp/questions-out.json
+          echo
+          echo "text-only elapsed: ${elapsed}s"
+          test "$status" = "200"
+          test "$elapsed" -lt 20
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/questions-out.json'))
+          assert d.get('mode') == 'questions', d
+          m=d.get('memories')
+          assert isinstance(m,list) and len(m)==5, d
+          for x in m:
+              assert isinstance(x.get('question'),str) and x['question'].strip(), x
+              assert isinstance(x.get('answers'),list) and len(x['answers'])==3, x
+              assert x.get('correct') in (0,1,2), x
+          print('text-only question regeneration ok')
+          PY
+
       - name: Verify five-image Smart Creator batch
         shell: bash
         run: |
