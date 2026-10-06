@@ -276,3 +276,77 @@ Automated verification:
 Real-device acceptance procedure is documented in `QA_IPAD_SPRINT2.md`.
 
 **Release policy:** no promotion of Sprint 2 to the production root until the physical iPad/iPhone acceptance test is completed.
+
+
+## Sprint 2.4 — Fast Creator
+
+Implemented 2026-10-06.
+
+### Product change
+
+The creator no longer forces the customer to review AI-generated photo descriptions before creating the quiz.
+
+New full-product journey:
+
+1. Select 5 photos.
+2. Go directly to a five-memory question editor.
+3. For each photo, write:
+   - question;
+   - three answers;
+   - correct answer.
+4. Optional: tap **AI suggestion** for one specific memory.
+5. Only then does LevelYou ask for an optional real-life hint and a tone.
+6. The AI generates one suggested question + three answers for that memory only.
+7. Review the completed five-question game.
+8. Continue to checkout.
+
+### UX / marketing rationale
+
+- Manual creativity is now the primary experience.
+- AI is an assistant, not a mandatory review workflow.
+- No automatic image-analysis wait occurs after selecting the five photos.
+- The customer can move between memories using 1–5 navigation and edits persist.
+- The final-review CTA stays disabled until all five questions and three answers are complete.
+- The final dedication remains optional/editable.
+- User-written questions are not silently regenerated when changing interface language.
+
+### Technical behavior
+
+- New client module: `smart-fast-sprint2.js`.
+- Full-product photo selection triggers **zero AI calls**.
+- AI is called only through the per-memory suggestion button.
+- A suggestion sends only the current photo, optional hint, recipient data, active language and selected tone.
+- Existing `smart-memory` endpoint is reused; no new AI service or infrastructure was added.
+- Existing Sprint 2 resilient checkout remains unchanged apart from creator-version metadata:
+  - `smart_creator_version = sprint2-fast-v2.4`;
+  - question tone metadata is retained.
+- Player, payment architecture and final-video generation remain outside the 2.4 logic change.
+
+### QA
+
+Automated acceptance covers:
+
+- ES / CA / EN interface and flags;
+- five-photo upload;
+- zero AI calls during initial upload and editor entry;
+- manual creation of questions/answers;
+- exactly one AI request when assistance is explicitly requested;
+- optional hint + tone passed to AI;
+- 1–5 navigation preserving edits;
+- five completed questions required before review;
+- question persistence from editor → preview → editor;
+- final game passed correctly into checkout;
+- five photo uploads and checkout cancellation/recovery.
+
+Validated runs on the 2.4 branch:
+- Static QA: PASS.
+- Browser end-to-end QA: PASS.
+
+### Deferred from 2.4
+
+- Smart/face-safe automatic photo framing.
+- Manual crop/zoom framing control.
+- Additional video-only photos.
+- Music selection and audio pipeline.
+
+Those remain subsequent product increments rather than being mixed into the Fast Creator rewrite.
