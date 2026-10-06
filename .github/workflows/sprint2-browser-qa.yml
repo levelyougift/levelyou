@@ -172,11 +172,28 @@ jobs:
           await page.waitForFunction(()=>document.querySelectorAll('#photoGrid img').length===5,{timeout:10000});
           assert.equal(await page.locator('#photoGrid img').count(),5);
           assert.equal(await page.locator('#continueEditBtn').isEnabled(),true);
+
+          // Clear selection button must reset the five-photo batch.
+          await page.click('#clearBatchBtn');
+          assert.equal(await page.locator('#photoGrid img').count(),0);
+          assert.equal(await page.locator('#continueEditBtn').isEnabled(),false);
+          await page.setInputFiles('#photoBatch',files);
+          await page.waitForFunction(()=>document.querySelectorAll('#photoGrid img').length===5,{timeout:10000});
+          assert.equal(await page.locator('#continueEditBtn').isEnabled(),true);
+
           await page.click('#continueEditBtn');
           await page.waitForSelector('#fullEditFlow:not(.hidden)',{timeout:10000});
           assert.equal(await page.locator('#editMemoryImg').isVisible(),true);
           assert.equal(await page.locator('#editMemoryContext').inputValue(),'Recuerdo especial 1');
           assert.equal(await page.locator('#dedication').inputValue(),'¡Feliz cumpleaños!');
+
+          // Back to photo batch and return to editor.
+          await page.click('#backToPhotosBtn');
+          assert.equal(await page.locator('#fullUploadFlow').isVisible(),true);
+          assert.equal(await page.locator('#photoGrid img').count(),5);
+          await page.click('#continueEditBtn');
+          await page.waitForSelector('#fullEditFlow:not(.hidden)',{timeout:10000});
+
           for(let i=0;i<4;i++) await page.click('#nextMemoryBtn');
           assert.match(await page.locator('#editMemoryIndex').innerText(),/5/);
           for(let i=0;i<4;i++) await page.click('#prevMemoryBtn');
@@ -186,6 +203,14 @@ jobs:
           await page.click('#nextQ');
           assert.match(await page.locator('#qcounter').innerText(),/2.*5/);
           await page.click('#prevQ');
+
+          // Edit memories button must return to memory editor and preserve state.
+          await page.click('#editMemoriesBtn');
+          assert.equal(await page.locator('#builder').isVisible(),true);
+          assert.equal(await page.locator('#fullEditFlow').isVisible(),true);
+          assert.equal(await page.locator('#dedication').inputValue(),'¡Feliz cumpleaños!');
+          await page.click('#generateFullBtn');
+          await page.waitForSelector('#previewSection:not(.hidden)',{timeout:10000});
 
           // Checkout client: compression + fake uploads + fake checkout + cancel-return screen
           await page.click('#interestBtn');
@@ -197,6 +222,13 @@ jobs:
           assert.equal(await page.locator('#resumePaymentBtn').innerText(),'Volver al pago');
           assert.equal(await page.locator('#restartFromCancelBtn').innerText(),'Empezar otro LevelYou');
           assert.equal(await page.locator('#creatorJourney').isVisible(),false);
+
+          const checkoutBeforeResume=checkoutCalls;
+          await page.click('#resumePaymentBtn');
+          await page.waitForTimeout(300);
+          assert.equal(checkoutCalls,checkoutBeforeResume+1);
+          assert.equal(await page.locator('#paymentResume').isVisible(),true);
+
           await page.click('#restartFromCancelBtn');
           assert.equal(await page.locator('#landing').isVisible(),true);
 
@@ -205,6 +237,11 @@ jobs:
           assert.equal(await page.locator('#paymentResume').isVisible(),true);
           assert.equal(await page.locator('#resumeTitle').innerText(),'No has perdut res.');
           assert.equal(await page.locator('#resumePaymentBtn').innerText(),'Tornar al pagament');
+
+          await page.goto(`${base}?payment=cancelled&order_id=${fakeOrder}&lang=en`,{waitUntil:'networkidle'});
+          assert.equal(await page.locator('#paymentResume').isVisible(),true);
+          assert.equal(await page.locator('#resumeTitle').innerText(),'Nothing has been lost.');
+          assert.equal(await page.locator('#resumePaymentBtn').innerText(),'Return to payment');
 
           // Player with mocked paid-game API
           await page.unroute('**/functions/v1/smart-memory');
@@ -224,19 +261,40 @@ jobs:
           await page.goto(`${base}play.html?token=22222222-2222-4222-8222-222222222222`,{waitUntil:'networkidle'});
           await page.waitForSelector('#intro:not(.hidden)',{timeout:10000});
           assert.match(await page.locator('#introTitle').innerText(),/Alex/);
+
+          await page.addInitScript(()=>{ window.__shared=0; try{navigator.share=async()=>{window.__shared++}}catch{} });
           await page.click('#startGame');
           assert.equal(await page.locator('#game').isVisible(),true);
+          assert.equal(await page.locator('#shareTop').isVisible(),true);
           for(let i=0;i<5;i++){
             assert.equal(await page.locator('#question').innerText(),`Pregunta premium ${i+1}`);
-            await page.locator('.answer').nth(i%3).click();
-            if(i<4) await page.click('#next');
-            else await page.click('#next');
+            const answerIndex=i%3;
+            await page.locator('.answer').nth(answerIndex).click();
+            assert.equal(await page.locator('.answer.correct').count(),1);
+            if(answerIndex!==0) assert.equal(await page.locator('.answer.wrong').count(),1);
+            await page.click('#next');
           }
           await page.waitForSelector('#finish:not(.hidden)',{timeout:5000});
           assert.equal(await page.locator('#memoryText').innerText(),'Gracias por todos estos recuerdos.');
+          assert.equal(await page.locator('#createVideo').isVisible(),true);
+          assert.equal(await page.locator('#share').isVisible(),true);
+          assert.equal(await page.locator('#again').isVisible(),true);
+
+          // Share buttons are wired; mock native sharing to avoid opening external apps.
+          await page.evaluate(()=>{ try{navigator.share=async()=>{window.__shared=(window.__shared||0)+1}}catch{} });
+          await page.click('#share');
+          await page.click('#shareTop');
+          assert.ok((await page.evaluate(()=>window.__shared||0))>=2);
+
           await page.click('#again');
           assert.equal(await page.locator('#game').isVisible(),true);
           assert.equal(await page.locator('#question').innerText(),'Pregunta premium 1');
+
+          // Invalid token must expose the retry/error surface instead of a blank page.
+          await page.goto(`${base}?page=player&token=bad-token`,{waitUntil:'networkidle'});
+          await page.waitForSelector('#error:not(.hidden)',{timeout:5000});
+          assert.equal(await page.locator('#retryBtn').isVisible(),true);
+          assert.match(await page.locator('#errorTitle').innerText(),/No hemos podido abrir/);
 
           // Browser surface quality
           const bodyScroll = await page.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth}));
