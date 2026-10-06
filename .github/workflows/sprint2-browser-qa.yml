@@ -238,6 +238,28 @@ jobs:
           assert.equal(checkoutCalls,1);
           assert.equal(await page.locator('[data-i18n="resumeTitle"]').innerText(),'No has perdido nada.');
 
+          // Paid player applies persisted framing received from the game API.
+          await page.route('**/functions/v1/get-game-sprint1?token=*',async route=>{
+            await route.fulfill({
+              status:200,contentType:'application/json',
+              body:JSON.stringify({
+                personName:'Lucía',language:'es',dedication:'Final',
+                items:Array.from({length:5},(_,i)=>({
+                  photoUrl:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxMDAwAAAHgAB9HFkzgAAAABJRU5ErkJggg==',
+                  framing:i===0?{zoom:1.6,x:.45,y:.2}:{zoom:1,x:0,y:0},
+                  question:'Player '+(i+1),answers:['A','B','C'],correct:0
+                }))
+              })
+            });
+          });
+          await page.goto(base+'play-sprint1.html?token=22222222-2222-4222-8222-222222222222',{waitUntil:'networkidle'});
+          await page.waitForSelector('#intro:not(.hidden)');
+          await page.click('#startGame');
+          assert.equal(await page.locator('#game').isVisible(),true);
+          const playerStyle=await page.locator('#photo').getAttribute('style');
+          assert.match(playerStyle,/scale\(1\.6\)/);
+          assert.match(playerStyle,/translate\(/);
+
           const meaningfulErrors=errors.filter(e=>!e.includes('favicon'));
           assert.deepEqual(meaningfulErrors,[]);
 
