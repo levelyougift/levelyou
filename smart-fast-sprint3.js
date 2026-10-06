@@ -207,12 +207,21 @@ function openAiModal(){
  document.body.classList.add('fast-modal-open');
  setTimeout(()=>$('#editMemoryContext')?.focus(),40);
 }
-function closeAiModal(returnFocus=true){
+function closeAiModal(returnFocus=true,force=false){
  const panel=$('#aiAssistPanel');
- if(!panel)return;
+ if(!panel||(!force&&aiBusy))return;
  panel.classList.add('hidden');
  document.body.classList.remove('fast-modal-open');
  if(returnFocus)$('#aiAssistBtn')?.focus();
+}
+
+function setAiBusy(busy){
+ aiBusy=busy;
+ ['#prevMemoryBtn','#nextMemoryBtn','#backToPhotosBtn','#framePhotoBtn','#replaceMemoryPhoto','#generateFullBtn','#aiAssistBtn','#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect'].forEach(sel=>{
+   const el=$(sel);if(el)el.disabled=busy;
+ });
+ const cancel=$('#aiCancelBtn');if(cancel)cancel.disabled=busy;
+ updateFastDots();
 }
 
 function updateFastDots(){
@@ -300,9 +309,8 @@ async function generateSuggestion(){
  const m=memories[requestIndex];if(!m?.image)return;
  const requestId=++aiRequestSeq;
  const b=$('#aiGenerateBtn'),original=b.textContent;
- aiBusy=true;
+ setAiBusy(true);
  b.disabled=true;b.textContent=fx('thinking');
- renderFullEditor();
  try{
    const image=await compact(m.image);
    const hint=clean(m.context||'');
@@ -332,7 +340,9 @@ async function generateSuggestion(){
      $('#fastA2').value=d.a[1]||'';
      $('#fastA3').value=d.a[2]||'';
      $('#fastCorrect').value=String(d.correct);
-     closeAiModal(false);
+     setAiBusy(false);
+     closeAiModal(false,true);
+     renderFullEditor();
      setTimeout(()=>$('#fastQuestion')?.focus(),40);
    }
    updateFastDots();updateReviewButton();
@@ -343,7 +353,7 @@ async function generateSuggestion(){
    }
  }finally{
    if(requestId===aiRequestSeq){
-     aiBusy=false;
+     if(aiBusy)setAiBusy(false);
      b.disabled=false;b.textContent=original;
      renderFullEditor();
    }
@@ -383,7 +393,7 @@ renderBuilderTexts=function(){
 
 const baseStartBuilder=startBuilder;
 startBuilder=function(nextMode){
- aiRequestSeq++;aiBusy=false;
+ aiRequestSeq++;aiBusy=false;closeAiModal(false,true);
  baseStartBuilder(nextMode);
  if(nextMode==='full'){
    memories=Array.from({length:5},(_,i)=>({image:fullPhotoData[i]||'',context:'',framing:{zoom:1,x:0,y:0},draft:{q:'',a:['','',''],correct:0}}));
