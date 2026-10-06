@@ -18,7 +18,7 @@ ca:{
  toneLabel:'To del joc',toneHelp:'Tria l’estil de les preguntes. Divertit és el recomanat.',toneFun:'😊 Divertit',toneComplicit:'😏 Còmplice',toneEmotional:'❤️ Emotiu',toneElegant:'✨ Elegant'
 },
 en:{
- ded:'Final message for them',help:'It appears after the game and also closes the video. You can edit the suggestion.',ph:'e.g. Happy birthday. Here is to many more unforgettable memories.',
+ ded:'Final message for them',help:'It appears after the game and also closes the video. You can edit the suggestion.',ph:'e.g. Happy birthday. Here’s to many more unforgettable memories.',
  hint:'Context / hint for LevelYou (optional)',previewHint:'Context / hint for LevelYou (optional)',desc:'LevelYou understands each photo and suggests the memory. Edit it only if you want to add a more personal hint.',
  analysing:'✨ Understanding your memories…',generating:'✨ Giving the questions some personality…',suggested:'✨ LevelYou suggestion',need:'To make it more personal, it would help to know: ',ready:'Keep this suggestion as it is or edit it.',
  fallback:'AI is unavailable right now. You can still continue.',translating:'✨ Adapting the game to the new language…',timeout:'The AI took too long. Please try again.',imageUnsupported:'We could not analyze one of the photos. Try another image or a JPG/PNG file.',
