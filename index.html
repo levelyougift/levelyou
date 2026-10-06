@@ -153,7 +153,7 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 <div class="topbar">
   <div class="brand"><span class="dot"></span> LEVELYOU</div>
   <div class="language-wrap">
-    <span class="language-label">LANGUAGE</span>
+    <span class="language-label" data-i18n="languageLabel">IDIOMA</span>
     <div class="language-native">
       <span class="flag" id="currentFlag" aria-hidden="true"></span>
       <select id="languageSelect" aria-label="Language" onchange="changeLanguage(this.value)">
@@ -322,7 +322,7 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
     <button type="button" class="btn secondary" id="editQuestionBtn" data-i18n="editQuestion">Editar pregunta y respuestas</button>
     <div style="height:10px"></div>
     <button type="button" class="btn secondary" id="editMemoriesBtn" data-i18n="editMemories">Editar recuerdos</button>
-    <div class="notice" style="margin-top:14px" data-i18n="earlyAccess"><b>Acceso anticipado:</b> todavía no se realizará ningún cargo.</div>
+    <div class="notice" style="margin-top:14px" data-i18n="earlyAccess">Pago seguro: tu LevelYou se activa automáticamente al confirmar el pago con Stripe.</div>
   </div>
 </section>
 
@@ -339,17 +339,7 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
   </div>
 </section>
 
-<section id="success" class="hidden">
-  <div class="card success">
-    <div class="emoji">🎉</div>
-    <h2 data-i18n="successTitle">Tu LevelYou ya tiene forma.</h2>
-    <p class="sub" style="font-size:16px" data-i18n="successText">Estamos abriendo el acceso por fases. Escríbenos LEVEL por Instagram y te avisaremos para completar la experiencia.</p>
-    <div style="height:14px"></div>
-    <button type="button" class="btn primary" id="instagramBtn" data-i18n="instagramBtn">Ir a @levelyougift</button>
-    <div style="height:10px"></div>
-    <button type="button" class="btn secondary" id="restartBtn" data-i18n="restart">Crear otro LevelYou</button>
-  </div>
-</section>
+
 
 <div class="footer">LevelYou · <span data-i18n="footer">Regalos personalizados</span></div>
 </div>
@@ -357,7 +347,7 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 <script>
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
-const sections=['#landing','#builder','#previewSection','#paymentResume','#success'];
+const sections=['#landing','#builder','#previewSection','#paymentResume'];
 let lang='es', mode='preview', memoryCount=1, memories=[], game=[], currentIndex=0;
 
 const T={
@@ -439,7 +429,7 @@ es:{
  fullBtnPremium:'Crear su LevelYou · 14,90 €',previewBtnPremium:'Ver una muestra con 1 foto',includedTitle:'Tu LevelYou incluye',howItWorks:'La experiencia',
  storyTitle:'Tú eliges los recuerdos. LevelYou construye la sorpresa.',storyText:'La creación está guiada de principio a fin y puedes cambiar cada sugerencia antes de pagar.',
  storyStep1:'Elige 5 fotos especiales',storyStep2:'Revisa tono, recuerdos y dedicatoria',storyStep3:'Ve el juego antes de terminar',
- journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personaliza',journeyPersonalizeDesc:'Tono y recuerdos',journeyReview:'Revisa',journeyReviewDesc:'Juego final',reviewKicker:'Último vistazo antes de terminar'
+ languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personaliza',journeyPersonalizeDesc:'Tono y recuerdos',journeyReview:'Revisa',journeyReviewDesc:'Juego final',reviewKicker:'Último vistazo antes de terminar',resumeKicker:'Tu LevelYou sigue guardado',resumeTitle:'No has perdido nada.',resumeText:'Tus recuerdos ya están preparados. Puedes volver al pago sin subir las fotos ni crear el juego otra vez.',resumePayment:'Volver al pago',restartFromCancel:'Empezar otro LevelYou'
 },
 ca:{
  premiumTag:'Regal digital personalitzat',premiumHero:'Cinc records. Un joc fet per a aquella persona. Un final per guardar.',premiumSub:'Tria 5 fotos. LevelYou les converteix en preguntes, moments i un vídeo final que només pot pertànyer a aquella persona.',
@@ -447,7 +437,7 @@ ca:{
  fullBtnPremium:'Crea el seu LevelYou · 14,90 €',previewBtnPremium:'Veure una mostra amb 1 foto',includedTitle:'El teu LevelYou inclou',howItWorks:'L’experiència',
  storyTitle:'Tu tries els records. LevelYou construeix la sorpresa.',storyText:'La creació està guiada de principi a fi i pots canviar cada suggeriment abans de pagar.',
  storyStep1:'Tria 5 fotos especials',storyStep2:'Revisa to, records i dedicatòria',storyStep3:'Mira el joc abans d’acabar',
- journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personalitza',journeyPersonalizeDesc:'To i records',journeyReview:'Revisa',journeyReviewDesc:'Joc final',reviewKicker:'Últim cop d’ull abans d’acabar'
+ languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personalitza',journeyPersonalizeDesc:'To i records',journeyReview:'Revisa',journeyReviewDesc:'Joc final',reviewKicker:'Últim cop d’ull abans d’acabar',resumeKicker:'El teu LevelYou continua guardat',resumeTitle:'No has perdut res.',resumeText:'Els teus records ja estan preparats. Pots tornar al pagament sense pujar les fotos ni crear el joc de nou.',resumePayment:'Tornar al pagament',restartFromCancel:'Començar un altre LevelYou'
 },
 en:{
  premiumTag:'Personalized digital gift',premiumHero:'Five memories. A game made for them. A final moment to keep.',premiumSub:'Choose 5 photos. LevelYou turns them into questions, moments and a final video that could only belong to that person.',
@@ -455,7 +445,7 @@ en:{
  fullBtnPremium:'Create their LevelYou · €14.90',previewBtnPremium:'See a 1-photo sample',includedTitle:'Your LevelYou includes',howItWorks:'The experience',
  storyTitle:'You choose the memories. LevelYou builds the surprise.',storyText:'Creation is guided from start to finish, and you can change every suggestion before paying.',
  storyStep1:'Choose 5 special photos',storyStep2:'Review tone, memories and dedication',storyStep3:'Preview the game before finishing',
- journeyCreate:'Create',journeyCreateDesc:'5 photos',journeyPersonalize:'Personalize',journeyPersonalizeDesc:'Tone and memories',journeyReview:'Review',journeyReviewDesc:'Final game',reviewKicker:'One last look before finishing'
+ languageLabel:'LANGUAGE',journeyCreate:'Create',journeyCreateDesc:'5 photos',journeyPersonalize:'Personalize',journeyPersonalizeDesc:'Tone and memories',journeyReview:'Review',journeyReviewDesc:'Final game',reviewKicker:'One last look before finishing',resumeKicker:'Your LevelYou is still saved',resumeTitle:'Nothing has been lost.',resumeText:'Your memories are already prepared. You can return to payment without uploading the photos or creating the game again.',resumePayment:'Return to payment',restartFromCancel:'Start another LevelYou'
 }
 };
 
@@ -489,7 +479,7 @@ function show(id){sections.forEach(s=>$(s).classList.add('hidden'));$(id).classL
 function updateJourney(section){
  const j=$('#creatorJourney');if(!j)return;
  const active=section||(!$('#previewSection').classList.contains('hidden')?'#previewSection':!$('#builder').classList.contains('hidden')?'#builder':'#landing');
- j.classList.toggle('hidden',active==='#landing'||active==='#paymentResume'||active==='#success');
+ j.classList.toggle('hidden',active==='#landing'||active==='#paymentResume');
  let step=1;
  if(active==='#previewSection')step=3;
  else if(active==='#builder'&&mode==='full'&&!$('#fullEditFlow').classList.contains('hidden'))step=2;
@@ -702,143 +692,10 @@ async function uploadPhotosReliably(uploads, blobs) {
   }
 }
 
-$('#interestBtn').onclick = async () => {
-  const btn = $('#interestBtn');
-  const originalText = btn.textContent;
-
-  if (mode !== 'full' || memories.length !== 5) {
-    alert(
-      lang === 'ca'
-        ? 'Per crear el LevelYou complet, selecciona primer els 5 records.'
-        : lang === 'en'
-        ? 'To create the full LevelYou, first select your 5 memories.'
-        : 'Para crear el LevelYou completo, selecciona primero los 5 recuerdos.'
-    );
-    return;
-  }
-
-  const identity = validIdentity();
-  if (!identity) return;
-
-  btn.disabled = true;
-
-  btn.textContent =
-    lang === 'ca'
-      ? 'Preparant el teu LevelYou…'
-      : lang === 'en'
-      ? 'Preparing your LevelYou…'
-      : 'Preparando tu LevelYou…';
-
-  try {
-    // 1. Convertimos las 5 imágenes que ya tiene la web a archivos
-    const blobs = await Promise.all(
-      memories.map(memory => dataUrlToBlob(memory.image))
-    );
-
-    const contentTypes = blobs.map(blob => {
-      if (blob.type === 'image/jpg') return 'image/jpeg';
-      return blob.type || 'image/jpeg';
-    });
-
-    // 2. Guardamos solo los datos necesarios del juego
-    const gameData = {
-      memories: memories.map(memory => ({
-        context: clean(memory.context)
-      })),
-      questions: game.map(item => ({
-        question: item.q,
-        answers: item.a,
-        correct: item.correct
-      }))
-    };
-
-    // 3. Creamos el pedido en Supabase
-    const orderResponse = await fetch(CREATE_ORDER_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        personName: identity.name,
-        age: identity.age ? Number(identity.age) : null,
-        language: lang,
-        gameData,
-        contentTypes
-      })
-    });
-
-    const orderData = await orderResponse.json();
-
-    if (
-      !orderResponse.ok ||
-      !orderData.orderId ||
-      !Array.isArray(orderData.uploads) ||
-      orderData.uploads.length !== 5
-    ) {
-      throw new Error(
-        orderData.error || 'Could not create order'
-      );
-    }
-
-    // 4. Subimos las 5 fotos al Storage privado.
-    // En móvil lo hacemos de forma secuencial y con reintentos automáticos.
-    await uploadPhotosReliably(orderData.uploads, blobs);
-
-    // 5. Creamos Stripe Checkout vinculado a ese pedido
-    btn.textContent =
-      lang === 'ca'
-        ? 'Obrint pagament…'
-        : lang === 'en'
-        ? 'Opening payment…'
-        : 'Abriendo pago…';
-
-    const checkoutResponse = await fetch(CHECKOUT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        orderId: orderData.orderId
-      })
-    });
-
-    const checkoutData = await checkoutResponse.json();
-
-    if (!checkoutResponse.ok || !checkoutData.url) {
-      throw new Error(
-        checkoutData.error || 'Checkout error'
-      );
-    }
-
-    // 6. Abrimos Stripe
-    window.location.href = checkoutData.url;
-
-  } catch (error) {
-    console.error(error);
-
-    alert(
-      lang === 'ca'
-        ? 'No hem pogut preparar el teu LevelYou. Torna-ho a provar.'
-        : lang === 'en'
-        ? 'We could not prepare your LevelYou. Please try again.'
-        : 'No hemos podido preparar tu LevelYou. Inténtalo de nuevo.'
-    );
-
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-};
-$('#instagramBtn').onclick=()=>window.open('https://www.instagram.com/levelyougift/','_blank','noopener');
-$('#restartBtn').onclick=()=>{mode='preview';memoryCount=1;memories=[];game=[];currentIndex=0;fullPhotoData=[];previewMemory={image:'',context:''};$('#name').value='';$('#age').value='';show('#landing')};
 
 applyLang();
 
 const paymentStatus = new URLSearchParams(window.location.search).get('payment');
-
-if (paymentStatus === 'success') {
-  show('#success');
-  history.replaceState({}, '', window.location.pathname);
-}
 
 if (paymentStatus === 'cancelled') {
   const query = new URLSearchParams(window.location.search);
