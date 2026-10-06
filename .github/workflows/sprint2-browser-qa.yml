@@ -22,6 +22,27 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
+      - name: Wait for current RC publication
+        run: |
+          python - <<'PY'
+          import time, urllib.request
+          url="https://levelyougift.github.io/levelyou/qa/sprint2-rc/"
+          last=""
+          for _ in range(12):
+              try:
+                  with urllib.request.urlopen(url,timeout=20) as r:
+                      html=r.read().decode("utf-8")
+                      if 'id="qaFinalBtn"' in html and 'smart-checkout-sprint2.js?v=2.1' in html:
+                          print("Current RC is published")
+                          break
+                      last="RC HTML is still the previous version"
+              except Exception as e:
+                  last=repr(e)
+              time.sleep(5)
+          else:
+              raise SystemExit(last or "RC publication not detected")
+          PY
+
       - name: Run staging browser acceptance
         env:
           STAGING_URL: https://levelyougift.github.io/levelyou/qa/sprint2-rc/
