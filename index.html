@@ -74,9 +74,64 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
 .footer{text-align:center;color:#7f879e;font-size:12px;margin-top:26px}
 .success{text-align:center;padding:18px 6px}.success .emoji{font-size:52px}
 @media(max-width:430px){h1{font-size:35px}.grid{grid-template-columns:1fr}.wrap{padding-left:14px;padding-right:14px}.topbar{align-items:flex-start}.language-label{font-size:10px}.language-native{padding:6px 8px}.language-native select{min-width:92px;font-size:12px}.photo-grid{gap:5px}.photo-slot .num{left:4px;top:4px}}
+
+/* ===== Sprint 2.1 — Premium Creator Experience ===== */
+:root{
+  --bg:#0a0b12;--card:#121522;--card2:#171a28;--muted:#aeb4c5;--txt:#fbfbfd;
+  --accent:#7be7d3;--accent2:#a5b7ff;--gold:#f3d9a7;--line:rgba(255,255,255,.10);
+  --soft:rgba(255,255,255,.055);--shadow:0 24px 80px rgba(0,0,0,.34)
+}
+html{background:var(--bg)}
+body{min-height:100vh;background:radial-gradient(circle at 12% -8%,rgba(123,231,211,.16),transparent 30%),radial-gradient(circle at 96% 12%,rgba(165,183,255,.14),transparent 33%),radial-gradient(circle at 50% 105%,rgba(243,217,167,.08),transparent 34%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(180deg,rgba(255,255,255,.018),transparent 22%)}
+.wrap{max-width:680px;padding:20px 20px 56px}
+.topbar{position:sticky;top:0;z-index:20;margin:0 -8px 24px;padding:10px 8px 12px;background:linear-gradient(180deg,rgba(10,11,18,.94) 68%,rgba(10,11,18,0));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.brand{font-size:13px;letter-spacing:.14em}.dot{width:10px;height:10px;box-shadow:0 0 30px rgba(123,231,211,.8)}
+.hero{padding:22px 2px 12px}
+.premium-eyebrow{display:inline-block;margin-bottom:13px;color:var(--gold);font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+h1{font-size:48px;line-height:.98;max-width:620px;margin:5px auto 17px;letter-spacing:-.05em}
+.sub{max-width:560px;color:#d4d8e5;font-size:18px;line-height:1.55}
+.hero-proof{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
+.hero-proof span{display:inline-flex;align-items:center;min-height:34px;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.045);border:1px solid var(--line);color:#cfd4e1;font-size:12px;font-weight:700}
+.card{position:relative;background:linear-gradient(180deg,rgba(24,27,42,.94),rgba(17,20,33,.94));border:1px solid rgba(255,255,255,.11);border-radius:28px;padding:22px;margin-top:20px;box-shadow:var(--shadow);overflow:hidden}
+.card:before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none}
+.landing-choice-card{padding:20px}.landing-choice-card .grid{gap:8px}
+.step{padding:15px;background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.07)}.step b{font-size:14px}.step span{font-size:12px}
+.pill{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.11)}
+.btn{min-height:54px;border-radius:17px;padding:15px 18px;transition:transform .18s ease,filter .18s ease,background .18s ease;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.985)}
+.btn.primary{color:#081311;background:linear-gradient(135deg,#7be7d3 0%,#9aeadc 56%,#b6c5ff 140%);box-shadow:0 12px 34px rgba(123,231,211,.15)}
+.btn.primary:hover{filter:brightness(1.04)}.btn.secondary{background:rgba(255,255,255,.065);border-color:rgba(255,255,255,.10)}.btn.ghost{background:rgba(255,255,255,.02)}
+input,textarea,select{background:rgba(6,8,16,.62);border-color:rgba(255,255,255,.11);border-radius:16px;padding:15px}
+input:focus,textarea:focus,select:focus{border-color:rgba(123,231,211,.58);box-shadow:0 0 0 4px rgba(123,231,211,.08)}
+label{margin-top:16px;color:#d5d9e5;font-weight:650}
+.multi-upload,.upload{border:1px dashed rgba(123,231,211,.30);background:linear-gradient(180deg,rgba(123,231,211,.035),rgba(255,255,255,.018))}
+.multi-upload{min-height:146px}.photo-slot{border-radius:16px;background:#0e111c}.editor-photo{border-radius:22px}
+.memory,.smart-ded,.smart-tone{background:rgba(255,255,255,.03)!important;border-color:rgba(255,255,255,.09)!important;border-radius:20px!important}
+.smart-note{background:linear-gradient(135deg,rgba(123,231,211,.08),rgba(165,183,255,.045))!important;border-color:rgba(123,231,211,.20)!important;border-radius:18px!important}
+.smart-tag{background:rgba(123,231,211,.12)!important;color:#bff7ed!important}
+.premium-progress{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 20px;padding:5px}
+.premium-step{position:relative;padding-top:17px;color:#737b90;font-size:11px;font-weight:850;text-align:center;letter-spacing:.025em;transition:color .2s ease}
+.premium-step:before{content:"";position:absolute;top:0;left:50%;width:8px;height:8px;transform:translateX(-50%);border-radius:50%;background:#3b4052;box-shadow:0 0 0 4px rgba(255,255,255,.025)}
+.premium-step:not(:last-child):after{content:"";position:absolute;top:3px;left:calc(50% + 9px);right:calc(-50% + 9px);height:2px;background:#2b2f3e}
+.premium-step.done,.premium-step.active{color:#e9edf5}.premium-step.done:before,.premium-step.active:before{background:var(--accent);box-shadow:0 0 0 4px rgba(123,231,211,.10)}.premium-step.done:not(:last-child):after{background:linear-gradient(90deg,var(--accent),rgba(123,231,211,.35))}
+.creator-stage-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 4px}
+.creator-stage-kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:900}.creator-stage-count{font-size:11px;color:#7e879b;font-weight:800}
+.price strong{font-size:40px}.checks li{position:relative;padding-left:4px;line-height:1.45}.notice{border-radius:17px}
+#loading{margin-top:18px;padding:18px;border-radius:20px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.075);text-align:center}
+.processing-orb{width:42px;height:42px;margin:2px auto 12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#d9fff8,var(--accent) 38%,rgba(165,183,255,.72) 72%,transparent 74%);box-shadow:0 0 34px rgba(123,231,211,.28);animation:premiumPulse 1.7s ease-in-out infinite}
+@keyframes premiumPulse{50%{transform:scale(1.08);filter:brightness(1.08)}}
+#loading .progress{height:5px;background:#252a39;margin:13px 0 9px}#loading .small{margin:0}.processing-sub{margin-top:6px!important;color:#7f8799!important}
+.game{border-radius:24px;background:#0d101a;border-color:rgba(255,255,255,.10);box-shadow:0 18px 48px rgba(0,0,0,.24)}
+.game img{aspect-ratio:4/3}.gamebody{padding:18px}.question{font-size:25px;letter-spacing:-.025em}
+.answer{padding:14px 15px;border-radius:15px;background:rgba(255,255,255,.055)}.answer:not(:disabled):active{transform:scale(.99)}
+#previewSection .card{padding-top:18px}.premium-preview-kicker{margin:2px 0 12px;color:var(--gold);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.footer{margin-top:34px;color:#666f83}
+@media(max-width:430px){.wrap{padding-left:14px;padding-right:14px}h1{font-size:39px}.hero{padding-top:15px}.card{border-radius:24px;padding:17px}.landing-choice-card{padding:16px}.premium-step{font-size:10px}.hero-proof{gap:6px}.hero-proof span{font-size:11px}}
+
 </style>
 </head>
-<body data-levelyou-build="2026-10-06-sprint1-rc1">
+<body data-levelyou-build="2026-10-06-sprint2-premium-2.1">
 <div class="wrap">
 <div class="topbar">
   <div class="brand"><span class="dot"></span> LEVELYOU</div>
@@ -95,12 +150,14 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
 
 <section id="landing">
   <div class="hero">
+    <span class="premium-eyebrow" data-premium-key="eyebrow">Hecho para una sola persona</span>
     <span class="pill" data-i18n="tagline">🎁 Un regalo que se juega</span>
     <h1 data-i18n="hero">Convierte sus recuerdos en un juego personalizado.</h1>
     <p class="sub" data-i18n="sub">Prueba con una foto o crea directamente una experiencia con 5 recuerdos. Sin instalar nada.</p>
+    <div class="hero-proof"><span data-premium-key="proof1">5 recuerdos</span><span data-premium-key="proof2">Juego personalizado</span><span data-premium-key="proof3">Final para guardar</span></div>
   </div>
 
-  <div class="card">
+  <div class="card landing-choice-card">
     <div class="grid">
       <div class="step"><b data-i18n="step1t">1. Sube recuerdos</b><span data-i18n="step1d">Fotos, lugares, amigos y momentos.</span></div>
       <div class="step"><b data-i18n="step2t">2. Creamos el juego</b><span data-i18n="step2d">Una pregunta para cada recuerdo.</span></div>
@@ -108,9 +165,9 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
       <div class="step"><b data-i18n="step4t">4. Guarda el vídeo</b><span data-i18n="step4d">La experiencia termina con un recuerdo para guardar.</span></div>
     </div>
     <div style="height:14px"></div>
-    <button type="button" class="btn primary" id="previewBtn" data-i18n="previewBtn" onclick="startBuilder('preview')">Probar gratis con 1 foto</button>
+    <button type="button" class="btn primary" id="fullBtn" data-i18n="fullBtn" onclick="startBuilder('full')">Crear su LevelYou · 14,90 €</button>
     <div style="height:10px"></div>
-    <button type="button" class="btn secondary" id="fullBtn" data-i18n="fullBtn" onclick="startBuilder('full')">Crear con 5 recuerdos</button>
+    <button type="button" class="btn secondary" id="previewBtn" data-i18n="previewBtn" onclick="startBuilder('preview')">Ver cómo funciona con 1 foto</button>
     <p class="small" style="text-align:center;margin-bottom:0" data-i18n="privacy">Las fotos se procesan solo en tu dispositivo durante esta prueba.</p>
   </div>
 
@@ -127,6 +184,8 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
 
 <section id="builder" class="hidden">
   <div class="card">
+    <div class="premium-progress" aria-label="Creation progress"><div class="premium-step active" data-pstep="1" data-premium-key="stepCreate">Crea</div><div class="premium-step" data-pstep="2" data-premium-key="stepPersonalize">Personaliza</div><div class="premium-step" data-pstep="3" data-premium-key="stepReview">Revisa</div></div>
+    <div class="creator-stage-meta"><span class="creator-stage-kicker" id="creatorStageKicker">Empieza por su historia</span><span class="creator-stage-count" id="creatorStageCount">1 / 3</span></div>
     <button type="button" class="btn secondary" id="backBtn" style="width:auto;padding:10px 14px;margin-bottom:10px">← Volver</button>
     <h2 id="builderTitle"></h2>
     <p class="small" id="builderDesc" style="font-size:14px"></p>
@@ -181,14 +240,18 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
     </div>
 
     <div id="loading" class="hidden">
+      <div class="processing-orb" aria-hidden="true"></div>
+      <p class="small" style="text-align:center;font-size:14px;font-weight:800" data-i18n="creating">Creando las preguntas…</p>
+      <p class="small processing-sub" data-premium-key="processingSub">Estamos convirtiendo los recuerdos en algo que solo puede ser suyo.</p>
       <div class="progress"><div class="bar" id="bar"></div></div>
-      <p class="small" style="text-align:center" data-i18n="creating">Creando las preguntas…</p>
     </div>
   </div>
 </section>
 
 <section id="previewSection" class="hidden">
   <div class="card">
+    <div class="premium-progress" aria-label="Creation progress"><div class="premium-step done" data-pstep="1" data-premium-key="stepCreate">Crea</div><div class="premium-step done" data-pstep="2" data-premium-key="stepPersonalize">Personaliza</div><div class="premium-step active" data-pstep="3" data-premium-key="stepReview">Revisa</div></div>
+    <div class="premium-preview-kicker" data-premium-key="previewKicker">Último vistazo antes de convertirlo en regalo</div>
     <button type="button" class="btn secondary" id="previewBackBtn" onclick="show('#builder')" style="width:auto;padding:10px 14px;margin-bottom:10px" data-i18n="back">← Volver</button>
     <span class="pill" data-i18n="yourGame">✨ Tu LevelYou</span>
     <h2 id="previewHeading" style="margin:10px 0 6px"></h2>
@@ -340,7 +403,8 @@ function applyLang(){
  document.documentElement.lang=lang;
  const languageSelect=$('#languageSelect');if(languageSelect)languageSelect.value=lang;
  renderFlag();
- $$('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));
+ applyPremiumLang();
+ $('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));
  $('#name').placeholder=tr('namePH');$('#age').placeholder=tr('agePH');
  $('#previewPhotoPH').textContent=tr('previewPhotoPH');$('#previewContext').placeholder=tr('previewContextPH');
  renderBuilderTexts();renderFullUpload();if(mode==='full'&&!$('#fullEditFlow').classList.contains('hidden'))renderFullEditor();
@@ -353,7 +417,7 @@ function applyLang(){
  }
 }
 function changeLanguage(value){lang=value;applyLang()}
-function show(id){sections.forEach(s=>$(s).classList.add('hidden'));$(id).classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+function show(id){sections.forEach(s=>$(s).classList.add('hidden'));$(id).classList.remove('hidden');syncPremiumExperience(id);window.scrollTo({top:0,behavior:'smooth'})}
 
 let previewMemory={image:'',context:''};
 let fullPhotoData=[];
@@ -687,6 +751,22 @@ $('#interestBtn').onclick = async () => {
 };
 $('#instagramBtn').onclick=()=>window.open('https://www.instagram.com/levelyougift/','_blank','noopener');
 $('#restartBtn').onclick=()=>{mode='preview';memoryCount=1;memories=[];game=[];currentIndex=0;fullPhotoData=[];previewMemory={image:'',context:''};$('#name').value='';$('#age').value='';show('#landing')};
+
+
+/* ===== Sprint 2.1 — premium copy + journey state ===== */
+const PREMIUM_T={
+ es:{eyebrow:'Hecho para una sola persona',proof1:'5 recuerdos',proof2:'Juego personalizado',proof3:'Final para guardar',stepCreate:'Crea',stepPersonalize:'Personaliza',stepReview:'Revisa',stage1:'Empieza por su historia',stage2:'Haz que cada recuerdo hable',stage3:'Revisa antes de regalar',processingSub:'Estamos convirtiendo los recuerdos en algo que solo puede ser suyo.',previewKicker:'Último vistazo antes de convertirlo en regalo'},
+ ca:{eyebrow:'Fet per a una sola persona',proof1:'5 records',proof2:'Joc personalitzat',proof3:'Final per guardar',stepCreate:'Crea',stepPersonalize:'Personalitza',stepReview:'Revisa',stage1:'Comença per la seva història',stage2:'Fes que cada record parli',stage3:'Revisa abans de regalar',processingSub:'Estem convertint els records en una cosa que només pot ser seva.',previewKicker:'Últim cop d’ull abans de convertir-ho en regal'},
+ en:{eyebrow:'Made for one person only',proof1:'5 memories',proof2:'Personalised game',proof3:'A finale to keep',stepCreate:'Create',stepPersonalize:'Personalise',stepReview:'Review',stage1:'Start with their story',stage2:'Make every memory speak',stage3:'Review before you gift it',processingSub:'We are turning the memories into something that could only be theirs.',previewKicker:'One last look before it becomes a gift'}
+};
+Object.assign(T.es,{tagline:'🎁 Un regalo hecho de recuerdos',hero:'Hay regalos que se abren. Este se vive.',sub:'Elige 5 fotos. LevelYou las transforma en un juego personalizado y un final para guardar.',step1t:'1. Elige 5 recuerdos',step1d:'Las fotos que mejor cuentan vuestra historia.',step2t:'2. Les damos personalidad',step2d:'Preguntas creadas a partir de cada momento.',step3t:'3. Se lo envías',step3d:'Lo juega desde un enlace privado, sin instalar nada.',step4t:'4. El final se queda',step4d:'Termina con una dedicatoria y un recuerdo para guardar.',previewBtn:'Ver cómo funciona con 1 foto',fullBtn:'Crear su LevelYou · 14,90 €',privacy:'Privado por diseño. Tus fotos se utilizan únicamente para crear este LevelYou.',launchPrice:'Experiencia completa',fiveMemories:'5 recuerdos',c1:'✓ 5 recuerdos convertidos en 5 preguntas personales',c2:'✓ Juego privado desde cualquier móvil',c3:'✓ Dedicatoria y vídeo final para guardar',c4:'✓ Enlace listo para enviar por WhatsApp',builderFullTitle:'Crea un regalo que solo puede ser suyo',builderFullDesc:'Añade 5 recuerdos. LevelYou hará el resto y tú conservarás el control.',choose5Title:'Elige los 5 recuerdos que cuentan vuestra historia',choose5Desc:'Selecciona las cinco fotos a la vez. Después podrás revisar y ajustar cada recuerdo.',creating:'Dándole forma a su LevelYou…',previewHeading5:'Así se sentirá su LevelYou',previewDesc5:'Revisa las 5 preguntas. Puedes cambiar cualquier detalle antes de continuar.',wantLevelYou:'Convertirlo en regalo · 14,90 €'});
+Object.assign(T.ca,{tagline:'🎁 Un regal fet de records',hero:'Hi ha regals que s’obren. Aquest es viu.',sub:'Tria 5 fotos. LevelYou les transforma en un joc personalitzat i un final per guardar.',step1t:'1. Tria 5 records',step1d:'Les fotos que millor expliquen la vostra història.',step2t:'2. Els donem personalitat',step2d:'Preguntes creades a partir de cada moment.',step3t:'3. L’hi envies',step3d:'Hi juga des d’un enllaç privat, sense instal·lar res.',step4t:'4. El final es queda',step4d:'Acaba amb una dedicatòria i un record per guardar.',previewBtn:'Veure com funciona amb 1 foto',fullBtn:'Crear el seu LevelYou · 14,90 €',privacy:'Privat per disseny. Les fotos només s’utilitzen per crear aquest LevelYou.',launchPrice:'Experiència completa',fiveMemories:'5 records',c1:'✓ 5 records convertits en 5 preguntes personals',c2:'✓ Joc privat des de qualsevol mòbil',c3:'✓ Dedicatòria i vídeo final per guardar',c4:'✓ Enllaç llest per enviar per WhatsApp',builderFullTitle:'Crea un regal que només pot ser seu',builderFullDesc:'Afegeix 5 records. LevelYou farà la resta i tu conservaràs el control.',choose5Title:'Tria els 5 records que expliquen la vostra història',choose5Desc:'Selecciona les cinc fotos alhora. Després podràs revisar i ajustar cada record.',creating:'Donant forma al seu LevelYou…',previewHeading5:'Així se sentirà el seu LevelYou',previewDesc5:'Revisa les 5 preguntes. Pots canviar qualsevol detall abans de continuar.',wantLevelYou:'Convertir-ho en regal · 14,90 €'});
+Object.assign(T.en,{tagline:'🎁 A gift made from memories',hero:'Some gifts are opened. This one is lived.',sub:'Choose 5 photos. LevelYou turns them into a personalised game and a finale worth keeping.',step1t:'1. Choose 5 memories',step1d:'The photos that tell your story best.',step2t:'2. We give them personality',step2d:'Questions created from each moment.',step3t:'3. Send it to them',step3d:'They play from a private link. Nothing to install.',step4t:'4. The ending stays',step4d:'It finishes with a dedication and a memory to keep.',previewBtn:'See how it works with 1 photo',fullBtn:'Create their LevelYou · €14.90',privacy:'Private by design. Your photos are used only to create this LevelYou.',launchPrice:'Complete experience',fiveMemories:'5 memories',c1:'✓ 5 memories turned into 5 personal questions',c2:'✓ Private game on any phone',c3:'✓ Dedication and final video to keep',c4:'✓ Link ready to send on WhatsApp',builderFullTitle:'Create a gift that could only be theirs',builderFullDesc:'Add 5 memories. LevelYou does the heavy lifting while you stay in control.',choose5Title:'Choose the 5 memories that tell your story',choose5Desc:'Select all five photos at once. Then review and fine-tune each memory.',creating:'Giving their LevelYou its shape…',previewHeading5:'This is how their LevelYou will feel',previewDesc5:'Review the 5 questions. You can change any detail before continuing.',wantLevelYou:'Turn it into a gift · €14.90'});
+function premiumTx(k){return(PREMIUM_T[lang]||PREMIUM_T.es)[k]||k}
+function applyPremiumLang(){$('[data-premium-key]').forEach(el=>el.textContent=premiumTx(el.dataset.premiumKey));syncPremiumExperience()}
+function premiumStep(){if(!$('#previewSection')?.classList.contains('hidden'))return 3;if(!$('#success')?.classList.contains('hidden'))return 3;if(!$('#builder')?.classList.contains('hidden')){if(!$('#fullEditFlow')?.classList.contains('hidden'))return 2;return 1}return 0}
+function syncPremiumExperience(){const step=premiumStep();$('.premium-step').forEach(el=>{const n=Number(el.dataset.pstep);el.classList.toggle('done',step>n);el.classList.toggle('active',step===n)});const kicker=$('#creatorStageKicker'),count=$('#creatorStageCount');if(kicker&&step){kicker.textContent=premiumTx(step===1?'stage1':step===2?'stage2':'stage3');count.textContent=Math.min(step,3)+' / 3'}}
+['#fullUploadFlow','#fullEditFlow','#previewSection'].forEach(sel=>{const node=$(sel);if(node)new MutationObserver(()=>syncPremiumExperience()).observe(node,{attributes:true,attributeFilter:['class']})});
 
 applyLang();
 
