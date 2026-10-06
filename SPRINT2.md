@@ -530,3 +530,32 @@ Production promotion is a separate release gate and still requires the final fro
 - broader device matrix.
 
 No additional structural features should be added to Sprint 2 after freeze.
+
+
+## Final closeout
+
+Sprint 2 development is frozen.
+
+Final automated acceptance evidence:
+- Static QA run `37530048662`: PASS.
+- Browser end-to-end QA run `37530048726`: PASS.
+- Public RC smoke run `37530048900`: PASS.
+
+Frozen product scope includes:
+- premium Creator shell;
+- Fast Creator 5-photo / 5-question flow;
+- optional AI suggestion modal;
+- editable questions/answers;
+- manual persistent photo framing;
+- resilient checkout and payment recovery;
+- premium recipient Player;
+- gentle answer feedback and progress;
+- dedication-first ending;
+- framed final-video generation path.
+
+Public QA release candidate:
+`https://levelyougift.github.io/levelyou/qa/sprint2-rc/`
+
+This Sprint 2 closeout is a **development freeze**, not a production promotion. The production root remains unchanged until the final physical-device release gate is accepted.
+
+Next development work must branch from the frozen Sprint 2 checkpoint, not continue mutating this closed scope.
