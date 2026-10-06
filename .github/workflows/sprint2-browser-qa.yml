@@ -26,7 +26,7 @@ jobs:
         env:
           STAGING_URL: https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview
         run: |
-          cat > /tmp/sprint2-browser-qa.mjs <<'JS'
+          cat > sprint2-browser-qa.mjs <<'JS'
           import { chromium } from 'playwright';
           import assert from 'node:assert/strict';
 
@@ -242,4 +242,4 @@ jobs:
           await browser.close();
           console.log('Sprint 2 browser QA: PASS');
           JS
-          node /tmp/sprint2-browser-qa.mjs
+          node sprint2-browser-qa.mjs
