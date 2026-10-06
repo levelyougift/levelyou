@@ -1,4 +1,5 @@
 (() => {
+  const CHECKOUT_SPRINT1_URL = 'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint1';
   const btn = document.querySelector('#interestBtn');
   if (!btn) return;
   btn.onclick = async () => {
@@ -18,7 +19,8 @@
         memories: memories.map(m => ({context: clean(m.context)})),
         questions: game.map(item => ({question:item.q, answers:item.a, correct:item.correct})),
         dedication: clean(document.querySelector('#dedication')?.value || ''),
-        smart_creator_version: 'sprint1-v1'
+        smart_creator_version: 'sprint1-v1.2',
+        question_tone: typeof tone === 'function' ? tone() : 'fun'
       };
       const orderResponse = await fetch(CREATE_ORDER_URL, {
         method:'POST',
@@ -29,7 +31,7 @@
       if (!orderResponse.ok || !orderData.orderId || !Array.isArray(orderData.uploads) || orderData.uploads.length !== 5) throw new Error(orderData.error || 'Could not create order');
       await uploadPhotosReliably(orderData.uploads, blobs);
       btn.textContent = lang === 'ca' ? 'Obrint pagament…' : lang === 'en' ? 'Opening payment…' : 'Abriendo pago…';
-      const checkoutResponse = await fetch(CHECKOUT_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:orderData.orderId})});
+      const checkoutResponse = await fetch(CHECKOUT_SPRINT1_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:orderData.orderId})});
       const checkoutData = await checkoutResponse.json();
       if (!checkoutResponse.ok || !checkoutData.url) throw new Error(checkoutData.error || 'Checkout error');
       location.href = checkoutData.url;
