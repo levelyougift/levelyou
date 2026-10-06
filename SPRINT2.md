@@ -350,3 +350,23 @@ Validated runs on the 2.4 branch:
 - Music selection and audio pipeline.
 
 Those remain subsequent product increments rather than being mixed into the Fast Creator rewrite.
+
+
+### Sprint 2.4.1 — AI suggestion modal
+
+The optional AI helper was moved from an inline expanding panel to a modal overlay.
+
+Behavior:
+- centered modal over a dimmed background;
+- contains only context/hint, tone, Cancel and Generate;
+- autofocuses the hint field;
+- page scroll is locked while open;
+- closes via Cancel, Escape or outside click;
+- after AI generation, closes automatically and writes the generated question/answers back into the main editor;
+- mobile/iPad layout uses bounded height and internal scrolling so the on-screen keyboard does not break the editor flow.
+
+No change was made to AI endpoint, checkout, player or video logic.
+
+QA:
+- static syntax/DOM QA: PASS;
+- browser E2E QA: PASS, including modal open/cancel/Escape/generate/close and editor population.
