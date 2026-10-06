@@ -489,7 +489,7 @@ function show(id){sections.forEach(s=>$(s).classList.add('hidden'));$(id).classL
 function updateJourney(section){
  const j=$('#creatorJourney');if(!j)return;
  const active=section||(!$('#previewSection').classList.contains('hidden')?'#previewSection':!$('#builder').classList.contains('hidden')?'#builder':'#landing');
- j.classList.toggle('hidden',active==='#landing'||active==='#success');
+ j.classList.toggle('hidden',active==='#landing'||active==='#paymentResume'||active==='#success');
  let step=1;
  if(active==='#previewSection')step=3;
  else if(active==='#builder'&&mode==='full'&&!$('#fullEditFlow').classList.contains('hidden'))step=2;
