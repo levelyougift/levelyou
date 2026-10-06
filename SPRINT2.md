@@ -1,7 +1,8 @@
 # LevelYou Sprint 2 — Premium Experience
 
-**Status:** STARTED  
+**Status:** COMPLETE / FROZEN  
 **Started:** 2026-10-06  
+**Closed:** 2026-10-06  
 **Base:** `v2-sprint1-complete` at commit `42af9f8f9525d4539f90379073879f778528b5f9`  
 **Frozen Sprint 1 archive:** `archive/sprint1-closed-2026-10-06`  
 **Development branch:** `sprint2-premium-experience`
@@ -540,6 +541,7 @@ Final automated acceptance evidence:
 - Static QA run `37530048662`: PASS.
 - Browser end-to-end QA run `37530048726`: PASS.
 - Public RC smoke run `37530048900`: PASS.
+- Final public RC browser acceptance run `37530247248`: PASS.
 
 Frozen product scope includes:
 - premium Creator shell;
