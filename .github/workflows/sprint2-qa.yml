@@ -1,0 +1,61 @@
+name: Sprint 2 QA
+
+on:
+  push:
+    branches:
+      - sprint2-premium-experience
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  static-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check external JavaScript syntax
+        run: |
+          node --check smart-sprint1.js
+          node --check smart-checkout-sprint2.js
+
+      - name: Check inline JavaScript and duplicate IDs
+        run: |
+          python - <<'PY'
+          import re, subprocess, pathlib, sys
+          for name in ("index.html", "play-sprint1.html"):
+              html = pathlib.Path(name).read_text(encoding="utf-8")
+              scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', html, re.I)
+              if len(scripts) != 1:
+                  raise SystemExit(f"{name}: expected 1 inline script, found {len(scripts)}")
+              tmp = pathlib.Path("/tmp") / (name.replace(".html","") + "-inline.js")
+              tmp.write_text(scripts[0], encoding="utf-8")
+              subprocess.run(["node","--check",str(tmp)],check=True)
+              ids = re.findall(r'\sid="([^"]+)"', html)
+              dups = sorted({x for x in ids if ids.count(x) > 1})
+              if dups:
+                  raise SystemExit(f"{name}: duplicate IDs: {dups}")
+          PY
+
+      - name: Check critical Sprint 2 wiring
+        run: |
+          grep -q 'smart-sprint1.js?v=1.2' index.html
+          grep -q 'smart-checkout-sprint2.js?v=2.1' index.html
+          grep -q 'get-game-sprint1' play-sprint1.html
+          grep -q 'creatorJourney' index.html
+          grep -q 'startGame' play-sprint1.html
+
+      - name: Check public endpoint health
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          urls = [
+            "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint1",
+            "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory",
+          ]
+          for url in urls:
+              with urllib.request.urlopen(url, timeout=20) as r:
+                  body = json.loads(r.read().decode("utf-8"))
+                  if not body.get("ok"):
+                      raise SystemExit(f"Health check failed: {url}: {body}")
+          PY
