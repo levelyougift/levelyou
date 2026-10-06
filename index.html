@@ -326,6 +326,19 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
   </div>
 </section>
 
+<section id="paymentResume" class="hidden">
+  <div class="card success">
+    <div class="emoji">↩️</div>
+    <div class="review-kicker" data-i18n="resumeKicker">Tu LevelYou sigue guardado</div>
+    <h2 data-i18n="resumeTitle">No has perdido nada.</h2>
+    <p class="sub" style="font-size:16px" data-i18n="resumeText">Tus recuerdos ya están preparados. Puedes volver al pago sin subir las fotos ni crear el juego otra vez.</p>
+    <div style="height:14px"></div>
+    <button type="button" class="btn primary" id="resumePaymentBtn" data-i18n="resumePayment">Volver al pago</button>
+    <div style="height:10px"></div>
+    <button type="button" class="btn secondary" id="restartFromCancelBtn" data-i18n="restartFromCancel">Empezar otro LevelYou</button>
+  </div>
+</section>
+
 <section id="success" class="hidden">
   <div class="card success">
     <div class="emoji">🎉</div>
@@ -344,7 +357,7 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 <script>
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
-const sections=['#landing','#builder','#previewSection','#success'];
+const sections=['#landing','#builder','#previewSection','#paymentResume','#success'];
 let lang='es', mode='preview', memoryCount=1, memories=[], game=[], currentIndex=0;
 
 const T={
@@ -828,6 +841,39 @@ if (paymentStatus === 'success') {
 }
 
 if (paymentStatus === 'cancelled') {
+  const query = new URLSearchParams(window.location.search);
+  const cancelledOrderId = query.get('order_id') || '';
+  const returnedLang = query.get('lang');
+  if (['es','ca','en'].includes(returnedLang)) { lang = returnedLang; applyLang(); }
+  if (/^[0-9a-f-]{36}$/i.test(cancelledOrderId)) {
+    show('#paymentResume');
+    $('#resumePaymentBtn').onclick = async () => {
+      const btn = $('#resumePaymentBtn'), original = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = lang === 'ca' ? 'Obrint pagament…' : lang === 'en' ? 'Opening payment…' : 'Abriendo pago…';
+      try {
+        const response = await fetch('https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint1', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({orderId:cancelledOrderId})
+        });
+        const data = await response.json().catch(()=>({}));
+        if (!response.ok || !data.url) throw new Error(data.error || 'Checkout error');
+        location.href = data.url;
+      } catch (error) {
+        console.error('Resume payment', error);
+        alert(lang === 'ca' ? 'No hem pogut reprendre el pagament. Torna-ho a provar.' : lang === 'en' ? 'We could not resume payment. Please try again.' : 'No hemos podido reanudar el pago. Inténtalo de nuevo.');
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    };
+    $('#restartFromCancelBtn').onclick = () => {
+      history.replaceState({}, '', window.location.pathname);
+      show('#landing');
+    };
+  } else {
+    show('#landing');
+  }
   history.replaceState({}, '', window.location.pathname);
 }
 </script>
