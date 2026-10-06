@@ -218,7 +218,7 @@ jobs:
           assert.equal(createOrderCalls,1);
           assert.equal(uploadCalls,5);
           assert.equal(checkoutCalls,1);
-          assert.equal(await page.locator('#resumeTitle').innerText(),'No has perdido nada.');
+          assert.equal(await page.locator('[data-i18n="resumeTitle"]').innerText(),'No has perdido nada.');
           assert.equal(await page.locator('#resumePaymentBtn').innerText(),'Volver al pago');
           assert.equal(await page.locator('#restartFromCancelBtn').innerText(),'Empezar otro LevelYou');
           assert.equal(await page.locator('#creatorJourney').isVisible(),false);
@@ -235,12 +235,12 @@ jobs:
           // Direct cancelled-return translations
           await page.goto(`${base}?payment=cancelled&order_id=${fakeOrder}&lang=ca`,{waitUntil:'networkidle'});
           assert.equal(await page.locator('#paymentResume').isVisible(),true);
-          assert.equal(await page.locator('#resumeTitle').innerText(),'No has perdut res.');
+          assert.equal(await page.locator('[data-i18n="resumeTitle"]').innerText(),'No has perdut res.');
           assert.equal(await page.locator('#resumePaymentBtn').innerText(),'Tornar al pagament');
 
           await page.goto(`${base}?payment=cancelled&order_id=${fakeOrder}&lang=en`,{waitUntil:'networkidle'});
           assert.equal(await page.locator('#paymentResume').isVisible(),true);
-          assert.equal(await page.locator('#resumeTitle').innerText(),'Nothing has been lost.');
+          assert.equal(await page.locator('[data-i18n="resumeTitle"]').innerText(),'Nothing has been lost.');
           assert.equal(await page.locator('#resumePaymentBtn').innerText(),'Return to payment');
 
           // Player with mocked paid-game API
