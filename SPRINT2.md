@@ -473,3 +473,60 @@ The ending is reframed as the emotional payoff rather than a technical utility s
 ### Technical guardrail
 
 The video is deliberately not generated automatically on quiz completion. This keeps a CPU/media-heavy operation outside the critical path of the paid game and avoids turning video codec support into a single point of failure.
+
+
+## Sprint 2.7 — Final Acceptance / Closure
+
+Automated acceptance scope for closure:
+
+- Premium landing and guided creator;
+- ES / CA / EN interface and flags;
+- five-photo Fast Creator;
+- manual question + three-answer editing;
+- optional AI suggestion modal;
+- framing modal with drag, zoom, reset and persistence;
+- creator → preview edit round-trip;
+- checkout payload integrity;
+- photo upload flow;
+- cancelled-payment recovery;
+- paid-game API compatibility;
+- framed Player rendering;
+- question progress and answer feedback;
+- final dedication hierarchy;
+- premium ending CTA to video;
+- final-video framing path;
+- public RC health/smoke.
+
+Sprint 2 is considered **development complete** once:
+1. static QA is green;
+2. browser end-to-end QA is green;
+3. public RC smoke is green.
+
+Production promotion is a separate release gate and still requires the final frozen RC to be checked on a physical iPad/iPhone, especially:
+- touch framing feel;
+- Safari photo picker;
+- MediaRecorder/video creation;
+- native save/share sheet;
+- one controlled real-payment path if we want payment certification before public launch.
+
+### Deferred to later sprints
+
+**Sprint 3 — Video Memories**
+- add extra photos used only in the final video;
+- reorder/select those extra video memories.
+
+**Sprint 4 — Music & Video**
+- music selection;
+- licensed/royalty-free track library;
+- richer motion/transitions;
+- further video polish.
+
+**Sprint 5 — Launch hardening**
+- retention/deletion automation;
+- AI abuse protection before acquisition traffic;
+- analytics/funnel instrumentation;
+- monitoring/support recovery;
+- legal/privacy launch package;
+- broader device matrix.
+
+No additional structural features should be added to Sprint 2 after freeze.
