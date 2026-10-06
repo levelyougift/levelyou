@@ -176,3 +176,77 @@ Static validation completed:
 - Paid-game player QA with a real or temporary token.
 - Final-video playback/save QA on iPhone/iPad.
 - Music/audio enhancement is not included yet; it should only be added after the current video path is confirmed stable on the target Apple devices.
+
+
+## Viability hardening checkpoint — 2026-10-06
+
+Product rule is now documented in `LAUNCH_GATE.md`: premium improvements must not create disproportionate reliability, cost or operational complexity.
+
+### Backend hardening applied
+
+Production Supabase functions were strengthened without changing the customer-facing architecture:
+
+- `super-api`
+  - strict GitHub Pages origin validation for browser writes;
+  - JSON content-type and request-size checks;
+  - validated five-memory / five-question game payload;
+  - bounded text fields and dedication;
+  - optional client request UUID so the initial order call can be safely retried without creating a second draft order.
+- `checkout-sprint1`
+  - reuses an existing open Stripe Checkout Session;
+  - uses Stripe idempotency keys when a new session is required;
+  - returns directly to the paid game when an order is already paid;
+  - can confirm Stripe payment state if the database has not yet been updated by the webhook.
+- `get-game-sprint1`
+  - if an order is not yet marked paid, checks its Stripe Checkout Session as a fallback;
+  - updates the order to paid when Stripe already confirms payment;
+  - returns a retryable state for short payment-propagation delays.
+
+The signed Stripe webhook remains the normal payment-confirmation path; Stripe lookup is a resilience fallback.
+
+### Sprint 2 client hardening
+
+New `smart-checkout-sprint2.js` replaces the Sprint 1 checkout client only on the Sprint 2 branch.
+
+- Sequential image processing to reduce peak memory on iPhone/iPad.
+- Photos are resized to a maximum edge of 1920px and encoded as JPEG at 0.88 quality when the browser can decode them.
+- Original-file fallback remains available for unsupported image decoding, with a maximum fallback size.
+- Initial order request uses a stable request UUID.
+- Network POSTs use timeout + one controlled retry.
+- Upload status copy distinguishes optimization, upload and payment phases.
+
+The Sprint 1 checkout file remains unchanged.
+
+### Recipient resilience
+
+The Sprint 2 player automatically retries a short-lived `LevelYou not ready` response several times before showing an error. This protects the paid customer from normal Stripe/webhook propagation delays.
+
+### Automated QA
+
+Added `.github/workflows/sprint2-qa.yml`:
+
+- checks syntax of Smart Creator and Sprint 2 checkout JavaScript;
+- checks inline JS syntax in creator/player pages;
+- rejects duplicate HTML IDs;
+- verifies critical Sprint 2 wiring;
+- checks live health endpoints for checkout and Smart Memory.
+
+Initial automated run `37512818818` completed successfully, including live endpoint health.
+
+### Infrastructure review
+
+Current production review:
+
+- Supabase project: active/healthy.
+- `orders` and private Stripe config tables: RLS enabled with no public policies.
+- photo bucket: private, supported image MIME types restricted, 15 MB object limit.
+- database performance advisor: no current findings.
+- existing test data includes draft/checkout-created orders; launch policy must define automatic retention/cleanup before broad public traffic.
+
+### Current checkpoint
+
+Rollback checkpoint after viability hardening:
+
+`checkpoint/sprint2-viability-hardened`
+
+This checkpoint is still not a production-release approval. Real-device and paid-flow acceptance remain launch gates.
