@@ -250,3 +250,28 @@ Rollback checkpoint after viability hardening:
 `checkpoint/sprint2-viability-hardened`
 
 This checkpoint is still not a production-release approval. Real-device and paid-flow acceptance remain launch gates.
+
+
+## Staging ready — 2026-10-06
+
+A non-production Sprint 2 staging surface is now available through the existing Supabase project:
+
+`https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview`
+
+Supporting staging functions:
+- `sprint2-preview` — serves the exact Sprint 2 creator/player build with noindex/no-store headers.
+- `checkout-sprint2-preview` — preserves Sprint 2 player/cancel routing during end-to-end QA.
+
+Production GitHub Pages / `main` remains untouched.
+
+GitHub Actions run `37514064928`, attempt 2, passed all steps including:
+- JS syntax;
+- duplicate-ID checks;
+- critical wiring;
+- live checkout / Smart Memory health;
+- Sprint 2 preview health;
+- verification that staging serves the Sprint 2 build and staging checkout wiring.
+
+Real-device acceptance procedure is documented in `QA_IPAD_SPRINT2.md`.
+
+**Release policy:** no further architecture or premium feature expansion before real-device acceptance unless it fixes a blocking defect.
