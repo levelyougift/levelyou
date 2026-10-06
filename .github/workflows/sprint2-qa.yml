@@ -46,6 +46,9 @@ jobs:
           grep -q 'framePhotoBtn' index.html
           grep -q 'frameModal' index.html
           grep -q 'drawVideoFrame' play-sprint1.html
+          grep -q 'answerFeedback' play-sprint1.html
+          grep -q 'videoLead' play-sprint1.html
+          grep -q 'Ver nuestro vídeo' play-sprint1.html
           grep -q 'startGame' play-sprint1.html
 
       - name: Check public endpoint health
