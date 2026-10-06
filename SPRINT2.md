@@ -443,3 +443,33 @@ Automated browser QA verifies:
 - paid Player applies the framing returned by the game API.
 
 Static QA also verifies the Player/video framing wiring.
+
+
+## Sprint 2.6 — Premium Player & Ending
+
+Implemented 2026-10-06.
+
+### Recipient experience
+
+- Each question now enters with a subtle transition instead of changing abruptly.
+- After choosing an answer, the Player gives a short emotional response:
+  - correct: positive confirmation;
+  - incorrect: gentle correction without punitive language.
+- The next CTA is contextual:
+  - memories 1–4: **Next memory**;
+  - memory 5: **See the ending**.
+- The score remains available but is visually secondary to the gift/message.
+
+### Ending
+
+The ending is reframed as the emotional payoff rather than a technical utility screen:
+
+- headline: **5 memories. One story.**
+- dedication becomes the focal message when present;
+- a short bridge introduces the final video;
+- primary CTA becomes **Watch our video** / localized equivalent;
+- video generation remains user-triggered rather than automatic to preserve iPad/iPhone reliability.
+
+### Technical guardrail
+
+The video is deliberately not generated automatically on quiz completion. This keeps a CPU/media-heavy operation outside the critical path of the paid game and avoids turning video codec support into a single point of failure.
