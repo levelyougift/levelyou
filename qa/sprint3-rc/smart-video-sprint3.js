@@ -266,7 +266,7 @@
     };
   }
   const pay=document.getElementById('interestBtn');
-  if(pay)pay.onclick=openStep;
+  if(pay)pay.onclick=()=>{if(typeof mode!=='undefined'&&mode==='full')openStep();else if(typeof startBuilder==='function')startBuilder('full')};
   const baseChange=typeof changeLanguage==='function'?changeLanguage:null;
   if(baseChange&&!window.__sprint3LangWrapped){
     window.__sprint3LangWrapped=true;
