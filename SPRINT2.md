@@ -112,3 +112,67 @@ Validation:
 - diff from Sprint 1 is limited to `SPRINT2.md` and `index.html`.
 
 Next planned checkpoint: **2.2 Premium Game & Reveal Experience**.
+
+
+## Progress checkpoint — 2026-10-06
+
+### Sprint 2.1 — Premium Creator
+Implemented on `index.html`.
+
+- Premium-first landing and value framing around the €14.90 experience.
+- Full product creation is the primary CTA; 1-photo sample is secondary.
+- Guided three-step journey: Create → Personalize → Review.
+- Premium styling applied without changing Smart Creator endpoints or checkout mechanics.
+- Existing `smart-sprint1.js?v=1.2` and `smart-checkout-sprint1.js?v=1.2` remain loaded.
+- Static QA: embedded JavaScript syntax valid, no duplicate IDs, required creator/checkout anchors present.
+
+Clean rebuild commit after QA correction: `31e7dffe562264cb1ec6ad1223230e9e303b94e6`.
+
+### Sprint 2.2 — Premium Player
+Implemented on `play-sprint1.html`.
+
+- New gift-opening cover before question 1.
+- Recipient name is used in the opening when available.
+- New visual progress indicator across the five questions.
+- Premium answer, card, score and dedication presentation.
+- Final dedication has greater visual priority than the score.
+- Existing paid-game API, answer logic, scoring, sharing and dedication retrieval preserved.
+
+Commit: `8c2ce81be9e8f1201f181ba3d34cc9e2f8ef93f1`.
+
+### Sprint 2.3 — Premium Final Video
+Implemented within the existing local video-generation path.
+
+- Premium intro treatment.
+- Smoother fades between the five memories.
+- Question text promoted as the emotional caption for each memory.
+- More cinematic gradient treatment and subtle motion.
+- Dedicated closing treatment for the final message / dedication.
+- Existing `canvas.captureStream` + `MediaRecorder` mechanism preserved to avoid adding a new compatibility dependency.
+
+Commit: `5bb7b81fbf5ccdf195e5ab52a6501ebae05fe7e8`.
+
+### Current QA status
+
+Compared with frozen Sprint 1 `42af9f8f9525d4539f90379073879f778528b5f9`, Sprint 2 currently changes only:
+
+- `SPRINT2.md`
+- `index.html`
+- `play-sprint1.html`
+
+No Sprint 1 Smart Creator JS file, checkout JS file, or frozen branch has been modified.
+
+Static validation completed:
+- creator embedded JS parses successfully;
+- player embedded JS parses successfully;
+- no duplicate HTML IDs detected in either page;
+- Smart Creator and checkout script references remain intact;
+- paid game API remains `get-game-sprint1`.
+
+### Still pending before Sprint 2 close
+
+- Real-device visual QA on iPad/Safari.
+- Full creator → preview → checkout QA on the Sprint 2 branch.
+- Paid-game player QA with a real or temporary token.
+- Final-video playback/save QA on iPhone/iPad.
+- Music/audio enhancement is not included yet; it should only be added after the current video path is confirmed stable on the target Apple devices.
