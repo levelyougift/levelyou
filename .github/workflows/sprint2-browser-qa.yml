@@ -169,6 +169,7 @@ jobs:
           await page.fill('#name','Lucía');
           const files=Array.from({length:5},(_,i)=>({name:`memory-${i+1}.png`,mimeType:'image/png',buffer:tinyPng}));
           await page.setInputFiles('#photoBatch',files);
+          await page.waitForFunction(()=>document.querySelectorAll('#photoGrid img').length===5,{timeout:10000});
           assert.equal(await page.locator('#photoGrid img').count(),5);
           assert.equal(await page.locator('#continueEditBtn').isEnabled(),true);
           await page.click('#continueEditBtn');
