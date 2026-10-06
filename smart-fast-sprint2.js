@@ -59,10 +59,10 @@ function ensureFraming(m){
 function framingCopy(f){return{zoom:Number(f?.zoom)||1,x:Number(f?.x)||0,y:Number(f?.y)||0}}
 function applyFraming(el,f){
  if(!el)return;
- const framing=f||{zoom:1,x:0,y:0};
+ const framing=f||{zoom:1,x:0,y:0},travel=50*Math.max(0,framing.zoom-1)/Math.max(1,framing.zoom);
  el.style.objectFit='contain';
  el.style.transformOrigin='center center';
- el.style.transform='translate('+(framing.x*18)+'%,'+(framing.y*18)+'%) scale('+framing.zoom+')';
+ el.style.transform='translate('+(framing.x*travel)+'%,'+(framing.y*travel)+'%) scale('+framing.zoom+')';
 }
 function isComplete(m){
  const d=ensureDraft(m);
