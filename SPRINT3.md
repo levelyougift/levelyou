@@ -178,3 +178,35 @@ Remaining release gate:
 - one controlled paid-path test if payment certification is desired.
 
 Sprint 3 is implemented as an RC, not yet production-promoted.
+
+
+## Functional review / RC2 — 2026-10-06
+
+A full code-level regression review was performed after iPad QA exposed state/UI defects.
+
+Corrections:
+- final dedication is no longer rendered as the AI modal on memory 5;
+- dedication is an inline optional field shown only in the final review;
+- per-photo AI suggestions are locked to the memory that initiated the request;
+- navigation, language, framing, replacement and editor controls are frozen while an AI suggestion is pending;
+- AI suggestions no longer auto-fill the final dedication;
+- AI question/answer text is bounded to Creator/backend limits;
+- question fields use multiline layout and preview text wraps safely;
+- asynchronous photo replacement captures its source-memory index;
+- framing save captures its source-memory index;
+- one-photo sample CTA now starts the full five-memory Creator instead of entering an invalid checkout/video path;
+- ES / CA / EN translation key parity and flag definitions were statically verified;
+- all referenced static/dynamic DOM IDs were checked and no missing references were found.
+
+Static RC2 validation:
+- external JS syntax: PASS;
+- Creator inline JS syntax: PASS;
+- Player inline JS syntax: PASS;
+- duplicate HTML IDs: none;
+- Creator translation parity: PASS for ES / CA / EN;
+- Fast Creator translation parity: PASS for ES / CA / EN;
+- Video Memories translation parity: PASS for ES / CA / EN;
+- Player translation parity: PASS for ES / CA / EN;
+- JS-to-DOM reference audit: PASS.
+
+Public QA assets were synchronized after these fixes. Physical iPad interaction remains the final acceptance gate.
