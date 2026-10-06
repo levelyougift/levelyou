@@ -51,20 +51,28 @@ jobs:
           import json, urllib.request
           urls = [
             "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint1",
-            "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory",
-            "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview?health=1",
-          ]
+            "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory",          ]
           for url in urls:
               with urllib.request.urlopen(url, timeout=20) as r:
                   body = json.loads(r.read().decode("utf-8"))
                   if not body.get("ok"):
                       raise SystemExit(f"Health check failed: {url}: {body}")
 
-          preview = "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview"
-          with urllib.request.urlopen(preview, timeout=20) as r:
-              html = r.read().decode("utf-8")
-              if 'data-levelyou-build="2026-10-06-sprint2-premium-2.1"' not in html:
-                  raise SystemExit("Preview is not serving the Sprint 2 build")
-              if "checkout-sprint2-preview" not in html:
-                  raise SystemExit("Preview is not wired to the staging checkout")
+          preview = "https://levelyougift.github.io/levelyou/qa/sprint2-rc/"
+          last = None
+          for attempt in range(8):
+              try:
+                  with urllib.request.urlopen(preview, timeout=20) as r:
+                      html = r.read().decode("utf-8")
+                      ctype = r.headers.get("content-type","")
+                      if r.status == 200 and "text/html" in ctype and 'data-levelyou-build="2026-10-06-sprint2-premium-rc1"' in html and "checkout-sprint2-preview" in html:
+                          last = None
+                          break
+                      last = f"status={r.status}, content-type={ctype}, rc={('sprint2-premium-rc1' in html)}"
+              except Exception as e:
+                  last = repr(e)
+              import time
+              time.sleep(5)
+          if last:
+              raise SystemExit(f"GitHub Pages Sprint 2 QA preview not ready: {last}")
           PY
