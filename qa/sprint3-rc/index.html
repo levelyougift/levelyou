@@ -6,7 +6,7 @@
 <title>LevelYou — Un regalo que se juega</title>
 <meta name="description" content="Convierte 5 recuerdos en un juego personalizado y un vídeo final para guardar y compartir.">
 <meta name="robots" content="noindex,nofollow">
-<meta name="levelyou-build" content="sprint3-rc-v1">
+<meta name="levelyou-build" content="sprint3-rc-v2">
 <meta name="theme-color" content="#0e1020">
 <style>
 :root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
@@ -64,8 +64,8 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,225,207,.55);box-s
 .game img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 .gamebody{padding:16px}.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(105,225,207,.12);color:#a8f3e7;font-weight:700;font-size:12px}
 .qcounter{float:right;color:var(--muted);font-size:12px;margin-top:6px}
-.question{font-size:24px;line-height:1.18;font-weight:800;margin:12px 0 16px;clear:both}
-.answer{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#1c2034;color:#fff;border-radius:14px;padding:13px 14px;margin:8px 0;font-size:15px}
+.question{font-size:24px;line-height:1.18;font-weight:800;margin:12px 0 16px;clear:both;overflow-wrap:anywhere;word-break:normal}
+.answer{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#1c2034;color:#fff;border-radius:14px;padding:13px 14px;margin:8px 0;font-size:15px;line-height:1.35;overflow-wrap:anywhere;white-space:normal}
 .answer.correct{border-color:rgba(105,225,207,.7);background:rgba(105,225,207,.09)}
 .answer.wrong{border-color:rgba(255,142,157,.72);background:rgba(255,142,157,.10)}
 .answer:disabled{opacity:1;cursor:default}
@@ -382,7 +382,7 @@ body.frame-modal-open{overflow:hidden}
 
       <div class="fast-question-card">
         <label id="fastQuestionLabel"></label>
-        <input id="fastQuestion" maxlength="160">
+        <textarea id="fastQuestion" rows="2" maxlength="160"></textarea>
         <div class="fast-answer-grid">
           <div><label id="fastA1Label"></label><input id="fastA1" maxlength="90"></div>
           <div><label id="fastA2Label"></label><input id="fastA2" maxlength="90"></div>
@@ -457,7 +457,7 @@ body.frame-modal-open{overflow:hidden}
     </div>
 
     <div id="questionEditor" class="hidden" style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)">
-      <label data-i18n="questionLabel">Pregunta</label><input id="editQuestion">
+      <label data-i18n="questionLabel">Pregunta</label><textarea id="editQuestion" rows="2" maxlength="160"></textarea>
       <label data-i18n="answer1">Respuesta 1</label><input id="editA1">
       <label data-i18n="answer2">Respuesta 2</label><input id="editA2">
       <label data-i18n="answer3">Respuesta 3</label><input id="editA3">
@@ -884,5 +884,5 @@ if (paymentStatus === 'cancelled') {
   history.replaceState({}, '', window.location.pathname);
 }
 </script>
-<script src="smart-fast-sprint2.js?v=2.5"></script><script src="smart-checkout-sprint3.js?v=3.0"></script><script src="smart-video-sprint3.js?v=3.0"></script></body>
+<script src="smart-fast-sprint3.js?v=3.1"></script><script src="smart-checkout-sprint3.js?v=3.1"></script><script src="smart-video-sprint3.js?v=3.1"></script></body>
 </html>
