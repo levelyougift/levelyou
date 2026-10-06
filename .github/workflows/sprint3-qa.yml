@@ -16,7 +16,7 @@ jobs:
 
       - name: Check JavaScript syntax
         run: |
-          node --check smart-fast-sprint2.js
+          node --check smart-fast-sprint3.js
           node --check smart-checkout-sprint3.js
           node --check smart-video-sprint3.js
 
@@ -40,7 +40,7 @@ jobs:
 
       - name: Check Sprint 3 wiring
         run: |
-          grep -q 'smart-fast-sprint2.js?v=2.5' index.html
+          grep -q 'smart-fast-sprint3.js?v=3.1' index.html
           grep -q 'smart-checkout-sprint3.js?v=3.0' index.html
           grep -q 'smart-video-sprint3.js?v=3.0' index.html
           grep -q 'checkout-sprint3-preview' index.html
@@ -49,6 +49,16 @@ jobs:
           grep -q 'levelYouGetVideoMemories' smart-video-sprint3.js
           grep -q 'video_memories' smart-checkout-sprint3.js
           grep -q 'super-api-sprint3' smart-checkout-sprint3.js
+          grep -q 'const requestIndex=fullEditIndex' smart-fast-sprint3.js
+          grep -q 'setAiBusy(true)' smart-fast-sprint3.js
+          grep -q 'fast-dedication-block hidden' smart-fast-sprint3.js
+          ! grep -q 'suggested_dedication))ded.value' smart-fast-sprint3.js
+          grep -q 'const replaceIndex=fullEditIndex' smart-fast-sprint3.js
+          grep -q "mode==='full')openStep()" smart-video-sprint3.js
+          grep -q '<textarea id="fastQuestion" rows="2" maxlength="160"></textarea>' index.html
+          grep -q '<input id="editA1" maxlength="90">' index.html
+          grep -q "FLAG_SVG" index.html
+          grep -q "renderFlag()" index.html
 
       - name: Check Sprint 2 frozen branch has no Sprint 3 commits
         run: |
