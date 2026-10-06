@@ -121,8 +121,8 @@
         memories: memories.map(m => ({context: clean(m.context)})),
         questions: game.map(item => ({question:item.q, answers:item.a, correct:item.correct})),
         dedication: clean(document.querySelector('#dedication')?.value || ''),
-        smart_creator_version: 'sprint2-premium-v2.1',
-        question_tone: typeof tone === 'function' ? tone() : 'fun'
+        smart_creator_version: 'sprint2-fast-v2.4',
+        question_tone: typeof window.levelYouQuestionTone === 'function' ? window.levelYouQuestionTone() : 'fun'
       };
 
       btn.textContent = lang === 'ca' ? 'Preparant el teu LevelYou…' : lang === 'en' ? 'Preparing your LevelYou…' : 'Preparando tu LevelYou…';
