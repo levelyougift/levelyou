@@ -1,0 +1,355 @@
+(() => {
+const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory';
+const AI_TIMEOUT=40000;
+
+const F={
+ es:{
+  question:'Pregunta',a1:'Respuesta 1',a2:'Respuesta 2',a3:'Respuesta 3',correct:'Respuesta correcta',
+  ai:'✨ Sugerirme una pregunta',hint:'Dale una pista a LevelYou (opcional)',hintHelp:'Cuéntanos qué hace especial este recuerdo. Sin pista, LevelYou se basará solo en lo que ve en la foto.',
+  tone:'Tono de la sugerencia',fun:'😊 Divertido',complicit:'😏 Cómplice',emotional:'❤️ Emotivo',elegant:'✨ Elegante',
+  cancel:'Cancelar',generate:'Generar sugerencia',thinking:'✨ Pensando una pregunta…',
+  dedication:'Mensaje final (opcional)',dedicationHelp:'Aparecerá al terminar el juego y cerrará también el vídeo.',
+  complete:'Completa las 5 preguntas y sus tres respuestas antes de revisar el juego.',
+  aiFail:'No hemos podido generar una sugerencia. Puedes escribir la pregunta manualmente.',
+  replace:'Cambiar foto',backPhotos:'← Cambiar las 5 fotos',prev:'← Anterior',next:'Siguiente →',
+  editorTitle:'Escribe la pregunta',editorDesc:'Hazla personal, divertida o imposible de entender para quien no conozca la historia.',
+  review:'Revisar mi LevelYou →',ready:'preguntas listas'
+ },
+ ca:{
+  question:'Pregunta',a1:'Resposta 1',a2:'Resposta 2',a3:'Resposta 3',correct:'Resposta correcta',
+  ai:'✨ Sugerir-me una pregunta',hint:'Dona una pista a LevelYou (opcional)',hintHelp:'Explica què fa especial aquest record. Sense pista, LevelYou es basarà només en el que veu a la foto.',
+  tone:'To del suggeriment',fun:'😊 Divertit',complicit:'😏 Còmplice',emotional:'❤️ Emotiu',elegant:'✨ Elegant',
+  cancel:'Cancel·lar',generate:'Generar suggeriment',thinking:'✨ Pensant una pregunta…',
+  dedication:'Missatge final (opcional)',dedicationHelp:'Apareixerà en acabar el joc i també tancarà el vídeo.',
+  complete:'Completa les 5 preguntes i les tres respostes abans de revisar el joc.',
+  aiFail:'No hem pogut generar un suggeriment. Pots escriure la pregunta manualment.',
+  replace:'Canviar foto',backPhotos:'← Canviar les 5 fotos',prev:'← Anterior',next:'Següent →',
+  editorTitle:'Escriu la pregunta',editorDesc:'Fes-la personal, divertida o impossible d’entendre per a qui no conegui la història.',
+  review:'Revisar el meu LevelYou →',ready:'preguntes llestes'
+ },
+ en:{
+  question:'Question',a1:'Answer 1',a2:'Answer 2',a3:'Answer 3',correct:'Correct answer',
+  ai:'✨ Suggest a question',hint:'Give LevelYou a hint (optional)',hintHelp:'Tell us what makes this memory special. Without a hint, LevelYou will rely only on what it can see in the photo.',
+  tone:'Suggestion tone',fun:'😊 Fun',complicit:'😏 Cheeky',emotional:'❤️ Emotional',elegant:'✨ Elegant',
+  cancel:'Cancel',generate:'Generate suggestion',thinking:'✨ Thinking of a question…',
+  dedication:'Final message (optional)',dedicationHelp:'It appears after the game and also closes the video.',
+  complete:'Complete all 5 questions and their three answers before reviewing the game.',
+  aiFail:'We could not generate a suggestion. You can still write the question manually.',
+  replace:'Change photo',backPhotos:'← Change the 5 photos',prev:'← Previous',next:'Next →',
+  editorTitle:'Write the question',editorDesc:'Make it personal, funny or impossible to understand unless you know the story.',
+  review:'Review my LevelYou →',ready:'questions ready'
+ }
+};
+const fx=k=>(F[lang]||F.es)[k]||k;
+
+function ensureDraft(m){
+ if(!m.draft)m.draft={q:'',a:['','',''],correct:0};
+ if(!Array.isArray(m.draft.a))m.draft.a=['','',''];
+ while(m.draft.a.length<3)m.draft.a.push('');
+ m.draft.correct=Number.isInteger(Number(m.draft.correct))?Math.max(0,Math.min(2,Number(m.draft.correct))):0;
+ return m.draft;
+}
+function isComplete(m){
+ const d=ensureDraft(m);
+ return Boolean(clean(d.q)&&d.a.every(x=>clean(x)));
+}
+function completeCount(){return memories.filter(isComplete).length}
+
+function saveFastFields(){
+ if(mode!=='full'||!memories[fullEditIndex])return;
+ const m=memories[fullEditIndex],d=ensureDraft(m);
+ d.q=clean($('#fastQuestion')?.value||'');
+ d.a=[
+  clean($('#fastA1')?.value||''),
+  clean($('#fastA2')?.value||''),
+  clean($('#fastA3')?.value||'')
+ ];
+ d.correct=Number($('#fastCorrect')?.value||0);
+ m.context=clean($('#editMemoryContext')?.value||'');
+ updateFastDots();
+ updateReviewButton();
+}
+
+function syncGameToDrafts(){
+ if(game.length!==5||memories.length!==5)return;
+ game.forEach((item,i)=>{
+   const d=ensureDraft(memories[i]);
+   d.q=clean(item.q);d.a=[...item.a];d.correct=Number(item.correct);
+ });
+}
+
+function renderFastTexts(){
+ if($('#editMemoryTitle'))$('#editMemoryTitle').textContent=fx('editorTitle');
+ if($('#editMemoryDesc'))$('#editMemoryDesc').textContent=fx('editorDesc');
+ if($('#fastQuestionLabel'))$('#fastQuestionLabel').textContent=fx('question');
+ if($('#fastA1Label'))$('#fastA1Label').textContent=fx('a1');
+ if($('#fastA2Label'))$('#fastA2Label').textContent=fx('a2');
+ if($('#fastA3Label'))$('#fastA3Label').textContent=fx('a3');
+ if($('#fastCorrectLabel'))$('#fastCorrectLabel').textContent=fx('correct');
+ if($('#aiAssistBtn'))$('#aiAssistBtn').textContent=fx('ai');
+ if($('#editContextLabel'))$('#editContextLabel').textContent=fx('hint');
+ if($('#aiHintHelp'))$('#aiHintHelp').textContent=fx('hintHelp');
+ if($('#fastToneLabel'))$('#fastToneLabel').textContent=fx('tone');
+ if($('#aiCancelBtn'))$('#aiCancelBtn').textContent=fx('cancel');
+ if($('#aiGenerateBtn'))$('#aiGenerateBtn').textContent=fx('generate');
+ if($('#replacePhotoLabel'))$('#replacePhotoLabel').textContent=fx('replace');
+ if($('#backToPhotosBtn'))$('#backToPhotosBtn').textContent=fx('backPhotos');
+ if($('#prevMemoryBtn'))$('#prevMemoryBtn').textContent=fx('prev');
+ if($('#nextMemoryBtn'))$('#nextMemoryBtn').textContent=fx('next');
+ const tone=$('#questionTone');
+ if(tone){
+   const labels=[fx('fun'),fx('complicit'),fx('emotional'),fx('elegant')];
+   [...tone.options].forEach((o,i)=>o.textContent=labels[i]);
+ }
+ const dl=$('#fastDedicationLabel');if(dl)dl.textContent=fx('dedication');
+ const dh=$('#fastDedicationHelp');if(dh)dh.textContent=fx('dedicationHelp');
+}
+
+function installDedication(){
+ if($('#fastDedicationBlock'))return;
+ const block=document.createElement('div');
+ block.id='fastDedicationBlock';
+ block.className='fast-ai-panel hidden';
+ block.innerHTML='<label id="fastDedicationLabel"></label><textarea id="dedication" rows="3" maxlength="180"></textarea><div class="small" id="fastDedicationHelp"></div>';
+ $('#generateFullBtn').insertAdjacentElement('beforebegin',block);
+}
+
+function install(){
+ installDedication();
+ renderFastTexts();
+ ['#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect','#editMemoryContext'].forEach(sel=>{
+   const el=$(sel);if(el)el.addEventListener(sel==='#fastCorrect'?'change':'input',saveFastFields);
+ });
+ $('#aiAssistBtn').onclick=()=>{
+   saveFastFields();
+   $('#aiAssistPanel').classList.toggle('hidden');
+ };
+ $('#aiCancelBtn').onclick=()=>$('#aiAssistPanel').classList.add('hidden');
+ $('#aiGenerateBtn').onclick=generateSuggestion;
+}
+
+function updateFastDots(){
+ const box=$('#fastDots');if(!box)return;
+ box.innerHTML=memories.map((m,i)=>'<button type="button" class="fast-dot'+(i===fullEditIndex?' active':'')+(isComplete(m)?' complete':'')+'" data-fast-index="'+i+'">'+(i+1)+'</button>').join('');
+ box.querySelectorAll('[data-fast-index]').forEach(btn=>btn.onclick=()=>{
+   saveFastFields();fullEditIndex=Number(btn.dataset.fastIndex);renderFullEditor();
+ });
+}
+
+function updateReviewButton(){
+ const b=$('#generateFullBtn');if(!b)return;
+ const n=completeCount();
+ b.disabled=n!==5;b.style.opacity=n===5?1:.5;
+ b.textContent=n===5?fx('review'):fx('review')+' · '+n+'/5 '+fx('ready');
+}
+
+function renderEditor(){
+ if(!memories.length||!memories[fullEditIndex])return;
+ updateJourney('#builder');
+ renderFastTexts();
+ const m=memories[fullEditIndex],d=ensureDraft(m);
+ $('#memoryCounter').textContent=(fullEditIndex+1)+' / 5';
+ $('#editMemoryImg').src=m.image;
+ $('#fastQuestion').value=d.q||'';
+ $('#fastA1').value=d.a[0]||'';
+ $('#fastA2').value=d.a[1]||'';
+ $('#fastA3').value=d.a[2]||'';
+ $('#fastCorrect').value=String(d.correct||0);
+ $('#editMemoryContext').value=m.context||'';
+ $('#aiAssistPanel').classList.add('hidden');
+ $('#prevMemoryBtn').disabled=fullEditIndex===0;
+ $('#nextMemoryBtn').disabled=fullEditIndex===4;
+ $('#prevMemoryBtn').style.opacity=fullEditIndex===0?.45:1;
+ $('#nextMemoryBtn').style.opacity=fullEditIndex===4?.45:1;
+ $('#fastDedicationBlock').classList.toggle('hidden',fullEditIndex!==4);
+ updateFastDots();updateReviewButton();
+}
+
+function compact(imageUrl){
+ return new Promise((resolve,reject)=>{
+   const im=new Image();
+   im.onload=()=>{
+     try{
+       const scale=Math.min(1,768/Math.max(im.naturalWidth||im.width,im.naturalHeight||im.height));
+       const canvas=document.createElement('canvas');
+       canvas.width=Math.max(1,Math.round((im.naturalWidth||im.width)*scale));
+       canvas.height=Math.max(1,Math.round((im.naturalHeight||im.height)*scale));
+       const ctx=canvas.getContext('2d');if(!ctx)throw new Error('IMAGE');
+       ctx.drawImage(im,0,0,canvas.width,canvas.height);
+       resolve(canvas.toDataURL('image/jpeg',.78));
+     }catch(e){reject(e)}
+   };
+   im.onerror=reject;im.src=imageUrl;
+ });
+}
+
+async function aiCall(payload){
+ let lastError=null;
+ for(let attempt=0;attempt<2;attempt++){
+   const controller=new AbortController();
+   const timer=setTimeout(()=>controller.abort(),AI_TIMEOUT);
+   try{
+     const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+     const data=await response.json().catch(()=>({}));
+     if(response.ok&&Array.isArray(data.memories)&&data.memories[0])return data;
+     lastError=new Error(data.error||'AI');
+     if(!(response.status===429||response.status>=500)||attempt===1)throw lastError;
+   }catch(e){
+     lastError=e;
+     if(attempt===1)throw e;
+   }finally{clearTimeout(timer)}
+   await new Promise(r=>setTimeout(r,600));
+ }
+ throw lastError||new Error('AI');
+}
+
+async function generateSuggestion(){
+ saveFastFields();
+ const id=validIdentity();if(!id)return;
+ const m=memories[fullEditIndex];if(!m?.image)return;
+ const b=$('#aiGenerateBtn'),original=b.textContent;
+ b.disabled=true;b.textContent=fx('thinking');
+ try{
+   const image=await compact(m.image);
+   const hint=clean($('#editMemoryContext').value);
+   const data=await aiCall({
+     mode:'analyze',
+     personName:id.name,
+     age:id.age?Number(id.age):null,
+     language:lang,
+     tone:$('#questionTone')?.value||'fun',
+     images:[image],
+     hints:[hint]
+   });
+   const suggestion=data.memories[0];
+   const d=ensureDraft(m);
+   d.q=clean(suggestion.question);
+   d.a=Array.isArray(suggestion.answers)?suggestion.answers.slice(0,3).map(clean):['','',''];
+   d.correct=Math.max(0,Math.min(2,Number(suggestion.correct)||0));
+   m.context=hint;
+   $('#fastQuestion').value=d.q;
+   $('#fastA1').value=d.a[0]||'';
+   $('#fastA2').value=d.a[1]||'';
+   $('#fastA3').value=d.a[2]||'';
+   $('#fastCorrect').value=String(d.correct);
+   const ded=$('#dedication');
+   if(ded&&!clean(ded.value)&&clean(data.suggested_dedication))ded.value=clean(data.suggested_dedication);
+   $('#aiAssistPanel').classList.add('hidden');
+   updateFastDots();updateReviewButton();
+ }catch(error){
+   console.error('Fast Creator AI suggestion',error);
+   alert(fx('aiFail'));
+ }finally{
+   b.disabled=false;b.textContent=original;
+ }
+}
+
+function showDraftGame(){
+ saveFastFields();
+ const id=validIdentity();if(!id)return;
+ const firstMissing=memories.findIndex(m=>!isComplete(m));
+ if(firstMissing>=0){
+   fullEditIndex=firstMissing;renderFullEditor();alert(fx('complete'));return;
+ }
+ game=memories.map(m=>{
+   const d=ensureDraft(m);
+   return{q:d.q,a:[...d.a],correct:Number(d.correct),image:m.image,edited:true,userEdited:true,selected:null,generatedLang:lang};
+ });
+ currentIndex=0;
+ $('#levelBadge').dataset.name=id.name;$('#levelBadge').dataset.age=id.age;
+ $('#previewHeading').textContent=tr('previewHeading5');
+ $('#previewDesc').textContent=tr('previewDesc5');
+ $('#questionNav').classList.remove('hidden');
+ renderGame();show('#previewSection');
+}
+
+const baseRenderBuilderTexts=renderBuilderTexts;
+renderBuilderTexts=function(){
+ baseRenderBuilderTexts();
+ if(mode==='full'){
+   $('#builderTitle').textContent=tr('builderFullTitle');
+   $('#builderDesc').textContent=tr('choose5Desc');
+ }
+ renderFastTexts();
+};
+
+const baseStartBuilder=startBuilder;
+startBuilder=function(nextMode){
+ baseStartBuilder(nextMode);
+ if(nextMode==='full'){
+   memories=Array.from({length:5},(_,i)=>({image:fullPhotoData[i]||'',context:'',draft:{q:'',a:['','',''],correct:0}}));
+   if($('#dedication'))$('#dedication').value='';
+ }
+ renderFastTexts();
+};
+
+$('#continueEditBtn').onclick=()=>{
+ const id=validIdentity();if(!id)return;
+ if(fullPhotoData.length!==5){alert(tr('needFive'));return}
+ memories=Array.from({length:5},(_,i)=>{
+   const old=memories[i]||{};
+   return{image:fullPhotoData[i],context:old.context||'',draft:old.draft||{q:'',a:['','',''],correct:0}};
+ });
+ fullEditIndex=0;
+ $('#fullUploadFlow').classList.add('hidden');
+ $('#fullEditFlow').classList.remove('hidden');
+ renderFullEditor();
+};
+
+renderFullEditor=renderEditor;
+
+$('#backToPhotosBtn').onclick=()=>{
+ saveFastFields();$('#fullEditFlow').classList.add('hidden');$('#fullUploadFlow').classList.remove('hidden');renderFullUpload();
+};
+$('#prevMemoryBtn').onclick=()=>{saveFastFields();if(fullEditIndex>0){fullEditIndex--;renderFullEditor()}};
+$('#nextMemoryBtn').onclick=()=>{saveFastFields();if(fullEditIndex<4){fullEditIndex++;renderFullEditor()}};
+$('#generateFullBtn').onclick=showDraftGame;
+
+$('#replaceMemoryPhoto').onchange=e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+   memories[fullEditIndex].image=String(reader.result||'');
+   fullPhotoData[fullEditIndex]=String(reader.result||'');
+   $('#editMemoryImg').src=String(reader.result||'');
+ };
+ reader.readAsDataURL(file);e.target.value='';
+};
+
+const basePreviewBack=$('#previewBackBtn').onclick;
+$('#previewBackBtn').onclick=()=>{
+ if(mode==='full'){
+   syncGameToDrafts();show('#builder');$('#previewFlow').classList.add('hidden');$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');fullEditIndex=Math.min(currentIndex,4);renderFullEditor();
+ }else if(basePreviewBack)basePreviewBack();
+};
+$('#editMemoriesBtn').onclick=()=>{
+ if(mode==='full'){
+   syncGameToDrafts();show('#builder');$('#previewFlow').classList.add('hidden');$('#fullUploadFlow').classList.add('hidden');$('#fullEditFlow').classList.remove('hidden');fullEditIndex=Math.min(currentIndex,4);renderFullEditor();
+ }else{
+   show('#builder');$('#previewFlow').classList.remove('hidden');
+ }
+};
+
+const baseSaveQuestion=$('#saveQuestionBtn').onclick;
+$('#saveQuestionBtn').onclick=()=>{
+ if(baseSaveQuestion)baseSaveQuestion();
+ if(mode==='full'&&game[currentIndex]&&memories[currentIndex]){
+   const d=ensureDraft(memories[currentIndex]);
+   d.q=game[currentIndex].q;d.a=[...game[currentIndex].a];d.correct=Number(game[currentIndex].correct);
+ }
+};
+
+const baseChangeLanguage=changeLanguage;
+changeLanguage=function(value){
+ saveFastFields();
+ baseChangeLanguage(value);
+ renderFastTexts();
+ if(mode==='full'&&!$('#fullEditFlow').classList.contains('hidden'))renderFullEditor();
+};
+
+window.levelYouQuestionTone=()=>$('#questionTone')?.value||'fun';
+window.levelYouFastCreator={version:'2.4',completeCount:()=>completeCount()};
+
+install();
+renderBuilderTexts();
+})();
