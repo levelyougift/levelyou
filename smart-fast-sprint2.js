@@ -347,6 +347,7 @@ changeLanguage=function(value){
  if(mode==='full'&&!$('#fullEditFlow').classList.contains('hidden'))renderFullEditor();
 };
 
+window.levelYouQuestionTone=()=>$('#questionTone')?.value||'fun';
 window.levelYouFastCreator={version:'2.4',completeCount:()=>completeCount()};
 
 install();
