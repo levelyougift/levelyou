@@ -274,8 +274,10 @@ jobs:
           }
           await page.waitForSelector('#finish:not(.hidden)');
           assert.equal(await page.locator('#finishTitle').innerText(),'5 recuerdos. Una historia.');
-          assert.equal(await page.locator('#memoryTitle').innerText(),'Un mensaje para ti');
+          assert.equal((await page.locator('#memoryTitle').innerText()).toLowerCase(),'un mensaje para ti');
           assert.equal(await page.locator('#memoryText').innerText(),'Final');
+          assert.match(await page.locator('#score').innerText(),/además/);
+          assert.equal(await page.locator('#finish').evaluate(el=>el.classList.contains('reveal')),true);
           assert.match(await page.locator('#videoLead').innerText(),/mira cómo estos recuerdos/);
           assert.equal(await page.locator('#createVideo').innerText(),'Ver nuestro vídeo');
           assert.equal(await page.locator('#share').isVisible(),true);
