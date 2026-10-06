@@ -1,0 +1,86 @@
+name: Sprint 1 QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sprint1.html"
+      - "smart-sprint1.js"
+      - "qa-lock-sprint1.js"
+      - ".github/workflows/qa-sprint1.yml"
+  workflow_dispatch:
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Pages propagation
+        run: sleep 25
+
+      - name: Verify published page and assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://levelyougift.github.io/levelyou"
+          for i in 1 2 3 4 5 6; do
+            code="$(curl -sS -o /tmp/sprint1.html -w '%{http_code}' "$base/sprint1.html?qa=${GITHUB_SHA}")"
+            if [ "$code" = "200" ]; then break; fi
+            echo "Pages returned $code; waiting..."
+            sleep 15
+          done
+          test "$code" = "200"
+          grep -q 'smart-sprint1.js' /tmp/sprint1.html
+          grep -q 'qa-lock-sprint1.js' /tmp/sprint1.html
+          curl -fsS "$base/smart-sprint1.js?qa=${GITHUB_SHA}" -o /tmp/smart.js
+          curl -fsS "$base/qa-lock-sprint1.js?qa=${GITHUB_SHA}" -o /tmp/qa.js
+          node --check /tmp/smart.js
+          node --check /tmp/qa.js
+
+      - name: Verify Smart Memory health
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory"
+          curl -fsS -H 'Origin: https://levelyougift.github.io' "$url" -o /tmp/health.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/health.json'))
+          assert d.get('ok') is True, d
+          assert d.get('configured') is True, d
+          assert d.get('model') == 'gpt-5.6-luna', d
+          print('health ok:', d)
+          PY
+
+      - name: Verify real AI image analysis
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory"
+          cat > /tmp/request.json <<'JSON'
+          {
+            "personName": "Alex",
+            "age": 40,
+            "language": "es",
+            "images": [
+              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII="
+            ],
+            "hints": ["Un recuerdo de prueba"]
+          }
+          JSON
+          status="$(curl -sS -o /tmp/ai.json -w '%{http_code}' -X POST             -H 'Origin: https://levelyougift.github.io'             -H 'Content-Type: application/json'             --data-binary @/tmp/request.json "$url")"
+          cat /tmp/ai.json
+          echo
+          test "$status" = "200"
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/ai.json'))
+          m=d.get('memories')
+          assert isinstance(m,list) and len(m)==1, d
+          x=m[0]
+          assert isinstance(x.get('suggested_context'),str) and x['suggested_context'].strip(), x
+          assert isinstance(x.get('question'),str) and x['question'].strip(), x
+          assert isinstance(x.get('answers'),list) and len(x['answers'])==3, x
+          assert x.get('correct') in (0,1,2), x
+          assert isinstance(d.get('suggested_dedication'),str), d
+          print('AI response schema ok')
+          PY
