@@ -260,10 +260,31 @@ jobs:
           assert.match(playerStyle,/scale\(1\.6\)/);
           assert.match(playerStyle,/translate\(/);
 
+          // Premium player rhythm and ending.
+          for(let n=0;n<5;n++){
+            await page.locator('.answer').nth(0).click();
+            assert.equal(await page.locator('#answerFeedback').isVisible(),true);
+            assert.match(await page.locator('#answerFeedback').innerText(),/Sí\. Esa era\./);
+            if(n<4){
+              assert.equal(await page.locator('#next').innerText(),'Siguiente recuerdo →');
+            }else{
+              assert.equal(await page.locator('#next').innerText(),'Ver el final →');
+            }
+            await page.click('#next');
+          }
+          await page.waitForSelector('#finish:not(.hidden)');
+          assert.equal(await page.locator('#finishTitle').innerText(),'5 recuerdos. Una historia.');
+          assert.equal(await page.locator('#memoryTitle').innerText(),'Un mensaje para ti');
+          assert.equal(await page.locator('#memoryText').innerText(),'Final');
+          assert.match(await page.locator('#videoLead').innerText(),/mira cómo estos recuerdos/);
+          assert.equal(await page.locator('#createVideo').innerText(),'Ver nuestro vídeo');
+          assert.equal(await page.locator('#share').isVisible(),true);
+          assert.equal(await page.locator('#again').isVisible(),true);
+
           const meaningfulErrors=errors.filter(e=>!e.includes('favicon'));
           assert.deepEqual(meaningfulErrors,[]);
 
           await browser.close();
-          console.log('Sprint 2.5 Framing browser QA: PASS');
+          console.log('Sprint 2.6 Player & Ending browser QA: PASS');
           JS
           node sprint24-browser-qa.mjs
