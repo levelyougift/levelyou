@@ -90,3 +90,45 @@ jobs:
           assert isinstance(d.get('suggested_dedication'),str), d
           print('AI response schema ok')
           PY
+
+      - name: Verify five-image Smart Creator batch
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory"
+          python - <<'PY'
+          import base64, json, struct, zlib, binascii
+          w=h=128
+          def chunk(t,d):
+              return struct.pack('>I',len(d))+t+d+struct.pack('>I',binascii.crc32(t+d)&0xffffffff)
+          imgs=[]
+          for n in range(5):
+              rgb=bytes([40+n*35,120,220-n*30])
+              raw=b''.join(b'\x00'+rgb*w for _ in range(h))
+              png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',w,h,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(raw))+chunk(b'IEND',b'')
+              imgs.append("data:image/png;base64,"+base64.b64encode(png).decode())
+          data={
+            "personName":"Alex",
+            "age":40,
+            "language":"es",
+            "images":imgs,
+            "hints":["Recuerdo de prueba "+str(i+1) for i in range(5)]
+          }
+          json.dump(data,open('/tmp/request5.json','w'))
+          PY
+          status="$(curl -sS -o /tmp/ai5.json -w '%{http_code}' -X POST             -H 'Origin: https://levelyougift.github.io'             -H 'Content-Type: application/json'             --data-binary @/tmp/request5.json "$url")"
+          cat /tmp/ai5.json
+          echo
+          test "$status" = "200"
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/ai5.json'))
+          m=d.get('memories')
+          assert isinstance(m,list) and len(m)==5, d
+          for x in m:
+              assert isinstance(x.get('suggested_context'),str) and x['suggested_context'].strip(), x
+              assert isinstance(x.get('question'),str) and x['question'].strip(), x
+              assert isinstance(x.get('answers'),list) and len(x['answers'])==3, x
+              assert x.get('correct') in (0,1,2), x
+          print('five-image batch ok')
+          PY
