@@ -254,6 +254,17 @@
   }
 
   ensureSection();
+  const baseStartBuilderSprint3=typeof startBuilder==='function'?startBuilder:null;
+  if(baseStartBuilderSprint3&&!window.__sprint3StartWrapped){
+    window.__sprint3StartWrapped=true;
+    startBuilder=function(nextMode){
+      if(nextMode==='full'){
+        state.splice(0,state.length);
+        render();
+      }
+      return baseStartBuilderSprint3(nextMode);
+    };
+  }
   const pay=document.getElementById('interestBtn');
   if(pay)pay.onclick=openStep;
   const baseChange=typeof changeLanguage==='function'?changeLanguage:null;
