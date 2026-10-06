@@ -17,7 +17,7 @@ jobs:
           import time, urllib.request, sys
 
           base="https://levelyougift.github.io/levelyou/qa/sprint2-rc/"
-          expected='data-levelyou-build="2026-10-06-sprint2-framing-2.5-rc1"'
+          expected='data-levelyou-build="2026-10-06-sprint2-complete-rc1"'
           html=None
           last=None
 
@@ -47,8 +47,10 @@ jobs:
               raise SystemExit("Framing controls missing")
           with urllib.request.urlopen(base+"play.html",timeout=20) as r:
               player=r.read().decode("utf-8")
-              if "safeFraming" not in player or "drawVideoFrame" not in player:
-                  raise SystemExit("Framed player/video not published")
+              required=("safeFraming","drawVideoFrame","answerFeedback","videoLead","scoreSecondary","finishReveal")
+              missing=[x for x in required if x not in player]
+              if missing:
+                  raise SystemExit("Final Sprint 2 Player missing: "+", ".join(missing))
 
-          print("Sprint 2.5 public RC smoke: PASS")
+          print("Sprint 2 complete public RC smoke: PASS")
           PY
