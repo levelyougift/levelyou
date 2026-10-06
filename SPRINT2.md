@@ -370,3 +370,76 @@ No change was made to AI endpoint, checkout, player or video logic.
 QA:
 - static syntax/DOM QA: PASS;
 - browser E2E QA: PASS, including modal open/cancel/Escape/generate/close and editor population.
+
+
+## Sprint 2.5 — Photo Framing
+
+Implemented 2026-10-06.
+
+### Product behavior
+
+- Photos now default to a **safe full-photo fit** instead of an aggressive crop.
+- Each of the five game photos has an **Adjust framing** control.
+- Framing modal supports:
+  - drag to reposition;
+  - zoom slider from 1.0× to 2.5×;
+  - recenter/reset;
+  - save/cancel.
+- At zoom 1.0 the full photo remains centered and visible.
+- Pan range increases with zoom, preventing unnecessary empty edges.
+- Replacing a photo resets its framing to the safe default.
+
+### Persistence
+
+Per-memory framing is stored as normalized metadata:
+
+- `zoom` — 1.0 to 2.5;
+- `x` — -1.0 to 1.0;
+- `y` — -1.0 to 1.0.
+
+The same framing is preserved across:
+
+1. Fast Creator;
+2. question preview;
+3. checkout order payload;
+4. Supabase order data;
+5. paid-game API;
+6. recipient Player;
+7. final video.
+
+### Video behavior
+
+The final video no longer performs a blind portrait `cover` crop on each memory.
+
+Instead:
+
+- each photo is rendered inside a deliberate 4:3 framed area;
+- the saved framing is reused;
+- the surrounding vertical video canvas retains the premium LevelYou background/titles;
+- faces/subjects are therefore not silently re-cropped differently from the game.
+
+### Technical choices
+
+- No external face-detection service has been added.
+- No new infrastructure dependency has been introduced.
+- Safe default + manual framing was chosen first because it is deterministic, easy to support, and commercially reliable.
+- Automatic face-aware framing remains a possible later enhancement, not a dependency for launch.
+
+### Backend hardening
+
+- `super-api` validates framing bounds before accepting an order.
+- `get-game-sprint1` returns validated framing metadata with each paid-game item.
+
+### QA
+
+Automated browser QA verifies:
+
+- framing modal opens;
+- zoom can be changed;
+- image can be dragged;
+- framing persists after navigating away and back;
+- framing is included in checkout `gameData`;
+- default framing remains 1×/centered for untouched memories;
+- paid Player applies the framing returned by the game API.
+
+Static QA also verifies the Player/video framing wiring.
