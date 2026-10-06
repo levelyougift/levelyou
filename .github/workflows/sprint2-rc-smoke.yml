@@ -17,7 +17,7 @@ jobs:
           import time, urllib.request, sys
 
           base="https://levelyougift.github.io/levelyou/qa/sprint2-rc/"
-          expected='data-levelyou-build="2026-10-06-sprint2-fast-2.4-rc1"'
+          expected='data-levelyou-build="2026-10-06-sprint2-fast-2.4.1-rc1"'
           html=None
           last=None
 
@@ -25,7 +25,7 @@ jobs:
               try:
                   with urllib.request.urlopen(base, timeout=20) as r:
                       body=r.read().decode("utf-8")
-                      if r.status==200 and expected in body and "smart-fast-sprint2.js?v=2.4-rc1" in body and "smart-checkout-sprint2.js?v=2.4-rc1" in body:
+                      if r.status==200 and expected in body and "smart-fast-sprint2.js?v=2.4.1-rc1" in body and "smart-checkout-sprint2.js?v=2.4.1-rc1" in body:
                           html=body
                           break
                       last=f"status={r.status}, build={expected in body}"
