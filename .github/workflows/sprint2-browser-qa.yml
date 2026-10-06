@@ -195,7 +195,7 @@ jobs:
           await page.waitForSelector('#fullEditFlow:not(.hidden)',{timeout:10000});
 
           for(let i=0;i<4;i++) await page.click('#nextMemoryBtn');
-          assert.match(await page.locator('#editMemoryIndex').innerText(),/5/);
+          assert.match(await page.locator('#memoryCounter').innerText(),/5/);
           for(let i=0;i<4;i++) await page.click('#prevMemoryBtn');
           await page.click('#generateFullBtn');
           await page.waitForSelector('#previewSection:not(.hidden)',{timeout:10000});
