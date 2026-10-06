@@ -2,9 +2,9 @@
 
 Use the staging preview:
 
-https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview
+https://levelyougift.github.io/levelyou/qa/sprint2-rc/
 
-**Important:** staging uses the same current Stripe configuration as LevelYou. Treat checkout as a potentially real payment unless Stripe explicitly shows test mode.
+**Important:** this QA route uses the current LevelYou backend and Stripe configuration. Treat checkout as a potentially real payment unless Stripe explicitly shows test mode. The QA route is isolated from the production landing page and is marked noindex.
 
 ## Pass criteria
 
