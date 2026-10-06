@@ -1,0 +1,80 @@
+name: Sprint 3 QA
+
+on:
+  push:
+    branches:
+      - sprint3-video-memories
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  static-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check smart-fast-sprint2.js
+          node --check smart-checkout-sprint3.js
+          node --check smart-video-sprint3.js
+
+      - name: Check inline JavaScript and duplicate IDs
+        run: |
+          python - <<'PY'
+          import re, subprocess, pathlib
+          for name in ("index.html", "play-sprint1.html"):
+              html = pathlib.Path(name).read_text(encoding="utf-8")
+              scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', html, re.I)
+              if len(scripts) != 1:
+                  raise SystemExit(f"{name}: expected 1 inline script, found {len(scripts)}")
+              tmp = pathlib.Path("/tmp") / (name.replace(".html","") + "-inline.js")
+              tmp.write_text(scripts[0], encoding="utf-8")
+              subprocess.run(["node","--check",str(tmp)],check=True)
+              ids = re.findall(r'\sid="([^"]+)"', html)
+              dups = sorted({x for x in ids if ids.count(x) > 1})
+              if dups:
+                  raise SystemExit(f"{name}: duplicate IDs: {dups}")
+          PY
+
+      - name: Check Sprint 3 wiring
+        run: |
+          grep -q 'smart-fast-sprint2.js?v=2.5' index.html
+          grep -q 'smart-checkout-sprint3.js?v=3.0' index.html
+          grep -q 'smart-video-sprint3.js?v=3.0' index.html
+          grep -q 'checkout-sprint3-preview' index.html
+          grep -q 'get-game-sprint3' play-sprint1.html
+          grep -q 'videoSequence' play-sprint1.html
+          grep -q 'levelYouGetVideoMemories' smart-video-sprint3.js
+          grep -q 'video_memories' smart-checkout-sprint3.js
+          grep -q 'super-api-sprint3' smart-checkout-sprint3.js
+
+      - name: Check Sprint 2 frozen branch has no Sprint 3 commits
+        run: |
+          git fetch origin v2-sprint2-complete --depth=1
+          test "$(git rev-parse FETCH_HEAD)" = "0d98a87dea21d31d33d223d75f7475dec03bc92f"
+
+      - name: Check Sprint 3 endpoint health
+        run: |
+          python - <<'PY'
+          import json, urllib.request, urllib.error
+          base="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/"
+          with urllib.request.urlopen(base+"checkout-sprint3-preview", timeout=20) as r:
+              body=json.loads(r.read().decode())
+              if not body.get("ok") or body.get("version")!="sprint3-preview-v1":
+                  raise SystemExit(f"checkout health failed: {body}")
+
+          req=urllib.request.Request(base+"super-api-sprint3", method="OPTIONS", headers={"Origin":"https://levelyougift.github.io"})
+          with urllib.request.urlopen(req, timeout=20) as r:
+              if r.status != 200:
+                  raise SystemExit("super-api-sprint3 OPTIONS failed")
+
+          try:
+              urllib.request.urlopen(base+"get-game-sprint3?token=bad", timeout=20)
+              raise SystemExit("get-game-sprint3 accepted invalid token")
+          except urllib.error.HTTPError as e:
+              if e.code != 400:
+                  raise
+          print("Sprint 3 endpoints healthy")
+          PY
