@@ -1,0 +1,181 @@
+name: Sprint 2 Final Acceptance
+
+on:
+  push:
+    branches:
+      - sprint2-premium-experience
+  workflow_dispatch:
+
+jobs:
+  public-rc-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install browser runtime
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run public Sprint 2 acceptance
+        run: |
+          cat > sprint2-final-acceptance.mjs <<'JS'
+          import { chromium } from 'playwright';
+          import assert from 'node:assert/strict';
+
+          const base='https://levelyougift.github.io/levelyou/qa/sprint2-rc/';
+          const browser=await chromium.launch({headless:true});
+          const context=await browser.newContext({viewport:{width:1024,height:1366},locale:'es-ES',hasTouch:true});
+          const page=await context.newPage();
+          const errors=[];
+          page.on('pageerror',e=>errors.push('pageerror: '+e.message));
+          page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
+
+          const tinyPng=Buffer.from(
+            'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxMDAwAAAHgAB9HFkzgAAAABJRU5ErkJggg==',
+            'base64'
+          );
+
+          let aiCalls=0,orderCalls=0,uploadCalls=0,checkoutCalls=0;
+          const fakeOrder='11111111-1111-4111-8111-111111111111';
+
+          await page.route('**/functions/v1/smart-memory',async route=>{
+            aiCalls++;
+            await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+              memories:[{
+                suggested_context:'',
+                visual_summary:'QA',
+                question:'¿Qué pasó justo después de esta foto?',
+                answers:['Nos perdimos','Nos reímos','Nadie se acuerda'],
+                correct:1,needs_hint:false,hint_prompt:'',confidence:'high'
+              }],
+              suggested_dedication:'Por muchos recuerdos más.'
+            })});
+          });
+
+          await page.route('**/functions/v1/super-api',async route=>{
+            orderCalls++;
+            const body=route.request().postDataJSON();
+            assert.equal(body.gameData.questions.length,5);
+            assert.ok(body.gameData.memories[0].framing.zoom>1);
+            await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+              orderId:fakeOrder,
+              uploads:Array.from({length:5},(_,i)=>({
+                path:`${fakeOrder}/photo-${i+1}.jpg`,
+                token:'qa',signedUrl:`https://upload.final.test/${i+1}`,contentType:'image/jpeg'
+              }))
+            })});
+          });
+          await page.route('https://upload.final.test/**',async route=>{uploadCalls++;await route.fulfill({status:200,body:'ok'})});
+          await page.route('**/functions/v1/checkout-sprint2-preview',async route=>{
+            checkoutCalls++;
+            await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+              orderId:fakeOrder,url:base+'?payment=cancelled&order_id='+fakeOrder+'&lang=es'
+            })});
+          });
+
+          let response=null;
+          for(let attempt=0;attempt<8;attempt++){
+            response=await page.goto(base+'?acceptance=final',{waitUntil:'networkidle'});
+            const build=await page.locator('body').getAttribute('data-levelyou-build');
+            if(response?.status()===200&&build==='2026-10-06-sprint2-complete-rc1')break;
+            await page.waitForTimeout(3000);
+          }
+          assert.equal(response?.status(),200);
+          assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-complete-rc1');
+
+          // Landing + languages.
+          assert.equal(await page.locator('#landing').isVisible(),true);
+          assert.equal(await page.locator('#currentFlag').getAttribute('data-flag'),'es');
+          await page.selectOption('#languageSelect','ca');
+          assert.equal(await page.locator('#currentFlag').getAttribute('data-flag'),'ca');
+          await page.selectOption('#languageSelect','en');
+          assert.equal(await page.locator('#currentFlag').getAttribute('data-flag'),'en');
+          await page.selectOption('#languageSelect','es');
+
+          // Fast Creator.
+          await page.click('#fullBtn');
+          await page.fill('#name','Lucía');
+          const files=Array.from({length:5},(_,i)=>({name:`memory-${i+1}.png`,mimeType:'image/png',buffer:tinyPng}));
+          await page.setInputFiles('#photoBatch',files);
+          await page.waitForFunction(()=>document.querySelectorAll('#photoGrid img').length===5);
+          assert.equal(aiCalls,0);
+          await page.click('#continueEditBtn');
+          await page.waitForSelector('#fullEditFlow:not(.hidden)');
+
+          for(let n=1;n<=5;n++){
+            if(n===1){
+              await page.fill('#fastQuestion','Pregunta final 1');
+              await page.fill('#fastA1','A1');await page.fill('#fastA2','B1');await page.fill('#fastA3','C1');
+              await page.click('#framePhotoBtn');
+              await page.waitForSelector('#frameModal:not(.hidden)');
+              await page.locator('#frameZoom').evaluate(el=>{el.value='1.5';el.dispatchEvent(new Event('input',{bubbles:true}))});
+              await page.click('#frameSaveBtn');
+            }else if(n===2){
+              await page.click('#aiAssistBtn');
+              await page.waitForSelector('#aiAssistPanel:not(.hidden)');
+              await page.fill('#editMemoryContext','Fue un viaje muy divertido.');
+              await page.click('#aiGenerateBtn');
+              await page.waitForFunction(()=>document.querySelector('#fastQuestion').value.includes('pasó'));
+            }else{
+              await page.fill('#fastQuestion',`Pregunta final ${n}`);
+              await page.fill('#fastA1',`A${n}`);await page.fill('#fastA2',`B${n}`);await page.fill('#fastA3',`C${n}`);
+            }
+            if(n<5)await page.click('#nextMemoryBtn');
+          }
+          assert.equal(aiCalls,1);
+          await page.fill('#dedication','Gracias por estos recuerdos.');
+          assert.equal(await page.locator('#generateFullBtn').isEnabled(),true);
+
+          await page.click('#generateFullBtn');
+          await page.waitForSelector('#previewSection:not(.hidden)');
+          assert.equal(await page.locator('#qaFinalBtn').isVisible(),true);
+
+          // Checkout recovery path.
+          await page.click('#interestBtn');
+          await page.waitForSelector('#paymentResume:not(.hidden)',{timeout:15000});
+          assert.equal(orderCalls,1);
+          assert.equal(uploadCalls,5);
+          assert.equal(checkoutCalls,1);
+          assert.equal(await page.locator('#resumePaymentBtn').isVisible(),true);
+
+          // Public RC Player: framing, answer feedback and emotional ending.
+          await page.route('**/functions/v1/get-game-sprint1?token=*',async route=>{
+            await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+              personName:'Lucía',language:'es',dedication:'Gracias por estos recuerdos.',
+              items:Array.from({length:5},(_,i)=>({
+                photoUrl:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxMDAwAAAHgAB9HFkzgAAAABJRU5ErkJggg==',
+                framing:i===0?{zoom:1.5,x:.3,y:.1}:{zoom:1,x:0,y:0},
+                question:'Pregunta '+(i+1),answers:['Correcta','B','C'],correct:0
+              }))
+            })});
+          });
+          await page.goto(base+'play.html?token=22222222-2222-4222-8222-222222222222',{waitUntil:'networkidle'});
+          await page.waitForSelector('#intro:not(.hidden)');
+          await page.click('#startGame');
+          assert.match(await page.locator('#photo').getAttribute('style'),/scale\(1\.5\)/);
+          assert.equal(await page.locator('.photoViewport').isVisible(),true);
+
+          for(let n=0;n<5;n++){
+            await page.locator('.answer').nth(0).click();
+            assert.equal(await page.locator('#answerFeedback').isVisible(),true);
+            if(n===4)assert.equal(await page.locator('#next').innerText(),'Ver el final →');
+            await page.click('#next');
+          }
+
+          await page.waitForSelector('#finish:not(.hidden)');
+          assert.equal(await page.locator('#finishTitle').innerText(),'5 recuerdos. Una historia.');
+          assert.equal(await page.locator('#memoryText').innerText(),'Gracias por estos recuerdos.');
+          assert.match((await page.locator('#memoryTitle').innerText()).toLowerCase(),/un mensaje para ti/);
+          assert.equal(await page.locator('#createVideo').innerText(),'Ver nuestro vídeo');
+          assert.equal(await page.locator('#finish').evaluate(el=>el.classList.contains('reveal')),true);
+
+          const meaningful=errors.filter(e=>!e.includes('favicon'));
+          assert.deepEqual(meaningful,[]);
+          await browser.close();
+          console.log('SPRINT 2 FINAL ACCEPTANCE: PASS');
+          JS
+          node sprint2-final-acceptance.mjs
