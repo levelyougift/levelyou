@@ -107,3 +107,33 @@ These can be polished after functional acceptance:
 - decorative visual effects.
 
 Reliability wins over extra polish.
+
+
+## Sprint 2 final acceptance additions
+
+### Fast Creator
+- No automatic AI analysis/review step after selecting the five photos.
+- The five question cards are editable immediately.
+- AI assistance opens as a modal only when requested.
+- Closing the AI modal via Cancel / Escape / outside tap does not lose manual edits.
+
+### Photo framing
+For at least one portrait photo and one landscape photo:
+- default view does not crop the subject aggressively;
+- **Adjust framing** opens correctly;
+- drag with one finger feels natural;
+- zoom slider responds smoothly;
+- Save preserves framing after moving to another memory and back;
+- framing shown in quiz matches the saved framing;
+- framing in the final video matches the quiz closely enough to feel intentional.
+
+### Recipient ending
+- Answer feedback is visible but not punitive.
+- Questions 1–4 use **Next memory**.
+- Question 5 uses **See the ending**.
+- Dedication is visually more important than the numeric score.
+- Primary ending CTA is **Watch our video** / localized equivalent.
+- Video failure still leaves the paid game usable.
+
+### Sprint 2 closure rule
+Development can be frozen when automated QA is green across Creator → framing → checkout → Player → ending. Promotion to the production root remains gated by one final physical-device pass of the frozen RC.
