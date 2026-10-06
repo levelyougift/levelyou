@@ -39,10 +39,13 @@ jobs:
 
       - name: Check critical Sprint 2 wiring
         run: |
-          grep -q 'smart-fast-sprint2.js?v=2.4.1' index.html
+          grep -q 'smart-fast-sprint2.js?v=2.5' index.html
           grep -q 'smart-checkout-sprint2.js?v=2.1' index.html
           grep -q 'get-game-sprint1' play-sprint1.html
           grep -q 'creatorJourney' index.html
+          grep -q 'framePhotoBtn' index.html
+          grep -q 'frameModal' index.html
+          grep -q 'drawVideoFrame' play-sprint1.html
           grep -q 'startGame' play-sprint1.html
 
       - name: Check public endpoint health
