@@ -146,9 +146,35 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 }
 @media(max-width:390px){h1{font-size:36px}.wrap{padding-left:14px;padding-right:14px}.card{padding:18px}.journey-step b{font-size:10px}}
 
+
+/* Sprint 2.4 — Fast Creator */
+.fast-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.fast-dots{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:10px 0 14px}
+.fast-dot{appearance:none;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);color:#8f98ad;border-radius:13px;min-height:42px;font-weight:850;cursor:pointer}
+.fast-dot.active{background:rgba(125,228,211,.12);color:#eafffb;border-color:rgba(125,228,211,.38)}
+.fast-dot.complete:after{content:"✓";font-size:10px;margin-left:4px;color:var(--accent)}
+.fast-photo-wrap{position:relative}
+.fast-photo{aspect-ratio:4/3;object-fit:contain;background:#080b14}
+.fast-replace{position:absolute;right:10px;bottom:10px;margin:0;padding:8px 11px;border-radius:999px;background:rgba(9,11,21,.84);border:1px solid rgba(255,255,255,.14);font-size:11px;font-weight:800;cursor:pointer;backdrop-filter:blur(10px)}
+.fast-replace input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.fast-question-card{margin-top:14px;padding:16px;border-radius:20px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.08)}
+.fast-question-card>label:first-child{margin-top:0}
+.fast-answer-grid{display:grid;grid-template-columns:1fr;gap:4px}
+.fast-ai-btn{margin-top:16px}
+.fast-ai-panel{margin-top:12px;padding:14px;border-radius:17px;background:linear-gradient(135deg,rgba(125,228,211,.07),rgba(158,175,255,.045));border:1px solid rgba(125,228,211,.18)}
+.fast-ai-panel label{margin-top:0}
+.fast-ai-actions{display:grid;grid-template-columns:.8fr 1.2fr;gap:8px;margin-top:10px}
+#fastQuestion{font-size:16px;font-weight:750}
+.fast-question-card input{min-height:48px}
+.fast-question-card select{min-height:48px}
+@media(max-width:430px){
+ .fast-ai-actions{grid-template-columns:1fr}
+ .fast-head{align-items:center}
+}
+
 </style>
 </head>
-<body data-levelyou-build="2026-10-06-sprint2-premium-2.1">
+<body data-levelyou-build="2026-10-06-sprint2-fast-2.4">
 <div class="wrap">
 <div class="topbar">
   <div class="brand"><span class="dot"></span> LEVELYOU</div>
@@ -257,16 +283,57 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 
     <div id="fullEditFlow" class="hidden">
       <button type="button" class="btn ghost" id="backToPhotosBtn" style="width:auto;padding:9px 12px;margin-bottom:12px"></button>
-      <div class="editor-head"><div><div class="section-title" id="editMemoryTitle"></div><div class="small" id="editMemoryDesc"></div></div><span class="pill" id="memoryCounter"></span></div>
-      <img class="editor-photo" id="editMemoryImg" alt="">
-      <label id="editContextLabel"></label>
-      <textarea id="editMemoryContext" rows="4"></textarea>
-      <label id="replacePhotoLabel"></label>
-      <input id="replaceMemoryPhoto" type="file" accept="image/*">
+
+      <div class="fast-head">
+        <div>
+          <div class="section-title" id="editMemoryTitle"></div>
+          <div class="small" id="editMemoryDesc"></div>
+        </div>
+        <span class="pill" id="memoryCounter"></span>
+      </div>
+
+      <div class="fast-dots" id="fastDots" aria-label="Recuerdos"></div>
+
+      <div class="fast-photo-wrap">
+        <img class="editor-photo fast-photo" id="editMemoryImg" alt="">
+        <label class="fast-replace">
+          <span id="replacePhotoLabel"></span>
+          <input id="replaceMemoryPhoto" type="file" accept="image/*">
+        </label>
+      </div>
+
+      <div class="fast-question-card">
+        <label id="fastQuestionLabel"></label>
+        <input id="fastQuestion" maxlength="160">
+        <div class="fast-answer-grid">
+          <div><label id="fastA1Label"></label><input id="fastA1" maxlength="90"></div>
+          <div><label id="fastA2Label"></label><input id="fastA2" maxlength="90"></div>
+          <div><label id="fastA3Label"></label><input id="fastA3" maxlength="90"></div>
+        </div>
+        <label id="fastCorrectLabel"></label>
+        <select id="fastCorrect">
+          <option value="0">1</option>
+          <option value="1">2</option>
+          <option value="2">3</option>
+        </select>
+
+        <button type="button" class="btn secondary fast-ai-btn" id="aiAssistBtn"></button>
+        <div class="fast-ai-panel hidden" id="aiAssistPanel">
+          <label id="editContextLabel"></label>
+          <textarea id="editMemoryContext" rows="3" maxlength="500"></textarea>
+          <div class="small" id="aiHintHelp"></div>
+          <div class="fast-ai-actions">
+            <button type="button" class="btn ghost" id="aiCancelBtn"></button>
+            <button type="button" class="btn primary" id="aiGenerateBtn"></button>
+          </div>
+        </div>
+      </div>
+
       <div class="editor-nav">
         <button type="button" class="btn ghost" id="prevMemoryBtn"></button>
         <button type="button" class="btn ghost" id="nextMemoryBtn"></button>
       </div>
+
       <div style="height:14px"></div>
       <button type="button" class="btn primary" id="generateFullBtn"></button>
     </div>
@@ -731,5 +798,5 @@ if (paymentStatus === 'cancelled') {
   history.replaceState({}, '', window.location.pathname);
 }
 </script>
-<script src="smart-sprint1.js?v=1.2"></script><script src="smart-checkout-sprint2.js?v=2.1"></script></body>
+<script src="smart-fast-sprint2.js?v=2.4"></script><script src="smart-checkout-sprint2.js?v=2.1"></script></body>
 </html>
