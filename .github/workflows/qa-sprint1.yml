@@ -56,17 +56,23 @@ jobs:
         run: |
           set -euo pipefail
           url="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory"
-          cat > /tmp/request.json <<'JSON'
-          {
-            "personName": "Alex",
-            "age": 40,
-            "language": "es",
-            "images": [
-              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII="
-            ],
-            "hints": ["Un recuerdo de prueba"]
+          python - <<'PY'
+          import base64, json, struct, zlib
+          w=h=128
+          raw=b''.join(b'\x00'+bytes([30,144,255])*w for _ in range(h))
+          def chunk(t,d):
+              import binascii
+              return struct.pack('>I',len(d))+t+d+struct.pack('>I',binascii.crc32(t+d)&0xffffffff)
+          png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',w,h,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(raw))+chunk(b'IEND',b'')
+          data={
+            "personName":"Alex",
+            "age":40,
+            "language":"es",
+            "images":["data:image/png;base64,"+base64.b64encode(png).decode()],
+            "hints":["Un recuerdo de prueba"]
           }
-          JSON
+          json.dump(data,open('/tmp/request.json','w'))
+          PY
           status="$(curl -sS -o /tmp/ai.json -w '%{http_code}' -X POST             -H 'Origin: https://levelyougift.github.io'             -H 'Content-Type: application/json'             --data-binary @/tmp/request.json "$url")"
           cat /tmp/ai.json
           echo
