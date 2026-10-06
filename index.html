@@ -642,9 +642,6 @@ $('#editMemoriesBtn').onclick=()=>{show('#builder');if(mode==='full'){$('#previe
 const CREATE_ORDER_URL =
   'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/super-api';
 
-const CHECKOUT_URL =
-  'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smooth-action';
-
 async function dataUrlToBlob(dataUrl) {
   const response = await fetch(dataUrl);
   return await response.blob();
