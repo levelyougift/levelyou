@@ -2,9 +2,9 @@
 const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory';
 const TIMEOUT=45000;
 const C={
-es:{ded:'Mensaje final para la persona',help:'Aparecerá al terminar el juego y cerrará también el vídeo. Puedes editar la sugerencia.',ph:'Ej. Feliz cumpleaños. Que sigamos sumando recuerdos inolvidables.',hint:'Contexto / pista para LevelYou (opcional)',previewHint:'Contexto / pista para LevelYou (opcional)',desc:'LevelYou analiza cada foto y propone un contexto. Corrígelo solo si quieres darle una pista más personal.',analysing:'✨ Entendiendo tus recuerdos…',generating:'✨ Creando preguntas con tus recuerdos…',suggested:'✨ Sugerencia de LevelYou',need:'Para hacer esta pregunta más personal, ayudaría saber: ',ready:'Puedes dejar esta sugerencia tal cual o editarla.',fallback:'No hemos podido usar la IA ahora mismo. Puedes continuar igualmente.',timeout:'La IA ha tardado demasiado. Puedes volver a intentarlo.',imageUnsupported:'No hemos podido analizar una de las fotos. Prueba con otra imagen o con formato JPG/PNG.'},
-ca:{ded:'Missatge final per a la persona',help:'Apareixerà en acabar el joc i també tancarà el vídeo. Pots editar el suggeriment.',ph:'Ex. Per molts anys. Que continuem sumant records inoblidables.',hint:'Context / pista per a LevelYou (opcional)',previewHint:'Context / pista per a LevelYou (opcional)',desc:'LevelYou analitza cada foto i proposa un context. Corregeix-lo només si vols donar-li una pista més personal.',analysing:'✨ Entenent els teus records…',generating:'✨ Creant preguntes amb els teus records…',suggested:'✨ Suggeriment de LevelYou',need:'Per fer aquesta pregunta més personal, ajudaria saber: ',ready:'Pots deixar aquest suggeriment tal com està o editar-lo.',fallback:'Ara mateix no hem pogut utilitzar la IA. Pots continuar igualment.',timeout:'La IA ha trigat massa. Pots tornar-ho a provar.',imageUnsupported:'No hem pogut analitzar una de les fotos. Prova una altra imatge o un format JPG/PNG.'},
-en:{ded:'Final message for them',help:'It appears after the game and also closes the video. You can edit the suggestion.',ph:'e.g. Happy birthday. Here is to many more unforgettable memories.',hint:'Context / hint for LevelYou (optional)',previewHint:'Context / hint for LevelYou (optional)',desc:'LevelYou analyzes each photo and suggests context. Edit it only if you want to add a more personal hint.',analysing:'✨ Understanding your memories…',generating:'✨ Creating questions from your memories…',suggested:'✨ LevelYou suggestion',need:'To make this question more personal, it would help to know: ',ready:'Keep this suggestion as it is or edit it.',fallback:'AI is unavailable right now. You can still continue.',timeout:'The AI took too long. Please try again.',imageUnsupported:'We could not analyze one of the photos. Try another image or a JPG/PNG file.'}
+es:{ded:'Mensaje final para la persona',help:'Aparecerá al terminar el juego y cerrará también el vídeo. Puedes editar la sugerencia.',ph:'Ej. Feliz cumpleaños. Que sigamos sumando recuerdos inolvidables.',hint:'Contexto / pista para LevelYou (opcional)',previewHint:'Contexto / pista para LevelYou (opcional)',desc:'LevelYou analiza cada foto y propone un contexto. Corrígelo solo si quieres darle una pista más personal.',analysing:'✨ Entendiendo tus recuerdos…',generating:'✨ Creando preguntas con tus recuerdos…',suggested:'✨ Sugerencia de LevelYou',need:'Para hacer esta pregunta más personal, ayudaría saber: ',ready:'Puedes dejar esta sugerencia tal cual o editarla.',fallback:'No hemos podido usar la IA ahora mismo. Puedes continuar igualmente.',translating:'✨ Adaptando el juego al nuevo idioma…',timeout:'La IA ha tardado demasiado. Puedes volver a intentarlo.',imageUnsupported:'No hemos podido analizar una de las fotos. Prueba con otra imagen o con formato JPG/PNG.'},
+ca:{ded:'Missatge final per a la persona',help:'Apareixerà en acabar el joc i també tancarà el vídeo. Pots editar el suggeriment.',ph:'Ex. Per molts anys. Que continuem sumant records inoblidables.',hint:'Context / pista per a LevelYou (opcional)',previewHint:'Context / pista per a LevelYou (opcional)',desc:'LevelYou analitza cada foto i proposa un context. Corregeix-lo només si vols donar-li una pista més personal.',analysing:'✨ Entenent els teus records…',generating:'✨ Creant preguntes amb els teus records…',suggested:'✨ Suggeriment de LevelYou',need:'Per fer aquesta pregunta més personal, ajudaria saber: ',ready:'Pots deixar aquest suggeriment tal com està o editar-lo.',fallback:'Ara mateix no hem pogut utilitzar la IA. Pots continuar igualment.',translating:'✨ Adaptant el joc al nou idioma…',timeout:'La IA ha trigat massa. Pots tornar-ho a provar.',imageUnsupported:'No hem pogut analitzar una de les fotos. Prova una altra imatge o un format JPG/PNG.'},
+en:{ded:'Final message for them',help:'It appears after the game and also closes the video. You can edit the suggestion.',ph:'e.g. Happy birthday. Here is to many more unforgettable memories.',hint:'Context / hint for LevelYou (optional)',previewHint:'Context / hint for LevelYou (optional)',desc:'LevelYou analyzes each photo and suggests context. Edit it only if you want to add a more personal hint.',analysing:'✨ Understanding your memories…',generating:'✨ Creating questions from your memories…',suggested:'✨ LevelYou suggestion',need:'To make this question more personal, it would help to know: ',ready:'Keep this suggestion as it is or edit it.',fallback:'AI is unavailable right now. You can still continue.',translating:'✨ Adapting the game to the new language…',timeout:'The AI took too long. Please try again.',imageUnsupported:'We could not analyze one of the photos. Try another image or a JPG/PNG file.'}
 };
 const tx=k=>(C[lang]||C.es)[k]||k;
 const esc=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -61,16 +61,34 @@ async function smart(images,hints,id){
  }catch(e){if(e?.name==='AbortError')throw new Error('AI_TIMEOUT');throw e}finally{clearTimeout(timer)}
 }
 function aiMessage(e){return e?.message==='AI_TIMEOUT'?tx('timeout'):e?.message==='IMAGE_DECODE'?tx('imageUnsupported'):tx('fallback')}
-function setDed(d){if($('#dedication')&&!clean($('#dedication').value)&&clean(d.suggested_dedication))$('#dedication').value=clean(d.suggested_dedication)}
+function setDed(d){
+ const f=$('#dedication'),next=clean(d.suggested_dedication);if(!f||!next)return;
+ const previous=f.dataset.aiSuggestion||'';
+ if(!clean(f.value)||clean(f.value)===previous){f.value=next;f.dataset.aiSuggestion=next}
+}
 function showGame(id,items){
- game=items.map((a,i)=>({q:a.question,a:a.answers,correct:Number(a.correct),image:memories[i].image,edited:true,selected:null,aiGenerated:true}));
+ game=items.map((a,i)=>({q:a.question,a:a.answers,correct:Number(a.correct),image:memories[i].image,edited:true,selected:null,aiGenerated:true,userEdited:false,generatedLang:lang}));
  currentIndex=0;$('#levelBadge').dataset.name=id.name;$('#levelBadge').dataset.age=id.age;
  $('#previewHeading').textContent=tr(game.length===5?'previewHeading5':'previewHeading1');$('#previewDesc').textContent=tr(game.length===5?'previewDesc5':'previewDesc1');
  $('#questionNav').classList.toggle('hidden',game.length===1);renderGame();show('#previewSection');
 }
 const oldEditor=renderFullEditor;renderFullEditor=function(){oldEditor();placeDedication();refresh()};
-const oldLang=changeLanguage;changeLanguage=function(v){oldLang(v);setTimeout(()=>{placeDedication();refresh()},0)};
-const oldBuilder=startBuilder;startBuilder=function(m){oldBuilder(m);if($('#dedication'))$('#dedication').value='';placeDedication();refresh()};
+async function refreshGameLanguage(){
+ if(!game.length||!game.some(x=>x.aiGenerated&&!x.userEdited&&x.generatedLang!==lang))return;
+ const id={name:clean($('#name').value),age:clean($('#age').value)};if(!id.name)return;
+ const desc=$('#previewDesc'),old=desc?.textContent||'';
+ if(desc)desc.textContent=tx('translating');
+ try{
+  const d=await smart(memories.map(m=>m.image),memories.map(m=>clean(m.context)),id);
+  game=game.map((oldItem,i)=>oldItem.userEdited?oldItem:{...oldItem,q:d.memories[i].question,a:d.memories[i].answers,correct:Number(d.memories[i].correct),selected:null,generatedLang:lang});
+  setDed(d);renderGame();
+ }catch(e){console.error('Smart Creator language refresh',e)}
+ finally{if(desc)desc.textContent=tr(game.length===5?'previewDesc5':'previewDesc1')}
+}
+const oldLang=changeLanguage;changeLanguage=function(v){oldLang(v);setTimeout(()=>{placeDedication();refresh();refreshGameLanguage()},0)};
+const oldBuilder=startBuilder;startBuilder=function(m){oldBuilder(m);if($('#dedication')){$('#dedication').value='';$('#dedication').dataset.aiSuggestion=''}placeDedication();refresh()};
+['#editQuestion','#editA1','#editA2','#editA3','#editCorrect'].forEach(sel=>{const el=$(sel);if(el)el.addEventListener(sel==='#editCorrect'?'change':'input',()=>{if(game[currentIndex])game[currentIndex].userEdited=true})});
+if($('#dedication'))$('#dedication').addEventListener('input',()=>{$('#dedication').dataset.aiSuggestion=''});
 $('#continueEditBtn').onclick=async()=>{
  const id=validIdentity();if(!id)return;if(fullPhotoData.length!==5){alert(tr('needFive'));return}
  const b=$('#continueEditBtn'),t=b.textContent;b.disabled=true;b.textContent=tx('analysing');$('#fullUploadFlow').classList.add('smart-busy');
