@@ -225,7 +225,7 @@ jobs:
 
           const checkoutBeforeResume=checkoutCalls;
           await page.click('#resumePaymentBtn');
-          await page.waitForTimeout(300);
+          await page.waitForSelector('#paymentResume:not(.hidden)',{timeout:5000});
           assert.equal(checkoutCalls,checkoutBeforeResume+1);
           assert.equal(await page.locator('#paymentResume').isVisible(),true);
 
@@ -291,7 +291,7 @@ jobs:
           assert.equal(await page.locator('#question').innerText(),'Pregunta premium 1');
 
           // Invalid token must expose the retry/error surface instead of a blank page.
-          await page.goto(`${base}?page=player&token=bad-token`,{waitUntil:'networkidle'});
+          await page.goto(`${base}play.html?token=bad-token`,{waitUntil:'networkidle'});
           await page.waitForSelector('#error:not(.hidden)',{timeout:5000});
           assert.equal(await page.locator('#retryBtn').isVisible(),true);
           assert.match(await page.locator('#errorTitle').innerText(),/No hemos podido abrir/);
