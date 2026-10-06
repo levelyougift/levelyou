@@ -13,7 +13,7 @@ const F={
   aiFail:'No hemos podido generar una sugerencia. Puedes escribir la pregunta manualmente.',
   replace:'Cambiar foto',backPhotos:'← Cambiar las 5 fotos',prev:'← Anterior',next:'Siguiente →',
   editorTitle:'Escribe la pregunta',editorDesc:'Hazla personal, divertida o imposible de entender para quien no conozca la historia.',
-  review:'Revisar mi LevelYou →',ready:'preguntas listas'
+  review:'Revisar mi LevelYou →',ready:'preguntas listas',frame:'🖼 Ajustar encuadre',frameTitle:'Ajusta cómo se verá esta foto',frameHelp:'Arrastra la foto y usa el zoom. Si no haces nada, se verá completa sin recortes.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar encuadre'
  },
  ca:{
   question:'Pregunta',a1:'Resposta 1',a2:'Resposta 2',a3:'Resposta 3',correct:'Resposta correcta',
@@ -25,7 +25,7 @@ const F={
   aiFail:'No hem pogut generar un suggeriment. Pots escriure la pregunta manualment.',
   replace:'Canviar foto',backPhotos:'← Canviar les 5 fotos',prev:'← Anterior',next:'Següent →',
   editorTitle:'Escriu la pregunta',editorDesc:'Fes-la personal, divertida o impossible d’entendre per a qui no conegui la història.',
-  review:'Revisar el meu LevelYou →',ready:'preguntes llestes'
+  review:'Revisar el meu LevelYou →',ready:'preguntes llestes',frame:'🖼 Ajustar enquadrament',frameTitle:'Ajusta com es veurà aquesta foto',frameHelp:'Arrossega la foto i utilitza el zoom. Si no fas res, es veurà completa sense retalls.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar enquadrament'
  },
  en:{
   question:'Question',a1:'Answer 1',a2:'Answer 2',a3:'Answer 3',correct:'Correct answer',
@@ -37,7 +37,7 @@ const F={
   aiFail:'We could not generate a suggestion. You can still write the question manually.',
   replace:'Change photo',backPhotos:'← Change the 5 photos',prev:'← Previous',next:'Next →',
   editorTitle:'Write the question',editorDesc:'Make it personal, funny or impossible to understand unless you know the story.',
-  review:'Review my LevelYou →',ready:'questions ready'
+  review:'Review my LevelYou →',ready:'questions ready',frame:'🖼 Adjust framing',frameTitle:'Adjust how this photo will appear',frameHelp:'Drag the photo and use zoom. If you do nothing, the full photo stays visible without cropping.',frameZoom:'Zoom',frameReset:'Recenter',frameSave:'Save framing'
  }
 };
 const fx=k=>(F[lang]||F.es)[k]||k;
@@ -48,6 +48,21 @@ function ensureDraft(m){
  while(m.draft.a.length<3)m.draft.a.push('');
  m.draft.correct=Number.isInteger(Number(m.draft.correct))?Math.max(0,Math.min(2,Number(m.draft.correct))):0;
  return m.draft;
+}
+function ensureFraming(m){
+ if(!m.framing||typeof m.framing!=='object')m.framing={zoom:1,x:0,y:0};
+ m.framing.zoom=Math.max(1,Math.min(2.5,Number(m.framing.zoom)||1));
+ m.framing.x=Math.max(-1,Math.min(1,Number(m.framing.x)||0));
+ m.framing.y=Math.max(-1,Math.min(1,Number(m.framing.y)||0));
+ return m.framing;
+}
+function framingCopy(f){return{zoom:Number(f?.zoom)||1,x:Number(f?.x)||0,y:Number(f?.y)||0}}
+function applyFraming(el,f){
+ if(!el)return;
+ const framing=f||{zoom:1,x:0,y:0};
+ el.style.objectFit='contain';
+ el.style.transformOrigin='center center';
+ el.style.transform='translate('+(framing.x*18)+'%,'+(framing.y*18)+'%) scale('+framing.zoom+')';
 }
 function isComplete(m){
  const d=ensureDraft(m);
@@ -74,7 +89,7 @@ function syncGameToDrafts(){
  if(game.length!==5||memories.length!==5)return;
  game.forEach((item,i)=>{
    const d=ensureDraft(memories[i]);
-   d.q=clean(item.q);d.a=[...item.a];d.correct=Number(item.correct);
+   d.q=clean(item.q);d.a=[...item.a];d.correct=Number(item.correct);if(item.framing)memories[i].framing=framingCopy(item.framing);
  });
 }
 
@@ -94,6 +109,13 @@ function renderFastTexts(){
  if($('#aiCancelBtn'))$('#aiCancelBtn').textContent=fx('cancel');
  if($('#aiGenerateBtn'))$('#aiGenerateBtn').textContent=fx('generate');
  if($('#replacePhotoLabel'))$('#replacePhotoLabel').textContent=fx('replace');
+ if($('#framePhotoBtn'))$('#framePhotoBtn').textContent=fx('frame');
+ if($('#frameModalTitle'))$('#frameModalTitle').textContent=fx('frameTitle');
+ if($('#frameHelp'))$('#frameHelp').textContent=fx('frameHelp');
+ if($('#frameZoomLabel'))$('#frameZoomLabel').textContent=fx('frameZoom');
+ if($('#frameResetBtn'))$('#frameResetBtn').textContent=fx('frameReset');
+ if($('#frameCancelBtn'))$('#frameCancelBtn').textContent=fx('cancel');
+ if($('#frameSaveBtn'))$('#frameSaveBtn').textContent=fx('frameSave');
  if($('#backToPhotosBtn'))$('#backToPhotosBtn').textContent=fx('backPhotos');
  if($('#prevMemoryBtn'))$('#prevMemoryBtn').textContent=fx('prev');
  if($('#nextMemoryBtn'))$('#nextMemoryBtn').textContent=fx('next');
@@ -115,9 +137,47 @@ function installDedication(){
  $('#generateFullBtn').insertAdjacentElement('beforebegin',block);
 }
 
+let frameDraft={zoom:1,x:0,y:0},frameStart=null,framePointer=null;
+function renderFrameDraft(){
+ const img=$('#frameImage');if(!img)return;
+ applyFraming(img,frameDraft);
+ if($('#frameZoom'))$('#frameZoom').value=String(frameDraft.zoom);
+}
+function openFrameModal(){
+ saveFastFields();
+ const m=memories[fullEditIndex];if(!m)return;
+ frameDraft=framingCopy(ensureFraming(m));
+ $('#frameImage').src=m.image;
+ $('#frameModal').classList.remove('hidden');
+ document.body.classList.add('frame-modal-open');
+ renderFrameDraft();
+}
+function closeFrameModal(returnFocus=true){
+ $('#frameModal')?.classList.add('hidden');
+ document.body.classList.remove('frame-modal-open');
+ framePointer=null;frameStart=null;
+ if(returnFocus)$('#framePhotoBtn')?.focus();
+}
+function saveFrameModal(){
+ const m=memories[fullEditIndex];if(!m)return closeFrameModal();
+ m.framing=framingCopy(frameDraft);
+ applyFraming($('#editMemoryImg'),m.framing);
+ closeFrameModal();
+}
 function install(){
  installDedication();
  renderFastTexts();
+ $('#framePhotoBtn').onclick=openFrameModal;
+ $('#frameCancelBtn').onclick=()=>closeFrameModal();
+ $('#frameSaveBtn').onclick=saveFrameModal;
+ $('#frameResetBtn').onclick=()=>{frameDraft={zoom:1,x:0,y:0};renderFrameDraft()};
+ $('#frameZoom').addEventListener('input',e=>{frameDraft.zoom=Math.max(1,Math.min(2.5,Number(e.target.value)||1));renderFrameDraft()});
+ $('#frameStage').addEventListener('pointerdown',e=>{framePointer=e.pointerId;frameStart={clientX:e.clientX,clientY:e.clientY,x:frameDraft.x,y:frameDraft.y};$('#frameStage').setPointerCapture?.(e.pointerId);$('#frameStage').classList.add('dragging')});
+ $('#frameStage').addEventListener('pointermove',e=>{if(framePointer!==e.pointerId||!frameStart)return;const r=$('#frameStage').getBoundingClientRect();frameDraft.x=Math.max(-1,Math.min(1,frameStart.x+(e.clientX-frameStart.clientX)/(r.width*.32)));frameDraft.y=Math.max(-1,Math.min(1,frameStart.y+(e.clientY-frameStart.clientY)/(r.height*.32)));renderFrameDraft()});
+ const endFrameDrag=e=>{if(framePointer!==null&&(!e||e.pointerId===framePointer)){framePointer=null;frameStart=null;$('#frameStage').classList.remove('dragging')}};
+ $('#frameStage').addEventListener('pointerup',endFrameDrag);$('#frameStage').addEventListener('pointercancel',endFrameDrag);
+ $('#frameModal').addEventListener('click',e=>{if(e.target===$('#frameModal'))closeFrameModal()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#frameModal').classList.contains('hidden'))closeFrameModal()});
  ['#fastQuestion','#fastA1','#fastA2','#fastA3','#fastCorrect','#editMemoryContext'].forEach(sel=>{
    const el=$(sel);if(el)el.addEventListener(sel==='#fastCorrect'?'change':'input',saveFastFields);
  });
@@ -171,13 +231,14 @@ function renderEditor(){
  const m=memories[fullEditIndex],d=ensureDraft(m);
  $('#memoryCounter').textContent=(fullEditIndex+1)+' / 5';
  $('#editMemoryImg').src=m.image;
+ applyFraming($('#editMemoryImg'),ensureFraming(m));
  $('#fastQuestion').value=d.q||'';
  $('#fastA1').value=d.a[0]||'';
  $('#fastA2').value=d.a[1]||'';
  $('#fastA3').value=d.a[2]||'';
  $('#fastCorrect').value=String(d.correct||0);
  $('#editMemoryContext').value=m.context||'';
- closeAiModal(false);
+ closeAiModal(false);closeFrameModal(false);
  $('#prevMemoryBtn').disabled=fullEditIndex===0;
  $('#nextMemoryBtn').disabled=fullEditIndex===4;
  $('#prevMemoryBtn').style.opacity=fullEditIndex===0?.45:1;
@@ -275,7 +336,7 @@ function showDraftGame(){
  }
  game=memories.map(m=>{
    const d=ensureDraft(m);
-   return{q:d.q,a:[...d.a],correct:Number(d.correct),image:m.image,edited:true,userEdited:true,selected:null,generatedLang:lang};
+   return{q:d.q,a:[...d.a],correct:Number(d.correct),image:m.image,framing:framingCopy(ensureFraming(m)),edited:true,userEdited:true,selected:null,generatedLang:lang};
  });
  currentIndex=0;
  $('#levelBadge').dataset.name=id.name;$('#levelBadge').dataset.age=id.age;
@@ -299,7 +360,7 @@ const baseStartBuilder=startBuilder;
 startBuilder=function(nextMode){
  baseStartBuilder(nextMode);
  if(nextMode==='full'){
-   memories=Array.from({length:5},(_,i)=>({image:fullPhotoData[i]||'',context:'',draft:{q:'',a:['','',''],correct:0}}));
+   memories=Array.from({length:5},(_,i)=>({image:fullPhotoData[i]||'',context:'',framing:{zoom:1,x:0,y:0},draft:{q:'',a:['','',''],correct:0}}));
    if($('#dedication'))$('#dedication').value='';
  }
  renderFastTexts();
@@ -310,7 +371,7 @@ $('#continueEditBtn').onclick=()=>{
  if(fullPhotoData.length!==5){alert(tr('needFive'));return}
  memories=Array.from({length:5},(_,i)=>{
    const old=memories[i]||{};
-   return{image:fullPhotoData[i],context:old.context||'',draft:old.draft||{q:'',a:['','',''],correct:0}};
+   return{image:fullPhotoData[i],context:old.context||'',framing:framingCopy(ensureFraming(old)),draft:old.draft||{q:'',a:['','',''],correct:0}};
  });
  fullEditIndex=0;
  $('#fullUploadFlow').classList.add('hidden');
@@ -332,6 +393,7 @@ $('#replaceMemoryPhoto').onchange=e=>{
  const reader=new FileReader();
  reader.onload=()=>{
    memories[fullEditIndex].image=String(reader.result||'');
+   memories[fullEditIndex].framing={zoom:1,x:0,y:0};
    fullPhotoData[fullEditIndex]=String(reader.result||'');
    $('#editMemoryImg').src=String(reader.result||'');
  };
@@ -369,8 +431,13 @@ changeLanguage=function(value){
  if(mode==='full'&&!$('#fullEditFlow').classList.contains('hidden'))renderFullEditor();
 };
 
+const baseRenderGameFast=renderGame;
+renderGame=function(){
+ baseRenderGameFast();
+ if(mode==='full'&&game[currentIndex])applyFraming($('#gameImg'),game[currentIndex].framing||memories[currentIndex]?.framing);
+};
 window.levelYouQuestionTone=()=>$('#questionTone')?.value||'fun';
-window.levelYouFastCreator={version:'2.4.1',completeCount:()=>completeCount()};
+window.levelYouFastCreator={version:'2.5',completeCount:()=>completeCount(),framing:()=>memories.map(m=>framingCopy(ensureFraming(m)))};
 
 install();
 renderBuilderTexts();
