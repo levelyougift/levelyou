@@ -187,6 +187,7 @@ function showGame(id,items){
  $('#previewHeading').textContent=tr(game.length===5?'previewHeading5':'previewHeading1');
  $('#previewDesc').textContent=tr(game.length===5?'previewDesc5':'previewDesc1');
  $('#questionNav').classList.toggle('hidden',game.length===1);
+ const qaWrap=$('#qaFinalWrap');if(qaWrap)qaWrap.classList.toggle('hidden',!(mode==='full'&&game.length===5));
  renderGame();show('#previewSection');
 }
 
