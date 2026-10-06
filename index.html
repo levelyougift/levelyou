@@ -857,7 +857,7 @@ if (paymentStatus === 'cancelled') {
       btn.disabled = true;
       btn.textContent = lang === 'ca' ? 'Obrint pagament…' : lang === 'en' ? 'Opening payment…' : 'Abriendo pago…';
       try {
-        const response = await fetch('https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint1', {
+        const response = await fetch('https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint3-preview', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({orderId:cancelledOrderId})
@@ -882,5 +882,5 @@ if (paymentStatus === 'cancelled') {
   history.replaceState({}, '', window.location.pathname);
 }
 </script>
-<script src="smart-fast-sprint2.js?v=2.5"></script><script src="smart-checkout-sprint2.js?v=2.1"></script></body>
+<script src="smart-fast-sprint2.js?v=2.5"></script><script src="smart-checkout-sprint3.js?v=3.0"></script><script src="smart-video-sprint3.js?v=3.0"></script></body>
 </html>
