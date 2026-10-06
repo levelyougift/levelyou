@@ -118,10 +118,10 @@
       });
 
       const gameData = {
-        memories: memories.map(m => ({context: clean(m.context)})),
+        memories: memories.map(m => ({context: clean(m.context),framing:{zoom:Number(m.framing?.zoom)||1,x:Number(m.framing?.x)||0,y:Number(m.framing?.y)||0}})),
         questions: game.map(item => ({question:item.q, answers:item.a, correct:item.correct})),
         dedication: clean(document.querySelector('#dedication')?.value || ''),
-        smart_creator_version: 'sprint2-fast-v2.4',
+        smart_creator_version: 'sprint2-framing-v2.5',
         question_tone: typeof window.levelYouQuestionTone === 'function' ? window.levelYouQuestionTone() : 'fun'
       };
 
