@@ -24,7 +24,7 @@ jobs:
 
       - name: Run staging browser acceptance
         env:
-          STAGING_URL: https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview
+          STAGING_URL: https://levelyougift.github.io/levelyou/qa/sprint2-rc/
         run: |
           cat > sprint2-browser-qa.mjs <<'JS'
           import { chromium } from 'playwright';
@@ -112,7 +112,7 @@ jobs:
           console.log('LANDING_TITLE', await page.title());
           console.log('LANDING_BODY_PREFIX', (await page.locator('body').innerText()).slice(0,300).replace(/\\s+/g,' '));
           assert.equal(landingResponse?.status(),200);
-          assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-premium-2.1');
+          assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-premium-rc1');
           assert.equal(await page.locator('#landing').isVisible(),true);
           assert.equal(await page.locator('#fullBtn').innerText(),'Crear su LevelYou · 14,90 €');
           assert.equal(await page.locator('#previewBtn').innerText(),'Ver una muestra con 1 foto');
