@@ -322,6 +322,13 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
           <label id="editContextLabel"></label>
           <textarea id="editMemoryContext" rows="3" maxlength="500"></textarea>
           <div class="small" id="aiHintHelp"></div>
+          <label id="fastToneLabel"></label>
+          <select id="questionTone">
+            <option value="fun"></option>
+            <option value="complicit"></option>
+            <option value="emotional"></option>
+            <option value="elegant"></option>
+          </select>
           <div class="fast-ai-actions">
             <button type="button" class="btn ghost" id="aiCancelBtn"></button>
             <button type="button" class="btn primary" id="aiGenerateBtn"></button>
@@ -386,7 +393,7 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
     <div style="height:14px"></div>
     <button type="button" class="btn primary" id="interestBtn" data-i18n="wantLevelYou">Quiero mi LevelYou · 14,90 €</button>
     <div style="height:10px"></div>
-    <button type="button" class="btn secondary" id="editQuestionBtn" data-i18n="editQuestion">Editar pregunta y respuestas</button>
+    <button type="button" class="btn secondary hidden" id="editQuestionBtn" data-i18n="editQuestion">Editar pregunta y respuestas</button>
     <div style="height:10px"></div>
     <button type="button" class="btn secondary" id="editMemoriesBtn" data-i18n="editMemories">Editar recuerdos</button>
     <div class="notice" style="margin-top:14px" data-i18n="earlyAccess">Pago seguro: tu LevelYou se activa automáticamente al confirmar el pago con Stripe.</div>
@@ -424,7 +431,7 @@ step1t:'1. Sube recuerdos',step1d:'Fotos, lugares, amigos y momentos.',step2t:'2
 previewBtn:'Probar gratis con 1 foto',fullBtn:'Crear con 5 recuerdos',privacy:'Tus fotos se guardan de forma privada y solo se utilizan para crear tu LevelYou.',launchPrice:'Precio de lanzamiento',fiveMemories:'5 recuerdos',
 c1:'✓ 5 fotos + 5 preguntas personalizadas',c2:'✓ Juego móvil sin instalar nada',c3:'✓ Vídeo final para guardar y compartir',c4:'✓ Enlace privado para enviar por WhatsApp',
 back:'← Volver',nameLabel:'Nombre de la persona',ageLabel:'Edad que cumple',optional:'(opcional)',namePH:'Ej. Cristina',agePH:'Ej. 48',memory:'Recuerdo',photoLabel:'Sube una foto',photoPH:'📷 Toca aquí para elegir una foto',contextLabel:'¿Qué representa este recuerdo?',contextPH:'Ej. Nuestro viaje a Mallorca, una cena especial, un día con amigos...',
-builderPreviewTitle:'Crea una muestra',builderPreviewDesc:'Con una foto verás cómo sería una pregunta del juego.',builderFullTitle:'Crea su LevelYou',builderFullDesc:'Añade 5 recuerdos. Crearemos una pregunta para cada uno.',generatePreview:'Generar mi prueba',generateFull:'Crear las 5 preguntas',creating:'Creando las preguntas…',
+builderPreviewTitle:'Crea una muestra',builderPreviewDesc:'Con una foto verás cómo sería una pregunta del juego.',builderFullTitle:'Crea su LevelYou',builderFullDesc:'Añade 5 recuerdos. Crearemos una pregunta para cada uno.',generatePreview:'Generar mi prueba',generateFull:'Revisar mi LevelYou →',creating:'Creando las preguntas…',
 yourGame:'✨ Tu LevelYou',previewHeading1:'Así podría empezar su LevelYou',previewDesc1:'Esta es una muestra con una pregunta.',previewHeading5:'Vista previa del juego',previewDesc5:'Revisa las 5 preguntas antes de continuar.',
 questionLabel:'Pregunta',answer1:'Respuesta 1',answer2:'Respuesta 2',answer3:'Respuesta 3',correctAnswer:'Respuesta correcta',saveChanges:'Guardar cambios',wantLevelYou:'Quiero mi LevelYou · 14,90 €',editQuestion:'Editar pregunta y respuestas',editMemories:'Editar recuerdos',
 earlyAccess:'Pago seguro: tu LevelYou se activa automáticamente al confirmar el pago con Stripe.',footer:'Regalos personalizados',
@@ -454,7 +461,7 @@ step1t:'1. Add memories',step1d:'Photos, places, friends and moments.',step2t:'2
 previewBtn:'Try it free with 1 photo',fullBtn:'Create with 5 memories',privacy:'Your photos are stored privately and used only to create your LevelYou.',launchPrice:'Launch price',fiveMemories:'5 memories',
 c1:'✓ 5 photos + 5 personalized questions',c2:'✓ Mobile game, no app required',c3:'✓ Final video to save and share',c4:'✓ Private link to send on WhatsApp',
 back:'← Back',nameLabel:'Person’s name',ageLabel:'Age they are turning',optional:'(optional)',namePH:'e.g. Cristina',agePH:'e.g. 48',memory:'Memory',photoLabel:'Upload a photo',photoPH:'📷 Tap here to choose a photo',contextLabel:'What does this memory represent?',contextPH:'e.g. Our trip to Mallorca, a special dinner, a day with friends...',
-builderPreviewTitle:'Create a preview',builderPreviewDesc:'With one photo you can see what a game question could look like.',builderFullTitle:'Create their LevelYou',builderFullDesc:'Add 5 memories. We will create one question for each.',generatePreview:'Generate my preview',generateFull:'Create the 5 questions',creating:'Creating the questions…',
+builderPreviewTitle:'Create a preview',builderPreviewDesc:'With one photo you can see what a game question could look like.',builderFullTitle:'Create their LevelYou',builderFullDesc:'Add 5 memories. We will create one question for each.',generatePreview:'Generate my preview',generateFull:'Review my LevelYou →',creating:'Creating the questions…',
 yourGame:'✨ Your LevelYou',previewHeading1:'This is how their LevelYou could start',previewDesc1:'This preview contains one question.',previewHeading5:'Game preview',previewDesc5:'Review the 5 questions before continuing.',
 questionLabel:'Question',answer1:'Answer 1',answer2:'Answer 2',answer3:'Answer 3',correctAnswer:'Correct answer',saveChanges:'Save changes',wantLevelYou:'I want my LevelYou · €14.90',editQuestion:'Edit question and answers',editMemories:'Edit memories',
 earlyAccess:'Secure payment: your LevelYou activates automatically when Stripe confirms payment.',footer:'Personalized gifts',
@@ -467,22 +474,22 @@ escape:'A special getaway',work:'A work meeting',ordinary:'An ordinary day',dinn
 
 const UX={
 es:{
- choose5Title:'Selecciona primero tus 5 fotos',choose5Desc:'Elige las cinco imágenes de una vez. Después podrás revisar y describir cada recuerdo, uno a uno.',batchPicker:'📷 Seleccionar 5 fotos',selectedCount:'{n} de 5 fotos seleccionadas',clearSelection:'Cambiar selección',continueEdit:'Continuar y editar recuerdos',needFive:'Selecciona exactamente 5 fotos para continuar.',
- editMemoryTitle:'Describe cada recuerdo',editMemoryDesc:'Revisa las fotos una a una y explica brevemente qué representa cada momento.',replacePhoto:'Cambiar esta foto',backToPhotos:'← Volver a las 5 fotos',prevMemory:'← Recuerdo anterior',nextMemory:'Siguiente recuerdo →',generateFull:'Crear las 5 preguntas',
+ choose5Title:'Elige las 5 fotos del juego',choose5Desc:'Selecciona las cinco fotos. Después escribirás directamente una pregunta para cada una. Si te bloqueas, la IA te ayuda.',batchPicker:'📷 Seleccionar 5 fotos',selectedCount:'{n} de 5 fotos seleccionadas',clearSelection:'Cambiar selección',continueEdit:'Crear las preguntas →',needFive:'Selecciona exactamente 5 fotos para continuar.',
+ editMemoryTitle:'Escribe la pregunta',editMemoryDesc:'Hazla personal, divertida o imposible de entender para cualquiera que no conozca la historia.',replacePhoto:'Cambiar esta foto',backToPhotos:'← Volver a las 5 fotos',prevMemory:'← Recuerdo anterior',nextMemory:'Siguiente recuerdo →',generateFull:'Crear las 5 preguntas',
  previewPhotoPH:'📷 Toca aquí para elegir una foto',previewContextPH:'Ej. Nuestro viaje a Mallorca, una cena especial, un día con amigos...',
  qBirthday:'{name}, ¿qué celebrábamos en este recuerdo?',birthday:'Un cumpleaños especial',holiday:'Un día de vacaciones',
  qConcert:'{name}, ¿qué tipo de momento era este?',concert:'Un concierto o espectáculo',quietPlan:'Un plan tranquilo'
 },
 ca:{
- choose5Title:'Selecciona primer les 5 fotos',choose5Desc:'Tria les cinc imatges de cop. Després podràs revisar i descriure cada record, un per un.',batchPicker:'📷 Seleccionar 5 fotos',selectedCount:'{n} de 5 fotos seleccionades',clearSelection:'Canviar selecció',continueEdit:'Continuar i editar records',needFive:'Selecciona exactament 5 fotos per continuar.',
- editMemoryTitle:'Descriu cada record',editMemoryDesc:'Revisa les fotos una per una i explica breument què representa cada moment.',replacePhoto:'Canviar aquesta foto',backToPhotos:'← Tornar a les 5 fotos',prevMemory:'← Record anterior',nextMemory:'Record següent →',generateFull:'Crear les 5 preguntes',
+ choose5Title:'Tria les 5 fotos del joc',choose5Desc:'Selecciona les cinc fotos. Després escriuràs directament una pregunta per a cadascuna. Si et bloqueges, la IA t’ajuda.',batchPicker:'📷 Seleccionar 5 fotos',selectedCount:'{n} de 5 fotos seleccionades',clearSelection:'Canviar selecció',continueEdit:'Crear les preguntes →',needFive:'Selecciona exactament 5 fotos per continuar.',
+ editMemoryTitle:'Escriu la pregunta',editMemoryDesc:'Fes-la personal, divertida o impossible d’entendre per a qui no conegui la història.',replacePhoto:'Canviar aquesta foto',backToPhotos:'← Tornar a les 5 fotos',prevMemory:'← Record anterior',nextMemory:'Record següent →',generateFull:'Revisar el meu LevelYou →',
  previewPhotoPH:'📷 Toca aquí per triar una foto',previewContextPH:'Ex. El nostre viatge a Mallorca, un sopar especial, un dia amb amics...',
  qBirthday:'{name}, què celebràvem en aquest record?',birthday:'Un aniversari especial',holiday:'Un dia de vacances',
  qConcert:'{name}, quin tipus de moment era aquest?',concert:'Un concert o espectacle',quietPlan:'Un pla tranquil'
 },
 en:{
- choose5Title:'Select your 5 photos first',choose5Desc:'Choose all five images at once. Then review and describe each memory, one by one.',batchPicker:'📷 Select 5 photos',selectedCount:'{n} of 5 photos selected',clearSelection:'Change selection',continueEdit:'Continue and edit memories',needFive:'Select exactly 5 photos to continue.',
- editMemoryTitle:'Describe each memory',editMemoryDesc:'Review the photos one by one and briefly explain what each moment represents.',replacePhoto:'Change this photo',backToPhotos:'← Back to the 5 photos',prevMemory:'← Previous memory',nextMemory:'Next memory →',generateFull:'Create the 5 questions',
+ choose5Title:'Choose the 5 game photos',choose5Desc:'Choose the five photos. Then write one question for each. If you get stuck, AI can help.',batchPicker:'📷 Select 5 photos',selectedCount:'{n} of 5 photos selected',clearSelection:'Change selection',continueEdit:'Create the questions →',needFive:'Select exactly 5 photos to continue.',
+ editMemoryTitle:'Write the question',editMemoryDesc:'Make it personal, funny or impossible to understand unless you know the story.',replacePhoto:'Change this photo',backToPhotos:'← Back to the 5 photos',prevMemory:'← Previous memory',nextMemory:'Next memory →',generateFull:'Create the 5 questions',
  previewPhotoPH:'📷 Tap here to choose a photo',previewContextPH:'e.g. Our trip to Mallorca, a special dinner, a day with friends...',
  qBirthday:'{name}, what were we celebrating in this memory?',birthday:'A special birthday',holiday:'A day on holiday',
  qConcert:'{name}, what kind of moment was this?',concert:'A concert or show',quietPlan:'A quiet moment'
@@ -494,25 +501,25 @@ es:{
  premiumTag:'Regalo digital personalizado',premiumHero:'Cinco recuerdos. Un juego hecho para esa persona. Un final para guardar.',premiumSub:'Elige 5 fotos. LevelYou las convierte en preguntas, momentos y un vídeo final que solo puede pertenecerle a esa persona.',
  premiumPromise:'No regalas un objeto. Regalas cinco momentos que vuelven a pasar.',oneTime:'Pago único',secureStripe:'✓ Pago seguro con Stripe',privatePhotos:'✓ Fotos privadas',noApp:'✓ Sin instalar nada',
  fullBtnPremium:'Crear su LevelYou · 14,90 €',previewBtnPremium:'Ver una muestra con 1 foto',includedTitle:'Tu LevelYou incluye',howItWorks:'La experiencia',
- storyTitle:'Tú eliges los recuerdos. LevelYou construye la sorpresa.',storyText:'La creación está guiada de principio a fin y puedes cambiar cada sugerencia antes de pagar.',
- storyStep1:'Elige 5 fotos especiales',storyStep2:'Revisa tono, recuerdos y dedicatoria',storyStep3:'Ve el juego antes de terminar',
- languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personaliza',journeyPersonalizeDesc:'Tono y recuerdos',journeyReview:'Revisa',journeyReviewDesc:'Juego final',reviewKicker:'Último vistazo antes de terminar',resumeKicker:'Tu LevelYou sigue guardado',resumeTitle:'No has perdido nada.',resumeText:'Tus recuerdos ya están preparados. Puedes volver al pago sin subir las fotos ni crear el juego otra vez.',resumePayment:'Volver al pago',restartFromCancel:'Empezar otro LevelYou'
+ storyTitle:'Tú eliges los recuerdos. LevelYou construye la sorpresa.',storyText:'Cinco fotos, cinco preguntas. Tú pones la historia; LevelYou te ayuda si la necesitas.',
+ storyStep1:'Elige 5 fotos especiales',storyStep2:'Escribe las preguntas o pide una sugerencia',storyStep3:'Ve el juego antes de terminar',
+ languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personaliza',journeyPersonalizeDesc:'5 preguntas',journeyReview:'Revisa',journeyReviewDesc:'Juego final',reviewKicker:'Último vistazo antes de terminar',resumeKicker:'Tu LevelYou sigue guardado',resumeTitle:'No has perdido nada.',resumeText:'Tus recuerdos ya están preparados. Puedes volver al pago sin subir las fotos ni crear el juego otra vez.',resumePayment:'Volver al pago',restartFromCancel:'Empezar otro LevelYou'
 },
 ca:{
  premiumTag:'Regal digital personalitzat',premiumHero:'Cinc records. Un joc fet per a aquella persona. Un final per guardar.',premiumSub:'Tria 5 fotos. LevelYou les converteix en preguntes, moments i un vídeo final que només pot pertànyer a aquella persona.',
  premiumPromise:'No regales un objecte. Regales cinc moments que tornen a passar.',oneTime:'Pagament únic',secureStripe:'✓ Pagament segur amb Stripe',privatePhotos:'✓ Fotos privades',noApp:'✓ Sense instal·lar res',
  fullBtnPremium:'Crea el seu LevelYou · 14,90 €',previewBtnPremium:'Veure una mostra amb 1 foto',includedTitle:'El teu LevelYou inclou',howItWorks:'L’experiència',
- storyTitle:'Tu tries els records. LevelYou construeix la sorpresa.',storyText:'La creació està guiada de principi a fi i pots canviar cada suggeriment abans de pagar.',
- storyStep1:'Tria 5 fotos especials',storyStep2:'Revisa to, records i dedicatòria',storyStep3:'Mira el joc abans d’acabar',
- languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personalitza',journeyPersonalizeDesc:'To i records',journeyReview:'Revisa',journeyReviewDesc:'Joc final',reviewKicker:'Últim cop d’ull abans d’acabar',resumeKicker:'El teu LevelYou continua guardat',resumeTitle:'No has perdut res.',resumeText:'Els teus records ja estan preparats. Pots tornar al pagament sense pujar les fotos ni crear el joc de nou.',resumePayment:'Tornar al pagament',restartFromCancel:'Començar un altre LevelYou'
+ storyTitle:'Tu tries els records. LevelYou construeix la sorpresa.',storyText:'Cinc fotos, cinc preguntes. Tu poses la història; LevelYou t’ajuda si ho necessites.',
+ storyStep1:'Tria 5 fotos especials',storyStep2:'Escriu les preguntes o demana un suggeriment',storyStep3:'Mira el joc abans d’acabar',
+ languageLabel:'IDIOMA',journeyCreate:'Crea',journeyCreateDesc:'5 fotos',journeyPersonalize:'Personalitza',journeyPersonalizeDesc:'5 preguntes',journeyReview:'Revisa',journeyReviewDesc:'Joc final',reviewKicker:'Últim cop d’ull abans d’acabar',resumeKicker:'El teu LevelYou continua guardat',resumeTitle:'No has perdut res.',resumeText:'Els teus records ja estan preparats. Pots tornar al pagament sense pujar les fotos ni crear el joc de nou.',resumePayment:'Tornar al pagament',restartFromCancel:'Començar un altre LevelYou'
 },
 en:{
  premiumTag:'Personalized digital gift',premiumHero:'Five memories. A game made for them. A final moment to keep.',premiumSub:'Choose 5 photos. LevelYou turns them into questions, moments and a final video that could only belong to that person.',
  premiumPromise:'You are not giving an object. You are giving five moments another life.',oneTime:'One-time payment',secureStripe:'✓ Secure Stripe payment',privatePhotos:'✓ Private photos',noApp:'✓ No app required',
  fullBtnPremium:'Create their LevelYou · €14.90',previewBtnPremium:'See a 1-photo sample',includedTitle:'Your LevelYou includes',howItWorks:'The experience',
- storyTitle:'You choose the memories. LevelYou builds the surprise.',storyText:'Creation is guided from start to finish, and you can change every suggestion before paying.',
- storyStep1:'Choose 5 special photos',storyStep2:'Review tone, memories and dedication',storyStep3:'Preview the game before finishing',
- languageLabel:'LANGUAGE',journeyCreate:'Create',journeyCreateDesc:'5 photos',journeyPersonalize:'Personalize',journeyPersonalizeDesc:'Tone and memories',journeyReview:'Review',journeyReviewDesc:'Final game',reviewKicker:'One last look before finishing',resumeKicker:'Your LevelYou is still saved',resumeTitle:'Nothing has been lost.',resumeText:'Your memories are already prepared. You can return to payment without uploading the photos or creating the game again.',resumePayment:'Return to payment',restartFromCancel:'Start another LevelYou'
+ storyTitle:'You choose the memories. LevelYou builds the surprise.',storyText:'Five photos, five questions. You bring the story; LevelYou helps when you need it.',
+ storyStep1:'Choose 5 special photos',storyStep2:'Write the questions or ask for a suggestion',storyStep3:'Preview the game before finishing',
+ languageLabel:'LANGUAGE',journeyCreate:'Create',journeyCreateDesc:'5 photos',journeyPersonalize:'Personalize',journeyPersonalizeDesc:'5 questions',journeyReview:'Review',journeyReviewDesc:'Final game',reviewKicker:'One last look before finishing',resumeKicker:'Your LevelYou is still saved',resumeTitle:'Nothing has been lost.',resumeText:'Your memories are already prepared. You can return to payment without uploading the photos or creating the game again.',resumePayment:'Return to payment',restartFromCancel:'Start another LevelYou'
 }
 };
 
