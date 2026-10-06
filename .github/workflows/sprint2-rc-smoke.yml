@@ -1,0 +1,48 @@
+name: Sprint 2 RC Smoke
+
+on:
+  push:
+    branches:
+      - sprint2-premium-experience
+  workflow_dispatch:
+
+jobs:
+  rc-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify public Sprint 2.4 RC
+        run: |
+          python - <<'PY'
+          import time, urllib.request, sys
+
+          base="https://levelyougift.github.io/levelyou/qa/sprint2-rc/"
+          expected='data-levelyou-build="2026-10-06-sprint2-fast-2.4-rc1"'
+          html=None
+          last=None
+
+          for _ in range(18):
+              try:
+                  with urllib.request.urlopen(base, timeout=20) as r:
+                      body=r.read().decode("utf-8")
+                      if r.status==200 and expected in body and "smart-fast-sprint2.js?v=2.4-rc1" in body and "smart-checkout-sprint2.js?v=2.4-rc1" in body:
+                          html=body
+                          break
+                      last=f"status={r.status}, build={expected in body}"
+              except Exception as e:
+                  last=repr(e)
+              time.sleep(5)
+
+          if html is None:
+              raise SystemExit("RC not propagated: "+str(last))
+
+          for path in ("smart-fast-sprint2.js?v=2.4-rc1","smart-checkout-sprint2.js?v=2.4-rc1","play.html"):
+              with urllib.request.urlopen(base+path, timeout=20) as r:
+                  if r.status != 200:
+                      raise SystemExit(f"{path}: HTTP {r.status}")
+
+          if 'id="qaFinalBtn"' not in html:
+              raise SystemExit("QA final-video button missing")
+
+          print("Sprint 2.4 public RC smoke: PASS")
+          PY
