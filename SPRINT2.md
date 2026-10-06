@@ -252,26 +252,27 @@ Rollback checkpoint after viability hardening:
 This checkpoint is still not a production-release approval. Real-device and paid-flow acceptance remain launch gates.
 
 
-## Staging ready — 2026-10-06
+## Browser-validated QA release candidate — 2026-10-06
 
-A non-production Sprint 2 staging surface is now available through the existing Supabase project:
+The initial Supabase Edge Function HTML preview was rejected because hosted Edge Functions without a custom domain serve HTML responses as plain text in browsers. It is no longer the acceptance URL.
 
-`https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview`
+The valid Sprint 2 QA release candidate is now served as isolated static files through the existing GitHub Pages site:
 
-Supporting staging functions:
-- `sprint2-preview` — serves the exact Sprint 2 creator/player build with noindex/no-store headers.
-- `checkout-sprint2-preview` — preserves Sprint 2 player/cancel routing during end-to-end QA.
+`https://levelyougift.github.io/levelyou/qa/sprint2-rc/`
 
-Production GitHub Pages / `main` remains untouched.
+QA assets live only under `main/qa/sprint2-rc/`. The production root `main/index.html` and `main/play.html` remain byte-for-byte unchanged from before Sprint 2 QA.
 
-GitHub Actions run `37514064928`, attempt 2, passed all steps including:
-- JS syntax;
-- duplicate-ID checks;
-- critical wiring;
-- live checkout / Smart Memory health;
-- Sprint 2 preview health;
-- verification that staging serves the Sprint 2 build and staging checkout wiring.
+Supporting QA backend:
+- `checkout-sprint2-preview` — routes Stripe success/cancel to the isolated QA Creator/Player.
+- production `smart-memory`, `super-api`, `get-game-sprint1` and signed Stripe webhook remain the functional backend baseline.
+
+Automated verification:
+- Sprint 2 static QA passes against the GitHub Pages RC, including HTML content type, build marker, JS syntax, duplicate IDs, critical wiring and live endpoint health.
+- Chromium browser QA run `37519185605` completed successfully.
+- Browser QA covers ES/CA/EN flags and copy, both landing CTAs, one-photo demo, five-photo flow, clear/reselect, Smart Creator mocked responses, memory navigation/editing, dedication, review navigation, checkout preparation with mocked order/upload/payment, cancellation recovery, payment resume, recipient Player, correct/wrong answers, sharing, replay and final-video UI controls.
+- Real Stripe payment is intentionally not executed by automated QA.
+- Real iPad/iPhone MediaRecorder/share-sheet behavior remains a physical-device acceptance gate.
 
 Real-device acceptance procedure is documented in `QA_IPAD_SPRINT2.md`.
 
-**Release policy:** no further architecture or premium feature expansion before real-device acceptance unless it fixes a blocking defect.
+**Release policy:** no promotion of Sprint 2 to the production root until the physical iPad/iPhone acceptance test is completed.
