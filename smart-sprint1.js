@@ -100,16 +100,25 @@ async function compact(u){
 }
 
 async function api(payload,timeoutMs){
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
- try{
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok||!Array.isArray(d.memories))throw new Error(d.error||'AI');
-  return d;
- }catch(e){
-  if(e?.name==='AbortError')throw new Error('AI_TIMEOUT');
-  throw e;
- }finally{clearTimeout(timer)}
+ let lastError=null;
+ for(let attempt=0;attempt<2;attempt++){
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
+   try{
+     const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+     const d=await r.json().catch(()=>({}));
+     if(r.ok&&Array.isArray(d.memories))return d;
+     const retryable=r.status===429||r.status>=500;
+     const err=new Error(d.error||'AI');
+     if(!retryable||attempt===1)throw err;
+     lastError=err;
+   }catch(e){
+     if(e?.name==='AbortError')throw new Error('AI_TIMEOUT');
+     lastError=e;
+     if(attempt===1)throw e;
+   }finally{clearTimeout(timer)}
+   await new Promise(r=>setTimeout(r,700));
+ }
+ throw lastError||new Error('AI');
 }
 
 async function smartAnalyze(images,hints,id){
