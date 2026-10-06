@@ -11,10 +11,10 @@
 <script>
 (async()=>{
   try{
-    const base='https://raw.githubusercontent.com/levelyougift/levelyou/v2-sprint1-smart-creator/';
+    const base='https://raw.githubusercontent.com/levelyougift/levelyou/ef17c7289f6f2e7ea64435751967734d9f4df930/';
     const [h,j]=await Promise.all([
-      fetch(base+'index.html?qa=20261006',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('index');return r.text()}),
-      fetch(base+'smart-sprint1.js?qa=20261006',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('smart');return r.text()})
+      fetch(base+'index.html',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('index');return r.text()}),
+      fetch(base+'smart-sprint1.js',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('smart');return r.text()})
     ]);
     const lock=`
 (function(){
