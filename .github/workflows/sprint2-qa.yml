@@ -52,10 +52,19 @@ jobs:
           urls = [
             "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint1",
             "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/smart-memory",
+            "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview?health=1",
           ]
           for url in urls:
               with urllib.request.urlopen(url, timeout=20) as r:
                   body = json.loads(r.read().decode("utf-8"))
                   if not body.get("ok"):
                       raise SystemExit(f"Health check failed: {url}: {body}")
+
+          preview = "https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/sprint2-preview"
+          with urllib.request.urlopen(preview, timeout=20) as r:
+              html = r.read().decode("utf-8")
+              if 'data-levelyou-build="2026-10-06-sprint2-premium-2.1"' not in html:
+                  raise SystemExit("Preview is not serving the Sprint 2 build")
+              if "checkout-sprint2-preview" not in html:
+                  raise SystemExit("Preview is not wired to the staging checkout")
           PY
