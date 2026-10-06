@@ -7,6 +7,7 @@ on:
       - "sprint1.html"
       - "smart-sprint1.js"
       - "qa-lock-sprint1.js"
+      - "play-sprint1.html"
       - ".github/workflows/qa-sprint1.yml"
   workflow_dispatch:
 
@@ -35,6 +36,10 @@ jobs:
           curl -fsS "$base/qa-lock-sprint1.js?qa=${GITHUB_SHA}" -o /tmp/qa.js
           node --check /tmp/smart.js
           node --check /tmp/qa.js
+          curl -fsS "$base/play-sprint1.html?qa=${GITHUB_SHA}" -o /tmp/play-sprint1.html
+          grep -q 'get-game-sprint1' /tmp/play-sprint1.html
+          grep -q 'DATA.dedication' /tmp/play-sprint1.html
+          grep -q 'Un mensaje para ti' /tmp/play-sprint1.html
 
       - name: Verify Smart Memory health
         shell: bash
@@ -49,6 +54,22 @@ jobs:
           assert d.get('configured') is True, d
           assert d.get('model') == 'gpt-5.6-luna', d
           print('health ok:', d)
+          PY
+
+      - name: Verify Sprint 1 checkout routing
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint1"
+          curl -fsS -H 'Origin: https://levelyougift.github.io' "$url" -o /tmp/checkout-health.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/checkout-health.json'))
+          assert d.get('ok') is True, d
+          assert d.get('stripeConfigured') is True, d
+          assert d.get('successTarget','').endswith('/levelyou/play-sprint1.html'), d
+          assert d.get('cancelTarget','').endswith('/levelyou/sprint1.html'), d
+          print('checkout routing ok')
           PY
 
       - name: Verify real AI image analysis
