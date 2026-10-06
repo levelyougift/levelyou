@@ -132,3 +132,49 @@ Sprint 3 development is complete when:
 9. physical iPad/iPhone acceptance verifies photo picker, touch framing, video generation and save/share.
 
 Production promotion remains a separate release decision.
+
+
+## Current implementation checkpoint — 2026-10-06
+
+Implemented on `sprint3-video-memories`:
+
+- optional Video Memories step after review and before checkout;
+- 0–10 extra video-only photos;
+- reorder, remove and manual framing;
+- separate Sprint 3 checkout client;
+- isolated Sprint 3 order API and paid-game API;
+- isolated Sprint 3 Stripe preview checkout;
+- final-video sequence combines 5 game memories + optional extra memories;
+- starting a new full gift clears previous extra-photo state.
+
+Backend preview functions active:
+
+- `super-api-sprint3` — version 3;
+- `get-game-sprint3` — version 1;
+- `checkout-sprint3-preview` — version 1.
+
+Static validation completed:
+
+- external JS syntax: PASS;
+- creator inline JS syntax: PASS;
+- player inline JS syntax: PASS;
+- duplicate HTML IDs: none;
+- frozen Sprint 2 base remains `0d98a87dea21d31d33d223d75f7475dec03bc92f`.
+
+Isolated public QA assets have been published under:
+
+`https://levelyougift.github.io/levelyou/qa/sprint3-rc/`
+
+Production root files on `main` were not replaced.
+
+Rollback / review checkpoint:
+
+`checkpoint/sprint3-video-memories-rc1`
+
+Remaining release gate:
+
+- public-route smoke once GitHub Pages deployment is visible;
+- physical iPad/iPhone acceptance using `QA_IPAD_SPRINT3.md`;
+- one controlled paid-path test if payment certification is desired.
+
+Sprint 3 is implemented as an RC, not yet production-promoted.
