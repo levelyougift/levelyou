@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LevelYou Sprint 1 QA</title>
+<style>body{margin:0;background:#0e1020;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:grid;place-items:center;min-height:100vh}.box{text-align:center;padding:30px}.spin{width:32px;height:32px;border:3px solid #ffffff22;border-top-color:#69e1cf;border-radius:50%;margin:0 auto 14px;animation:s .8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}</style>
+</head>
+<body>
+<div class="box"><div class="spin"></div><strong>Cargando LevelYou Sprint 1…</strong></div>
+<script>
+(async()=>{
+  try{
+    const base='https://raw.githubusercontent.com/levelyougift/levelyou/v2-sprint1-smart-creator/';
+    const [h,j]=await Promise.all([
+      fetch(base+'index.html?qa=20261006',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('index');return r.text()}),
+      fetch(base+'smart-sprint1.js?qa=20261006',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('smart');return r.text()})
+    ]);
+    const lock=`
+(function(){
+ const labels={
+ es:{btn:'Sprint 1 · vista previa (pago desactivado)',msg:'Vista previa de Sprint 1: el pago está desactivado.',notice:'Modo prueba: no se realizará ningún cargo.'},
+ ca:{btn:'Sprint 1 · vista prèvia (pagament desactivat)',msg:'Vista prèvia de Sprint 1: el pagament està desactivat.',notice:'Mode prova: no es farà cap càrrec.'},
+ en:{btn:'Sprint 1 · preview (payment disabled)',msg:'Sprint 1 preview: payment is disabled.',notice:'Test mode: you will not be charged.'}
+ };
+ function apply(){
+   const x=labels[window.lang]||labels.es,b=document.querySelector('#interestBtn'),n=document.querySelector('[data-i18n="earlyAccess"]');
+   if(b){b.textContent=x.btn;b.onclick=()=>alert(x.msg)}
+   if(n)n.textContent=x.notice;
+ }
+ const old=window.changeLanguage;
+ window.changeLanguage=function(v){old(v);setTimeout(apply,0)};
+ apply();
+})();`;
+    const injection='<script>'+j+'\n'+lock+'<\\/script>';
+    const out=h.replace('</body>',injection+'</body>').replace('data-levelyou-build="2026-10-05-r8"','data-levelyou-build="2026-10-06-sprint1-qa2"');
+    document.open();document.write(out);document.close();
+  }catch(e){
+    console.error(e);
+    document.body.innerHTML='<div class="box"><h2>No hemos podido cargar la preview</h2><p>Recarga la página e inténtalo de nuevo.</p></div>';
+  }
+})();
+</script>
+</body>
+</html>
