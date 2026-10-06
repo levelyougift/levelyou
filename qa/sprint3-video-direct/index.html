@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1020">
+<meta name="robots" content="noindex,nofollow">
+<meta name="levelyou-build" content="sprint3-direct-video-qa-v1">
+<title>LevelYou — Test directo de vídeo</title>
+<style>
+:root{--bg:#090b15;--card:#121625;--muted:#9ea6ba;--txt:#fbfbfd;--accent:#7de4d3;--accent2:#9eafff;--warm:#f3d7a1;--line:rgba(255,255,255,.10)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transparent 31%),radial-gradient(circle at 92% 10%,rgba(158,175,255,.16),transparent 32%),linear-gradient(180deg,#090b15,#0b0e19 48%,#090b15);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:680px;margin:auto;padding:20px 16px 48px}.head{display:flex;justify-content:space-between;align-items:center;margin:3px 0 20px}.brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:800;letter-spacing:.14em}.dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 26px rgba(125,228,211,.7)}.pill{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--warm);border:1px solid rgba(243,215,161,.2);border-radius:999px;padding:7px 9px;background:rgba(243,215,161,.05)}
+.card{background:linear-gradient(180deg,rgba(23,28,45,.94),rgba(14,18,31,.96));border:1px solid var(--line);border-radius:28px;box-shadow:0 26px 80px rgba(0,0,0,.35);padding:24px}.eyebrow{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--warm);margin-bottom:10px}h1{font-size:34px;line-height:1.05;letter-spacing:-.04em;margin:0 0 12px}p{color:#b4bdcf;line-height:1.5}.small{font-size:13px;color:var(--muted)}label{display:block;margin:16px 0 8px;font-size:13px;font-weight:800;color:#c9cfdb}
+input,textarea{width:100%;border:1px solid var(--line);background:#0d111d;color:#fff;border-radius:15px;padding:13px 14px;font:inherit}textarea{resize:vertical;min-height:90px}.upload{position:relative;display:flex;min-height:100px;align-items:center;justify-content:center;text-align:center;border:1px dashed rgba(125,228,211,.32);border-radius:18px;background:rgba(255,255,255,.025);cursor:pointer;padding:18px}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}.shot{aspect-ratio:4/3;border-radius:13px;overflow:hidden;background:#080b14;border:1px solid var(--line);position:relative}.shot img{width:100%;height:100%;object-fit:contain;display:block}.shot span{position:absolute;left:7px;bottom:7px;background:rgba(0,0,0,.55);padding:4px 6px;border-radius:999px;font-size:10px;font-weight:800}
+.btn{appearance:none;border:0;border-radius:18px;padding:15px 18px;width:100%;min-height:56px;font-size:16px;font-weight:800;cursor:pointer;margin-top:12px;background:linear-gradient(135deg,#8be9da,#d7f7ef);color:#0d1720;box-shadow:0 14px 38px rgba(125,228,211,.14)}.btn.secondary{background:rgba(255,255,255,.055);color:#fff;border:1px solid var(--line);box-shadow:none}.btn:disabled{opacity:.5;cursor:default}
+.status{min-height:22px;margin-top:12px;text-align:center;font-size:13px;color:var(--muted)}video{display:block;width:100%;max-height:620px;background:#05060c;border-radius:22px;margin-top:16px;border:1px solid var(--line);box-shadow:0 18px 55px rgba(0,0,0,.28)}.hidden{display:none!important}.footer{text-align:center;color:#667087;font-size:12px;margin-top:24px}
+@media(max-width:520px){h1{font-size:30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><div class="brand"><span class="dot"></span> LEVELYOU</div><span class="pill">QA · vídeo directo</span></div>
+  <div class="card">
+    <div class="eyebrow">Sprint 3 · prueba rápida</div>
+    <h1>Prueba el vídeo sin crear el juego.</h1>
+    <p>Selecciona entre 1 y 15 fotos y generaremos directamente el vídeo final. No hay preguntas, IA, checkout ni pago.</p>
+
+    <label>Nombre de la persona <span class="small">(opcional)</span></label>
+    <input id="name" maxlength="28" placeholder="Ej. Joaquín">
+
+    <label>Mensaje final <span class="small">(opcional)</span></label>
+    <textarea id="dedication" maxlength="180" placeholder="Ej. ¡Feliz cumpleaños! Que nunca falten momentos así."></textarea>
+
+    <label class="upload">
+      <div><strong>📷 Elegir fotos</strong><div class="small" style="margin-top:6px">1–15 fotos · puedes seleccionarlas todas de una vez</div></div>
+      <input id="photos" type="file" accept="image/*" multiple>
+    </label>
+
+    <div class="small" id="count" style="margin-top:10px">0 fotos seleccionadas</div>
+    <div class="grid" id="grid"></div>
+
+    <button class="btn" id="generate" disabled>Ver el vídeo ahora</button>
+    <div class="status" id="status"></div>
+    <video id="preview" class="hidden" controls playsinline></video>
+    <button class="btn secondary hidden" id="save">Guardar / compartir vídeo</button>
+    <button class="btn secondary hidden" id="reset">Probar otras fotos</button>
+  </div>
+  <canvas id="canvas" width="720" height="1280" class="hidden"></canvas>
+  <div class="footer">LevelYou · herramienta QA aislada</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let items=[],videoBlob=null,videoFile=null;
+const waitFrame=()=>new Promise(requestAnimationFrame);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+function readFile(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result||''));r.onerror=reject;r.readAsDataURL(file)})}
+async function choose(files){
+  const selected=[...files].filter(f=>f.type.startsWith('image/')).slice(0,15);
+  items=[];
+  for(const f of selected)items.push({src:await readFile(f),framing:{zoom:1,x:0,y:0}});
+  renderSelection();
+}
+function renderSelection(){
+  $('count').textContent=items.length+' foto'+(items.length===1?'':'s')+' seleccionada'+(items.length===1?'':'s');
+  $('grid').innerHTML=items.map((x,i)=>'<div class="shot"><img src="'+x.src+'" alt=""><span>'+(i+1)+'</span></div>').join('');
+  $('generate').disabled=items.length<1;
+  $('preview').classList.add('hidden');$('save').classList.add('hidden');$('reset').classList.add('hidden');$('status').textContent='';
+}
+$('photos').addEventListener('change',async e=>{await choose(e.target.files||[]);e.target.value=''});
+
+function safeFraming(f){return{zoom:Math.max(1,Math.min(2.5,Number(f?.zoom)||1)),x:Math.max(-1,Math.min(1,Number(f?.x)||0)),y:Math.max(-1,Math.min(1,Number(f?.y)||0))}}
+async function imgFromData(url){return await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=url})}
+function roundedRect(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()}
+function drawContained(ctx,img,x,y,w,h,framing){
+ const f=safeFraming(framing),base=Math.min(w/img.width,h/img.height),dw=img.width*base*f.zoom,dh=img.height*base*f.zoom;
+ const maxPanX=Math.max(0,(dw-w)/2),maxPanY=Math.max(0,(dh-h)/2),px=f.x*maxPanX,py=f.y*maxPanY;
+ ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.fillStyle='#080b14';ctx.fillRect(x,y,w,h);ctx.drawImage(img,x+(w-dw)/2+px,y+(h-dh)/2+py,dw,dh);ctx.restore();
+}
+function drawVideoFrame(ctx,img,framing){
+ const x=52,y=235,w=616,h=462;ctx.save();ctx.fillStyle='rgba(255,255,255,.055)';roundedRect(ctx,x-6,y-6,w+12,h+12,24);ctx.fill();drawContained(ctx,img,x,y,w,h,framing);ctx.restore();
+}
+function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
+ const words=String(text||'').split(/\s+/);let line='',lines=[];
+ for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;if(lines.length>=maxLines-1)break}else line=test}
+ if(line&&lines.length<maxLines)lines.push(line);lines.forEach((l,n)=>ctx.fillText(l,x,y+n*lineHeight));
+}
+function textBlock(ctx,title,sub){
+ ctx.save();const g=ctx.createLinearGradient(0,650,0,1280);g.addColorStop(0,'rgba(9,11,21,0)');g.addColorStop(.28,'rgba(9,11,21,.26)');g.addColorStop(.62,'rgba(9,11,21,.86)');g.addColorStop(1,'rgba(9,11,21,.99)');ctx.fillStyle=g;ctx.fillRect(0,610,720,670);
+ ctx.fillStyle='#7de4d3';ctx.beginPath();ctx.arc(58,956,6,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f3d7a1';ctx.font='800 20px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(String(title||'').toUpperCase(),78,963);
+ if(sub){ctx.fillStyle='#fff';ctx.font='800 38px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrap(ctx,sub,52,1032,616,48,4)}
+ ctx.fillStyle='rgba(255,255,255,.68)';ctx.font='700 18px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',52,1225);ctx.restore();
+}
+function background(ctx){const g=ctx.createLinearGradient(0,0,720,1280);g.addColorStop(0,'#090b15');g.addColorStop(.56,'#11182a');g.addColorStop(1,'#090b15');ctx.fillStyle=g;ctx.fillRect(0,0,720,1280)}
+
+async function generateVideo(){
+ const btn=$('generate'),status=$('status');btn.disabled=true;status.textContent='Preparando el vídeo…';$('preview').classList.add('hidden');$('save').classList.add('hidden');$('reset').classList.add('hidden');videoBlob=null;videoFile=null;
+ try{
+   const canvas=$('canvas');
+   if(!canvas.captureStream||!window.MediaRecorder)throw new Error('unsupported');
+   const mime=['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm'].find(x=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(x))||'';
+   const stream=canvas.captureStream(24);
+   const rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:4500000}:{videoBitsPerSecond:4500000});
+   const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+   const stopped=new Promise((resolve,reject)=>{rec.onstop=resolve;rec.onerror=()=>reject(new Error('record'))});
+   rec.start(250);
+   const ctx=canvas.getContext('2d'),imgs=[];for(const item of items)imgs.push(await imgFromData(item.src));
+   const name=$('name').value.trim();
+
+   const introStart=performance.now(),introDur=1200;
+   while(performance.now()-introStart<introDur){
+     const p=Math.min(1,(performance.now()-introStart)/introDur);background(ctx);ctx.globalAlpha=Math.min(1,p/.25);
+     ctx.fillStyle='#7de4d3';ctx.beginPath();ctx.arc(360,390,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f3d7a1';ctx.textAlign='center';ctx.font='800 20px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,455);
+     ctx.fillStyle='#fff';ctx.font='800 58px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrap(ctx,name?('Para '+name):'Tus recuerdos',70,570,580,68,2);
+     ctx.fillStyle='#b9c1d2';ctx.font='500 28px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('Un regalo hecho de recuerdos',360,735);ctx.globalAlpha=1;ctx.textAlign='left';await waitFrame();
+   }
+
+   const sampleQuestions=[
+     '¿Qué hace especial este recuerdo?',
+     '¿Cuál de estos momentos volverías a repetir mañana?',
+     'Hay fotos que no necesitan explicación.',
+     'Uno de esos recuerdos que siempre vuelve.',
+     '¿Te acuerdas de este momento?'
+   ];
+   for(let n=0;n<imgs.length;n++){
+     status.textContent='Creando recuerdo '+(n+1)+' de '+imgs.length+'…';
+     const start=performance.now(),dur=1500;
+     while(performance.now()-start<dur){
+       const p=Math.min(1,(performance.now()-start)/dur);background(ctx);
+       const fade=Math.min(1,p/.13,(1-p)/.13);ctx.globalAlpha=Math.max(.12,fade);drawVideoFrame(ctx,imgs[n],items[n].framing);ctx.globalAlpha=1;
+       textBlock(ctx,'Recuerdo '+(n+1),n<5?sampleQuestions[n]:'');await waitFrame();
+     }
+   }
+
+   const dedication=$('dedication').value.trim()||'Que nunca se olviden estos momentos.';
+   const outroStart=performance.now(),outroDur=1700;
+   while(performance.now()-outroStart<outroDur){
+     const p=Math.min(1,(performance.now()-outroStart)/outroDur);background(ctx);ctx.globalAlpha=Math.min(1,p/.25);
+     ctx.fillStyle='#f3d7a1';ctx.textAlign='center';ctx.font='800 18px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('UN MENSAJE PARA TI',360,370);
+     ctx.fillStyle='#fff';ctx.font='800 39px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrap(ctx,dedication,70,485,580,50,5);
+     ctx.fillStyle='#7de4d3';ctx.font='700 22px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,900);ctx.globalAlpha=1;ctx.textAlign='left';await waitFrame();
+   }
+
+   rec.stop();await stopped;
+   videoBlob=new Blob(chunks,{type:rec.mimeType||'video/webm'});const ext=videoBlob.type.includes('mp4')?'mp4':'webm';videoFile=new File([videoBlob],`LevelYou-video-test.${ext}`,{type:videoBlob.type});
+   $('preview').src=URL.createObjectURL(videoBlob);$('preview').classList.remove('hidden');$('save').classList.remove('hidden');$('reset').classList.remove('hidden');status.textContent='Vídeo listo.';
+ }catch(e){
+   console.error(e);status.textContent=e?.message==='unsupported'?'Este navegador no permite generar el vídeo directamente.':'No hemos podido generar el vídeo.';
+ }finally{btn.disabled=items.length<1}
+}
+$('generate').onclick=generateVideo;
+$('save').onclick=async()=>{
+ if(!videoBlob||!videoFile)return;
+ if(navigator.canShare&&navigator.share&&navigator.canShare({files:[videoFile]})){try{await navigator.share({files:[videoFile],title:'LevelYou'});return}catch(e){if(e?.name==='AbortError')return}}
+ const u=URL.createObjectURL(videoBlob),a=document.createElement('a');a.href=u;a.download=videoFile.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),15000);
+};
+$('reset').onclick=()=>{$('photos').click()};
+</script>
+</body>
+</html>
