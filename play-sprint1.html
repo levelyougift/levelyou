@@ -30,7 +30,7 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
 .giftIntro p{max-width:470px;margin:0 auto;color:#b4bdcf;line-height:1.55;font-size:15px}
 .giftIntro .btn{margin:28px auto 0;max-width:360px}
 .gameProgress{height:5px;background:rgba(255,255,255,.07);overflow:hidden}.gameProgress span{display:block;height:100%;width:20%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease}
-.photo{aspect-ratio:4/3;object-fit:contain;background:#080b14;transform-origin:center center;will-change:transform}.body{padding:20px}
+.photoViewport{width:100%;aspect-ratio:4/3;overflow:hidden;background:#080b14;position:relative}.photo{width:100%;height:100%;aspect-ratio:auto;object-fit:contain;background:#080b14;transform-origin:center center;will-change:transform;pointer-events:none;display:block}.body{padding:20px}
 .badge{background:rgba(125,228,211,.1);color:#baf5eb;border:1px solid rgba(125,228,211,.12)}
 .question{font-size:27px;letter-spacing:-.028em;line-height:1.16;margin:17px 0}
 .answer{border-radius:17px;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09);padding:15px 16px;transition:.18s ease}
@@ -99,7 +99,7 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
     <button class="btn" id="startGame">Abrir mi LevelYou</button>
   </div>
   <div id="error" class="card error hidden"><div style="font-size:48px">🎁</div><h2 id="errorTitle">No hemos podido abrir este LevelYou</h2><p id="errorText">Comprueba que el enlace sea correcto e inténtalo de nuevo.</p><button class="btn secondary" onclick="location.reload()" id="retryBtn">Reintentar</button></div>
-  <div id="game" class="card hidden"><div class="gameProgress"><span id="gameProgressBar"></span></div><img id="photo" class="photo" alt="Recuerdo LevelYou"><div class="body"><div class="top"><span class="badge" id="badge"></span><span class="count" id="count"></span></div><div class="question" id="question"></div><div id="answers"></div><div class="answerFeedback hidden" id="answerFeedback"></div><button class="btn hidden" id="next"></button></div></div>
+  <div id="game" class="card hidden"><div class="gameProgress"><span id="gameProgressBar"></span></div><div class="photoViewport"><img id="photo" class="photo" alt="Recuerdo LevelYou"></div><div class="body"><div class="top"><span class="badge" id="badge"></span><span class="count" id="count"></span></div><div class="question" id="question"></div><div id="answers"></div><div class="answerFeedback hidden" id="answerFeedback"></div><button class="btn hidden" id="next"></button></div></div>
   <div id="finish" class="card finish hidden">
     <div class="finishKicker" id="finishKicker">Tu historia, en cinco recuerdos</div>
     <div class="emoji">✨</div><h1 id="finishTitle"></h1>
