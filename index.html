@@ -161,9 +161,28 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 .fast-question-card>label:first-child{margin-top:0}
 .fast-answer-grid{display:grid;grid-template-columns:1fr;gap:4px}
 .fast-ai-btn{margin-top:16px}
-.fast-ai-panel{margin-top:12px;padding:14px;border-radius:17px;background:linear-gradient(135deg,rgba(125,228,211,.07),rgba(158,175,255,.045));border:1px solid rgba(125,228,211,.18)}
-.fast-ai-panel label{margin-top:0}
-.fast-ai-actions{display:grid;grid-template-columns:.8fr 1.2fr;gap:8px;margin-top:10px}
+.fast-ai-panel{
+ position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1000;
+ width:min(520px,calc(100vw - 32px));max-height:min(680px,calc(100dvh - 40px));overflow:auto;
+ margin:0;padding:22px;border-radius:24px;
+ background:linear-gradient(180deg,rgba(24,29,47,.99),rgba(13,17,30,.995));
+ border:1px solid rgba(255,255,255,.14);
+ box-shadow:0 0 0 100vmax rgba(3,5,12,.72),0 28px 90px rgba(0,0,0,.5);
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.fast-ai-panel.hidden{display:none!important}
+.fast-ai-title{font-size:22px;line-height:1.15;font-weight:900;letter-spacing:-.03em;margin:0 0 16px}
+.fast-ai-panel label{margin-top:14px}
+.fast-ai-panel label:first-of-type{margin-top:0}
+.fast-ai-panel textarea{min-height:112px;resize:vertical}
+.fast-ai-panel .small{margin-top:7px;line-height:1.45}
+.fast-ai-actions{display:grid;grid-template-columns:.8fr 1.2fr;gap:8px;margin-top:18px}
+body.fast-modal-open{overflow:hidden}
+@media(max-width:520px){
+ .fast-ai-panel{width:calc(100vw - 22px);max-height:calc(100dvh - 22px);padding:18px;border-radius:22px}
+ .fast-ai-title{font-size:20px}
+ .fast-ai-actions{grid-template-columns:1fr}
+}
 #fastQuestion{font-size:16px;font-weight:750}
 .fast-question-card input{min-height:48px}
 .fast-question-card select{min-height:48px}
@@ -174,7 +193,7 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
 
 </style>
 </head>
-<body data-levelyou-build="2026-10-06-sprint2-fast-2.4">
+<body data-levelyou-build="2026-10-06-sprint2-fast-2.4.1">
 <div class="wrap">
 <div class="topbar">
   <div class="brand"><span class="dot"></span> LEVELYOU</div>
@@ -318,7 +337,8 @@ input,textarea,select{background:rgba(4,7,16,.68);border-color:rgba(255,255,255,
         </select>
 
         <button type="button" class="btn secondary fast-ai-btn" id="aiAssistBtn"></button>
-        <div class="fast-ai-panel hidden" id="aiAssistPanel">
+        <div class="fast-ai-panel hidden" id="aiAssistPanel" role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
+          <div class="fast-ai-title" id="aiModalTitle"></div>
           <label id="editContextLabel"></label>
           <textarea id="editMemoryContext" rows="3" maxlength="500"></textarea>
           <div class="small" id="aiHintHelp"></div>
@@ -805,5 +825,5 @@ if (paymentStatus === 'cancelled') {
   history.replaceState({}, '', window.location.pathname);
 }
 </script>
-<script src="smart-fast-sprint2.js?v=2.4"></script><script src="smart-checkout-sprint2.js?v=2.1"></script></body>
+<script src="smart-fast-sprint2.js?v=2.4.1"></script><script src="smart-checkout-sprint2.js?v=2.1"></script></body>
 </html>
