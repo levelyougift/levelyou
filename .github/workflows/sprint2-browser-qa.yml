@@ -78,6 +78,10 @@ jobs:
             assert.equal(body.gameData.questions.length,5);
             assert.equal(body.gameData.questions[0].question,'Pregunta manual 1');
             assert.equal(body.gameData.questions[1].question,'¿Quién dijo que esto era una buena idea?');
+            assert.equal(body.gameData.memories.length,5);
+            assert.ok(body.gameData.memories[0].framing.zoom > 1.4);
+            assert.ok(Math.abs(body.gameData.memories[0].framing.x) > 0.05);
+            assert.equal(body.gameData.memories[1].framing.zoom,1);
             await route.fulfill({
               status:200,contentType:'application/json',
               body:JSON.stringify({
@@ -104,7 +108,7 @@ jobs:
 
           const response=await page.goto(base,{waitUntil:'networkidle'});
           assert.equal(response?.status(),200);
-          assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-fast-2.4.1');
+          assert.equal(await page.locator('body').getAttribute('data-levelyou-build'),'2026-10-06-sprint2-framing-2.5');
           assert.equal(await page.locator('#landing').isVisible(),true);
           assert.equal(await page.locator('#currentFlag').getAttribute('data-flag'),'es');
 
@@ -137,6 +141,25 @@ jobs:
           await page.fill('#fastA3','Respuesta C1');
           await page.selectOption('#fastCorrect','1');
           assert.equal(await page.locator('#fastDots .fast-dot').nth(0).evaluate(el=>el.classList.contains('complete')),true);
+
+          // Memory 1: manual framing (zoom + drag) persists independently from the question.
+          await page.click('#framePhotoBtn');
+          await page.waitForSelector('#frameModal:not(.hidden)');
+          assert.equal(await page.locator('#frameModal').getAttribute('role'),'dialog');
+          assert.match(await page.locator('#frameModalTitle').innerText(),/Ajusta/);
+          await page.locator('#frameZoom').evaluate(el=>{el.value='1.6';el.dispatchEvent(new Event('input',{bubbles:true}))});
+          const box=await page.locator('#frameStage').boundingBox();
+          assert.ok(box);
+          await page.mouse.move(box.x+box.width/2,box.y+box.height/2);
+          await page.mouse.down();
+          await page.mouse.move(box.x+box.width/2+50,box.y+box.height/2+20,{steps:5});
+          await page.mouse.up();
+          await page.click('#frameSaveBtn');
+          assert.equal(await page.locator('#frameModal').isVisible(),false);
+          const framing1=await page.evaluate(()=>window.levelYouFastCreator.framing()[0]);
+          assert.ok(framing1.zoom>1.5);
+          assert.ok(Math.abs(framing1.x)>0.05);
+          assert.match(await page.locator('#editMemoryImg').getAttribute('style'),/scale\(1\.6/);
 
           // Memory 2: optional AI assistant, with a personal hint and selected tone.
           await page.click('#nextMemoryBtn');
@@ -185,6 +208,9 @@ jobs:
           // Navigation by numbered dots preserves the edits.
           await page.locator('#fastDots .fast-dot').nth(0).click();
           assert.equal(await page.locator('#fastQuestion').inputValue(),'Pregunta manual 1');
+          const persistedFrame=await page.evaluate(()=>window.levelYouFastCreator.framing()[0]);
+          assert.ok(persistedFrame.zoom>1.5);
+          assert.ok(Math.abs(persistedFrame.x)>0.05);
           await page.locator('#fastDots .fast-dot').nth(4).click();
           assert.equal(await page.locator('#fastQuestion').inputValue(),'Pregunta manual 5');
 
@@ -216,6 +242,6 @@ jobs:
           assert.deepEqual(meaningfulErrors,[]);
 
           await browser.close();
-          console.log('Sprint 2.4 Fast Creator browser QA: PASS');
+          console.log('Sprint 2.5 Framing browser QA: PASS');
           JS
           node sprint24-browser-qa.mjs
