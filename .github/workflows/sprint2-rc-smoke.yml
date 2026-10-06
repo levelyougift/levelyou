@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Verify public Sprint 2.4 RC
+      - name: Verify public Sprint 2.5 RC
         run: |
           python - <<'PY'
           import time, urllib.request, sys
@@ -25,7 +25,7 @@ jobs:
               try:
                   with urllib.request.urlopen(base, timeout=20) as r:
                       body=r.read().decode("utf-8")
-                      if r.status==200 and expected in body and "smart-fast-sprint2.js?v=2.5-rc1" in body and "smart-checkout-sprint2.js?v=2.4.1-rc1" in body:
+                      if r.status==200 and expected in body and "smart-fast-sprint2.js?v=2.5-rc1" in body and "smart-checkout-sprint2.js?v=2.5-rc1" in body:
                           html=body
                           break
                       last=f"status={r.status}, build={expected in body}"
@@ -36,7 +36,7 @@ jobs:
           if html is None:
               raise SystemExit("RC not propagated: "+str(last))
 
-          for path in ("smart-fast-sprint2.js?v=2.4-rc1","smart-checkout-sprint2.js?v=2.5-rc1","play.html"):
+          for path in ("smart-fast-sprint2.js?v=2.5-rc1","smart-checkout-sprint2.js?v=2.5-rc1","play.html"):
               with urllib.request.urlopen(base+path, timeout=20) as r:
                   if r.status != 200:
                       raise SystemExit(f"{path}: HTTP {r.status}")
