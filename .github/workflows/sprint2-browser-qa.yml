@@ -212,6 +212,16 @@ jobs:
           await page.click('#generateFullBtn');
           await page.waitForSelector('#previewSection:not(.hidden)',{timeout:10000});
 
+          // RC-only final preview path.
+          assert.equal(await page.locator('#qaFinalBtn').isVisible(),true);
+          await page.click('#qaFinalBtn');
+          await page.waitForURL('**/qa/sprint2-rc/play.html?qa=1&finish=1',{timeout:10000});
+          await page.waitForSelector('#finish:not(.hidden)',{timeout:10000});
+          assert.equal(await page.locator('#memoryText').innerText(),'¡Feliz cumpleaños!');
+          assert.equal(await page.locator('#createVideo').isVisible(),true);
+          await page.goBack({waitUntil:'networkidle'});
+          await page.waitForSelector('#previewSection:not(.hidden)',{timeout:10000});
+
           // Checkout client: compression + fake uploads + fake checkout + cancel-return screen
           await page.click('#interestBtn');
           await page.waitForSelector('#paymentResume:not(.hidden)',{timeout:15000});
