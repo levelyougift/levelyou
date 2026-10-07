@@ -211,6 +211,13 @@ function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photo
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
 async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
 
+function levelYouMagicTransform(){
+ const backend=DATA?.magicTransform;
+ if(backend&&backend.status==='ready'&&backend.url)return backend;
+ const p=new URLSearchParams(location.search),u=p.get('magic_url'),idx=Number(p.get('magic_index')||2);
+ if(u&&/^https:\/\//.test(u))return{status:'ready',url:u,index:Number.isInteger(idx)?idx:2,style:'editorial_v1',qa:true};
+ return backend||null;
+}
 function magicEffectFor(index){
  const ctx=String(DATA?.items?.[index]?.context||'').toLowerCase();
  if(index===4)return 'finale';
@@ -228,12 +235,19 @@ function armMagicReveal(){
 function revealMagic(){
  const v=document.querySelector('.photoViewport');if(!v||v.classList.contains('magic-revealed'))return;
  void v.offsetWidth;v.classList.add('magic-revealed');
- const img=$('photo'),p=safeFraming(DATA?.items?.[i]?.framing),effect=magicEffectFor(i);
+ const img=$('photo'),p=safeFraming(DATA?.items?.[i]?.framing),effect=magicEffectFor(i),mt=levelYouMagicTransform();
  const factor=effect==='finale'?1.055:effect==='cinema'?1.035:effect==='art'?1.025:1.018;
- if(img)img.style.transform='scale('+(p.zoom*factor)+')';
- emitLevelYouEvent('levelyou:magic-reveal',{index:i,effect});
+ if(img){
+  img.style.transform='scale('+(p.zoom*factor)+')';
+  if(mt&&mt.status==='ready'&&mt.index===i&&mt.url){
+   const original=img.dataset.originalSrc||DATA?.items?.[i]?.photoUrl||'';
+   const swap=()=>{img.style.opacity='0';setTimeout(()=>{img.src=mt.url;img.style.opacity='1';},140)};
+   const test=new Image();test.onload=swap;test.onerror=()=>{img.src=original};test.src=mt.url;
+  }
+ }
+ emitLevelYouEvent('levelyou:magic-reveal',{index:i,effect,ai:Boolean(mt&&mt.status==='ready'&&mt.index===i&&mt.url)});
 }
-function render(){resetPhotoReaction();armMagicReveal();locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
+function render(){resetPhotoReaction();armMagicReveal();locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i],mt=levelYouMagicTransform();$('photo').src=x.photoUrl;$('photo').dataset.originalSrc=x.photoUrl;applyPhotoFraming($('photo'),x.framing);if(mt&&mt.status==='ready'&&mt.index===i&&mt.url){const pre=new Image();pre.decoding='async';pre.src=mt.url;}$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
 function emitLevelYouEvent(name,detail){try{window.dispatchEvent(new CustomEvent(name,{detail}))}catch(e){}}
 let photoReactionTimer=null;
 function resetPhotoReaction(){
@@ -530,9 +544,10 @@ async function generateVideo(){
   const canvas=$('videoCanvas');if(!canvas.captureStream||!window.MediaRecorder)throw new Error('unsupported');
   preparedAudio=await prepareAudioContext();
   const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('unsupported');
+  const mt=levelYouMagicTransform();
   const videoSequence=[
-   ...DATA.items.map(item=>({photoUrl:item.photoUrl,framing:item.framing,kind:'game'})),
-   ...(Array.isArray(DATA.videoMemories)?DATA.videoMemories.map(item=>({photoUrl:item.photoUrl,framing:item.framing,kind:'video'})):[])
+   ...DATA.items.map((item,index)=>({photoUrl:(mt&&mt.status==='ready'&&mt.index===index&&mt.url)?mt.url:item.photoUrl,framing:item.framing,kind:'game',ai:Boolean(mt&&mt.status==='ready'&&mt.index===index&&mt.url)})),
+   ...(Array.isArray(DATA.videoMemories)?DATA.videoMemories.map(item=>({photoUrl:item.photoUrl,framing:item.framing,kind:'video',ai:false})):[])
   ];
   const imgs=[],backs=[];
   for(let n=0;n<videoSequence.length;n++){
