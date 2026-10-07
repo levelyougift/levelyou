@@ -216,7 +216,6 @@
 
       if (btn) btn.textContent = textFor('upload');
       await uploadPhotosReliably(orderData.uploads, blobs);
-      kickMagicTransform(orderData.orderId);
 
       if (btn) btn.textContent = textFor('payment');
       const checkoutResult = await postJson(CHECKOUT_SPRINT3_URL, {orderId:orderData.orderId}, 25000, 1);
