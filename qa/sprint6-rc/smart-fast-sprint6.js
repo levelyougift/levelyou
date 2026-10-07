@@ -13,7 +13,7 @@ const F={
   aiFail:'No hemos podido generar una sugerencia. Puedes escribir la pregunta manualmente.',
   replace:'Cambiar foto',backPhotos:'← Cambiar las 5 fotos',prev:'← Anterior',next:'Siguiente →',
   editorTitle:'Escribe la pregunta',editorDesc:'Hazla personal y tuya. Si te bloqueas, la IA puede sugerirte una versión y tú decides siempre el resultado.',
-  review:'Revisar mi LevelYou →',ready:'preguntas listas',frame:'🖼 Ajustar encuadre',frameTitle:'Ajusta cómo se verá esta foto',frameHelp:'Arrastra la foto y usa el zoom. El encuadre se ajusta automáticamente sin bandas negras. Arrastra para recolocar y usa el zoom si quieres acercarte.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar encuadre'
+  review:'Revisar mi LevelYou →',ready:'preguntas listas',frame:'🖼 Ajustar encuadre',frameTitle:'Ajusta cómo se verá esta foto',frameHelp:'Arrastra la foto y usa el zoom. LevelYou encuadra automáticamente intentando mantener el sujeto principal a la vista y sin bandas negras. Arrastra para recolocar y usa el zoom si quieres acercarte.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar encuadre'
  },
  ca:{
   question:'Pregunta',a1:'Resposta 1',a2:'Resposta 2',a3:'Resposta 3',correct:'Resposta correcta',
@@ -25,7 +25,7 @@ const F={
   aiFail:'No hem pogut generar un suggeriment. Pots escriure la pregunta manualment.',
   replace:'Canviar foto',backPhotos:'← Canviar les 5 fotos',prev:'← Anterior',next:'Següent →',
   editorTitle:'Escriu la pregunta',editorDesc:'Fes-la personal i teva. Si et bloqueges, la IA et pot suggerir una versió i tu decideixes sempre el resultat.',
-  review:'Revisar el meu LevelYou →',ready:'preguntes llestes',frame:'🖼 Ajustar enquadrament',frameTitle:'Ajusta com es veurà aquesta foto',frameHelp:'Arrossega la foto i utilitza el zoom. L\'enquadrament s\'ajusta automàticament sense bandes negres. Arrossega per recol·locar i usa el zoom si vols acostar-te.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar enquadrament'
+  review:'Revisar el meu LevelYou →',ready:'preguntes llestes',frame:'🖼 Ajustar enquadrament',frameTitle:'Ajusta com es veurà aquesta foto',frameHelp:'Arrossega la foto i utilitza el zoom. LevelYou enquadra automàticament intentant mantenir el subjecte principal visible i sense bandes negres. Arrossega per recol·locar i usa el zoom si vols acostar-te.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar enquadrament'
  },
  en:{
   question:'Question',a1:'Answer 1',a2:'Answer 2',a3:'Answer 3',correct:'Correct answer',
@@ -37,7 +37,7 @@ const F={
   aiFail:'We could not generate a suggestion. You can still write the question manually.',
   replace:'Change photo',backPhotos:'← Change the 5 photos',prev:'← Previous',next:'Next →',
   editorTitle:'Write the question',editorDesc:'Make it personal and yours. If you get stuck, AI can suggest a version and you always decide the final result.',
-  review:'Review my LevelYou →',ready:'questions ready',frame:'🖼 Adjust framing',frameTitle:'Adjust how this photo will appear',frameHelp:'Drag the photo and use zoom. Framing adjusts automatically with no black bars. Drag to reposition and use zoom if you want to move closer.',frameZoom:'Zoom',frameReset:'Recenter',frameSave:'Save framing'
+  review:'Review my LevelYou →',ready:'questions ready',frame:'🖼 Adjust framing',frameTitle:'Adjust how this photo will appear',frameHelp:'Drag the photo and use zoom. LevelYou frames the photo automatically, trying to keep the main subject visible with no black bars. Drag to reposition and use zoom if you want to move closer.',frameZoom:'Zoom',frameReset:'Recenter',frameSave:'Save framing'
  }
 };
 const fx=k=>(F[lang]||F.es)[k]||k;
@@ -67,6 +67,68 @@ function applyFraming(el,f){
  el.style.transformOrigin='center center';
  el.style.transform='scale('+Math.max(1,Number(framing.zoom)||1)+')';
 }
+
+async function autoFramingFor(imageUrl){
+ const fallback={zoom:1,x:0,y:0};
+ if(!imageUrl)return fallback;
+ try{
+  const im=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=imageUrl});
+  const iw=im.naturalWidth||im.width||1,ih=im.naturalHeight||im.height||1;
+  let fx=.5,fy=.5,found=false;
+
+  // Use native face detection when the browser exposes it; otherwise use local visual saliency.
+  if('FaceDetector' in window){
+   try{
+    const detector=new FaceDetector({fastMode:true,maxDetectedFaces:6});
+    const faces=await detector.detect(im);
+    if(Array.isArray(faces)&&faces.length){
+     let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+     faces.forEach(face=>{
+      const b=face.boundingBox;if(!b)return;
+      minX=Math.min(minX,b.x);minY=Math.min(minY,b.y);maxX=Math.max(maxX,b.x+b.width);maxY=Math.max(maxY,b.y+b.height);
+     });
+     if(Number.isFinite(minX)){
+      fx=((minX+maxX)/2)/iw;
+      fy=Math.min(.88,((minY+maxY)/2)/ih+.10);
+      found=true;
+     }
+    }
+   }catch(_){}
+  }
+
+  if(!found){
+   const W=72,H=Math.max(48,Math.round(72*ih/iw));
+   const c=document.createElement('canvas');c.width=W;c.height=Math.min(108,H);
+   const x=c.getContext('2d',{willReadFrequently:true});if(!x)return fallback;
+   x.drawImage(im,0,0,c.width,c.height);
+   const d=x.getImageData(0,0,c.width,c.height).data;
+   let sw=0,sx=0,sy=0;
+   const gray=(px,py)=>{
+    const k=(py*c.width+px)*4;
+    return .2126*d[k]+.7152*d[k+1]+.0722*d[k+2];
+   };
+   for(let py=1;py<c.height-1;py+=2){
+    for(let px=1;px<c.width-1;px+=2){
+     const k=(py*c.width+px)*4,r=d[k],g=d[k+1],b=d[k+2];
+     const edge=Math.abs(gray(px+1,py)-gray(px-1,py))+Math.abs(gray(px,py+1)-gray(px,py-1));
+     const max=Math.max(r,g,b),min=Math.min(r,g,b),sat=max-min;
+     const skin=(r>80&&g>35&&b>20&&r>g&&r>b&&Math.abs(r-g)>10&&sat>15)?38:0;
+     const nx=px/(c.width-1),ny=py/(c.height-1);
+     const center=.45+.55*Math.max(0,1-Math.hypot((nx-.5)*1.25,(ny-.46)*1.05));
+     const weight=(edge+skin+2)*center;
+     sw+=weight;sx+=weight*nx;sy+=weight*ny;
+    }
+   }
+   if(sw>0){fx=sx/sw;fy=sy/sw;found=true}
+  }
+
+  // Existing framing x/y semantics: positive x means "drag image right", hence inverse focal mapping.
+  const x=Math.max(-.72,Math.min(.72,(.5-fx)*1.55));
+  const y=Math.max(-.68,Math.min(.68,(.5-fy)*1.45));
+  return{zoom:1,x,y};
+ }catch(_){return fallback}
+}
+
 function isComplete(m){
  const d=ensureDraft(m);
  return Boolean(clean(d.q)&&d.a.every(x=>clean(x)));
@@ -408,17 +470,25 @@ startBuilder=function(nextMode){
  renderFastTexts();
 };
 
-$('#continueEditBtn').onclick=()=>{
+$('#continueEditBtn').onclick=async()=>{
  const id=validIdentity();if(!id)return;
  if(fullPhotoData.length!==5){alert(tr('needFive'));return}
- memories=Array.from({length:5},(_,i)=>{
+ const btn=$('#continueEditBtn');btn.disabled=true;
+ try{
+  const framings=await Promise.all(fullPhotoData.map(async(image,i)=>{
+   const old=memories[i]||{},f=old.framing;
+   const alreadyAdjusted=f&&(Number(f.zoom)!==1||Math.abs(Number(f.x)||0)>.001||Math.abs(Number(f.y)||0)>.001);
+   return alreadyAdjusted?framingCopy(ensureFraming(old)):await autoFramingFor(image);
+  }));
+  memories=Array.from({length:5},(_,i)=>{
    const old=memories[i]||{};
-   return{image:fullPhotoData[i],context:old.context||'',framing:framingCopy(ensureFraming(old)),draft:old.draft||{q:'',a:['','',''],correct:0}};
- });
- fullEditIndex=0;
- $('#fullUploadFlow').classList.add('hidden');
- $('#fullEditFlow').classList.remove('hidden');
- renderFullEditor();
+   return{image:fullPhotoData[i],context:old.context||'',framing:framings[i],draft:old.draft||{q:'',a:['','',''],correct:0}};
+  });
+  fullEditIndex=0;
+  $('#fullUploadFlow').classList.add('hidden');
+  $('#fullEditFlow').classList.remove('hidden');
+  renderFullEditor();
+ }finally{btn.disabled=false}
 };
 
 renderFullEditor=renderEditor;
@@ -434,11 +504,11 @@ $('#replaceMemoryPhoto').onchange=e=>{
  const file=e.target.files?.[0];if(!file)return;
  const replaceIndex=fullEditIndex;
  const reader=new FileReader();
- reader.onload=()=>{
+ reader.onload=async()=>{
    const image=String(reader.result||'');
    if(!memories[replaceIndex])return;
    memories[replaceIndex].image=image;
-   memories[replaceIndex].framing={zoom:1,x:0,y:0};
+   memories[replaceIndex].framing=await autoFramingFor(image);
    fullPhotoData[replaceIndex]=image;
    if(fullEditIndex===replaceIndex){
      $('#editMemoryImg').src=image;
