@@ -125,6 +125,7 @@ export default {
 
       const occasion = ["classic", "birthday"].includes(g.occasion) ? g.occasion : "classic";
       return json({
+        orderId: order.id,
         personName: order.person_name || "",
         age: order.age,
         language: order.language || "es",
