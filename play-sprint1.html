@@ -183,7 +183,7 @@ function applyPhotoFraming(el,f){
 }
 function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photoUrl){const im=new Image();im.decoding='async';im.src=item.photoUrl}})}catch(e){console.warn('Game photo preload',e)}}
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
-async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=pt.introEyebrow;$('introTitle').textContent=pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
+async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
 function render(){resetPhotoReaction();locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
 function emitLevelYouEvent(name,detail){try{window.dispatchEvent(new CustomEvent(name,{detail}))}catch(e){}}
 let photoReactionTimer=null;
@@ -200,7 +200,7 @@ function playPhotoReaction(correct){
  layer.classList.add(correct?'good':'miss');
  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  if(correct&&!reduced){
-  const colors=['#7de4d3','#f3d7a1','#9eafff','#ffffff','#ff9fbc','#8ff0c6'];
+  const colors=currentTheme().id==='birthday'?['#ff9fbc','#ffd37d','#ffffff','#ff6fa8','#ffe7a8','#c7a8ff']:['#7de4d3','#f3d7a1','#9eafff','#ffffff','#ff9fbc','#8ff0c6'];
   const pieces=Array.from({length:34},(_,n)=>{
    const angle=((n*137.5)%360)*Math.PI/180;
    const radius=118+(n%7)*18;
@@ -216,7 +216,7 @@ function playPhotoReaction(correct){
 }
 window.addEventListener('levelyou:answer',e=>playPhotoReaction(Boolean(e.detail?.correct)));
 function pick(n,b){if(locked)return;locked=true;const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden');emitLevelYouEvent('levelyou:answer',{correct:ok,index:i,selected:n,correctIndex:x.correct,theme:currentTheme().id})}
-function done(){$('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finish').classList.remove('reveal');void $('finish').offsetWidth;$('finish').classList.add('reveal');$('finishTitle').textContent=t.finish;$('score').textContent=t.score(score);const hasDed=DATA&&typeof DATA.dedication==='string'&&DATA.dedication.trim();$('memoryTitle').textContent=hasDed?(DATA.language==='ca'?'Un missatge per a tu':DATA.language==='en'?'A message for you':'Un mensaje para ti'):t.memoryTitle;$('memoryText').textContent=hasDed?DATA.dedication:t.memoryText;$('videoLead').textContent=t.videoLead;$('createVideo').textContent=t.createVideo;$('saveVideo').textContent=t.saveVideo;$('again').textContent=t.again;$('share').textContent=t.share;window.scrollTo({top:0,behavior:'smooth'})}
+function done(){$('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finish').classList.remove('reveal');void $('finish').offsetWidth;$('finish').classList.add('reveal');$('finishTitle').textContent=themedCopy()?.finish||t.finish;$('score').textContent=t.score(score);const hasDed=DATA&&typeof DATA.dedication==='string'&&DATA.dedication.trim();$('memoryTitle').textContent=hasDed?(DATA.language==='ca'?'Un missatge per a tu':DATA.language==='en'?'A message for you':'Un mensaje para ti'):t.memoryTitle;$('memoryText').textContent=hasDed?DATA.dedication:t.memoryText;$('videoLead').textContent=t.videoLead;$('createVideo').textContent=t.createVideo;$('saveVideo').textContent=t.saveVideo;$('again').textContent=t.again;$('share').textContent=t.share;window.scrollTo({top:0,behavior:'smooth'})}
 $('startGame').onclick=()=>{$('intro').classList.add('hidden');$('shareTop').classList.remove('hidden');$('game').classList.remove('hidden');render()};$('next').onclick=()=>{if(i<DATA.items.length-1){i++;render()}else done()};$('again').onclick=()=>{i=0;score=0;$('finish').classList.add('hidden');$('game').classList.remove('hidden');render()};
 async function shareLink(){const d={title:'LevelYou',text:'🎁 Tengo un LevelYou para ti',url:location.href};if(navigator.share){try{await navigator.share(d);return}catch(e){if(e&&e.name==='AbortError')return}}location.href='https://wa.me/?text='+encodeURIComponent('🎁 Tengo un LevelYou para ti: '+location.href)}
 $('share').onclick=shareLink;$('shareTop').onclick=shareLink;
@@ -229,12 +229,21 @@ const THEME_CONFIG={
  classic:{id:'classic',accent:'#7de4d3',accent2:'#9eafff',warm:'#f3d7a1'},
  birthday:{id:'birthday',accent:'#ff9fbc',accent2:'#ffd37d',warm:'#fff0b5'}
 };
+const THEME_COPY={
+ es:{birthday:{eyebrow:'Un cumpleaños hecho de recuerdos',title:n=>n?('Feliz cumpleaños, '+n+'.'):'Feliz cumpleaños.',intro:'Cinco recuerdos te esperan. Acierta las preguntas y descubre el final que han preparado para ti.',finish:'Cinco recuerdos. Una celebración.'}},
+ ca:{birthday:{eyebrow:'Un aniversari fet de records',title:n=>n?('Per molts anys, '+n+'.'):'Per molts anys.',intro:'Cinc records t’esperen. Encerta les preguntes i descobreix el final que han preparat per a tu.',finish:'Cinc records. Una celebració.'}},
+ en:{birthday:{eyebrow:'A birthday made of memories',title:n=>n?('Happy Birthday, '+n+'.'):'Happy Birthday.',intro:'Five memories are waiting. Answer the questions and discover the ending made for you.',finish:'Five memories. One celebration.'}}
+};
 function currentTheme(){const id=DATA&&['classic','birthday'].includes(DATA.theme)?DATA.theme:'classic';return THEME_CONFIG[id]||THEME_CONFIG.classic}
 function applyTheme(){
  const theme=currentTheme();document.body.dataset.theme=theme.id;
  document.documentElement.style.setProperty('--accent',theme.accent);
  document.documentElement.style.setProperty('--accent2',theme.accent2);
  document.documentElement.style.setProperty('--warm',theme.warm);
+}
+function themedCopy(){
+ const l=DATA?.language||'es',theme=currentTheme().id;
+ return THEME_COPY[l]?.[theme]||null;
 }
 const VIDEO_COPY={
  es:{forName:n=>n?('Para '+n):'Para ti',birthdayName:n=>n?('Feliz cumpleaños, '+n):'Feliz cumpleaños',subtitle:'Una historia hecha de momentos',birthdaySubtitle:'Hoy celebramos todo lo vivido',closing:'UN RECUERDO PARA VOLVER SIEMPRE'},
