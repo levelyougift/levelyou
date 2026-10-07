@@ -383,63 +383,79 @@ async function prepareAudioContext(){
 function createLevelYouSoundtrack(ac,durationSec,memoryStarts=[]){
  if(!ac||typeof ac.createMediaStreamDestination!=='function')return null;
  const birthday=currentTheme().id==='birthday';
- const destination=ac.createMediaStreamDestination(),master=ac.createGain(),tone=ac.createBiquadFilter();
- tone.type='lowpass';tone.frequency.value=birthday?5200:4600;tone.Q.value=.18;master.connect(tone);tone.connect(destination);
- const start=ac.currentTime+.045,end=start+durationSec,fadeOut=Math.max(start+1.2,end-2.2),sources=[];
- master.gain.setValueAtTime(.0001,start);master.gain.exponentialRampToValueAtTime(birthday?.12:.105,start+.72);master.gain.setValueAtTime(birthday?.12:.105,fadeOut);master.gain.exponentialRampToValueAtTime(.0001,end);
+ const destination=ac.createMediaStreamDestination(),master=ac.createGain(),musicBus=ac.createGain(),drumBus=ac.createGain();
+ const tone=ac.createBiquadFilter();tone.type='lowpass';tone.frequency.value=birthday?7000:5800;tone.Q.value=.12;
+ musicBus.connect(tone);drumBus.connect(tone);tone.connect(master);master.connect(destination);
+ const start=ac.currentTime+.05,end=start+durationSec,fadeOut=Math.max(start+1.0,end-1.8),sources=[];
+ master.gain.setValueAtTime(.0001,start);master.gain.exponentialRampToValueAtTime(birthday?.16:.125,start+.42);master.gain.setValueAtTime(birthday?.16:.125,fadeOut);master.gain.exponentialRampToValueAtTime(.0001,end);
+ musicBus.gain.value=birthday?.72:.68;drumBus.gain.value=birthday?.80:.52;
 
- // Brighter major-pop harmony: quicker movement and higher voicings than Sprint 4/early Sprint 5.
+ // Sprint 5.6B: clearly upbeat pop/celebration groove. Birthday is intentionally party-like.
+ const bpm=birthday?126:112,beat=60/bpm,bar=beat*4;
  const chords=birthday?[
-  [261.63,329.63,392.00,523.25],
-  [174.61,220.00,261.63,349.23],
-  [196.00,246.94,293.66,392.00],
-  [261.63,329.63,392.00,659.25]
+  [261.63,329.63,392.00,523.25], // C
+  [349.23,440.00,523.25,698.46], // F
+  [392.00,493.88,587.33,783.99], // G
+  [261.63,329.63,392.00,659.25]  // C
  ]:[
-  [261.63,329.63,392.00,523.25],
-  [196.00,246.94,293.66,392.00],
-  [220.00,261.63,329.63,440.00],
-  [174.61,220.00,261.63,349.23]
+  [293.66,369.99,440.00,587.33], // D
+  [392.00,493.88,587.33,783.99], // G
+  [440.00,554.37,659.25,880.00], // A
+  [392.00,493.88,587.33,783.99]  // G
  ];
- const chordLen=2.4;
- for(let t=0,step=0;t<durationSec+.2;t+=chordLen,step++){
-  const chord=chords[step%chords.length],segStart=start+t,segEnd=Math.min(end,segStart+chordLen+.16);
-  chord.forEach((freq,j)=>{
-   const o=ac.createOscillator(),g=ac.createGain();o.type=j===0?'sine':'triangle';o.frequency.value=freq;o.detune.value=(j-1.5)*1.6;
-   g.gain.setValueAtTime(.0001,segStart);g.gain.exponentialRampToValueAtTime(j===0?.014:.010,segStart+.16);
-   g.gain.setValueAtTime(j===0?.010:.007,Math.max(segStart+.22,segEnd-.28));g.gain.exponentialRampToValueAtTime(.0001,segEnd);
-   o.connect(g);g.connect(master);o.start(segStart);o.stop(segEnd+.04);sources.push(o);
-  });
+
+ const addOsc=(when,freq,type,peak,life,bus=musicBus,startFreq=null)=>{
+  const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(startFreq||freq,when);
+  if(startFreq)o.frequency.exponentialRampToValueAtTime(freq,when+Math.min(.09,life*.4));
+  g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(peak,when+.012);g.gain.exponentialRampToValueAtTime(.0001,when+life);
+  o.connect(g);g.connect(bus);o.start(when);o.stop(when+life+.03);sources.push(o);return o;
+ };
+
+ // Major-chord stabs every bar; short envelope keeps the track bright instead of sentimental.
+ for(let t=0,barIndex=0;t<durationSec+.1;t+=bar,barIndex++){
+  const chord=chords[barIndex%chords.length],when=start+t;
+  chord.forEach((freq,j)=>addOsc(when,freq,j===0?'sine':'triangle',j===0?.020:.013,Math.min(bar*.82,1.35),musicBus));
+  // Upbeat off-beat chord hit.
+  const off=when+beat*2.5;
+  if(off<end-.2)chord.slice(1).forEach((freq,j)=>addOsc(off,freq,'triangle',.0075,Math.min(beat*.58,.28),musicBus));
  }
 
- // Gentle rhythmic pulse so the Reel feels alive instead of sentimental/slow.
- const pulseStep=birthday?.48:.60;
- const pulseNotes=birthday?[523.25,659.25,783.99,659.25]:[392.00,523.25,493.88,523.25];
- for(let t=.34,step=0;t<durationSec-1.1;t+=pulseStep,step++){
-  const when=start+t,o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=pulseNotes[step%pulseNotes.length];
-  const peak=birthday?(step%4===0?.020:.012):(step%4===0?.012:.0075);
-  g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(peak,when+.014);g.gain.exponentialRampToValueAtTime(.0001,when+(birthday?.16:.20));
-  o.connect(g);g.connect(master);o.start(when);o.stop(when+.22);sources.push(o);
+ // Reusable deterministic noise buffer for claps/hats.
+ const noiseBuffer=ac.createBuffer(1,Math.ceil(ac.sampleRate*.22),ac.sampleRate),noise=noiseBuffer.getChannelData(0);
+ let seed=37;for(let n=0;n<noise.length;n++){seed=(seed*16807)%2147483647;noise[n]=((seed/2147483647)*2-1)*(.96-n/noise.length*.28)}
+ const addNoise=(when,peak,life,highpassFreq,bandFreq=null)=>{
+  const src=ac.createBufferSource(),g=ac.createGain(),hp=ac.createBiquadFilter();src.buffer=noiseBuffer;hp.type='highpass';hp.frequency.value=highpassFreq;
+  src.connect(hp);let last=hp;
+  if(bandFreq){const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=bandFreq;bp.Q.value=.7;hp.connect(bp);last=bp}
+  last.connect(g);g.connect(drumBus);g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(peak,when+.006);g.gain.exponentialRampToValueAtTime(.0001,when+life);
+  src.start(when);src.stop(when+life+.02);sources.push(src);
+ };
+
+ // Four-on-the-floor kick; Birthday stronger. Clap on 2/4, hats on eighth notes.
+ for(let t=0,step=0;t<durationSec-.25;t+=beat,step++){
+  const when=start+t;
+  addOsc(when,52,'sine',birthday?.072:.045,.20,drumBus,128);
+  if(step%4===1||step%4===3)addNoise(when+.01,birthday?.034:.020,.13,700,1800);
+  const hat=when+beat*.5;if(hat<end-.12)addNoise(hat,birthday?.014:.008,.055,5600);
  }
 
- // Scene-entry accents stay synchronized with the actual variable Reel timing.
+ // Bright hook: simple ascending major motif, deliberately distinct between Classic and Birthday.
+ const hook=birthday?[523.25,659.25,783.99,1046.50,783.99,659.25,698.46,783.99]:[440.00,493.88,587.33,659.25,587.33,493.88,523.25,587.33];
+ const hookStep=beat*.5;
+ for(let t=beat*.75,step=0;t<durationSec-1.0;t+=hookStep,step++){
+  if(step%2===1&&!birthday)continue;
+  const when=start+t,freq=hook[step%hook.length],peak=birthday?.020:.012;
+  addOsc(when,freq,'triangle',peak,birthday?.16:.22,musicBus);
+ }
+
+ // Accent each visual cut so music and Reel edit feel connected.
  for(let step=0;step<memoryStarts.length;step++){
-  const when=start+memoryStarts[step]+.035,o=ac.createOscillator(),g=ac.createGain();
-  o.type='sine';o.frequency.value=birthday?(step%2?1046.50:783.99):(step%2?659.25:523.25);
-  const peak=birthday?.020:.009;
-  g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(peak,when+.016);g.gain.exponentialRampToValueAtTime(.0001,when+.17);
-  o.connect(g);g.connect(master);o.start(when);o.stop(when+.19);sources.push(o);
+  const when=start+memoryStarts[step]+.02;if(when>end-.15)continue;
+  addOsc(when,birthday?(step%2?1174.66:987.77):(step%2?739.99:659.25),'sine',birthday?.024:.014,.16,musicBus);
+  if(birthday)addNoise(when+.005,.013,.055,6200);
  }
 
- // Upward, major-key motif; birthday is deliberately brighter and more playful.
- const melody=birthday?[523.25,659.25,783.99,880.00,783.99,659.25,698.46,783.99]:[392.00,440.00,493.88,523.25,587.33,523.25,493.88,440.00];
- const melodyStep=birthday?1.2:1.5;
- for(let t=.78,step=0;t<durationSec-1.2;t+=melodyStep,step++){
-  const when=start+t,o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=melody[step%melody.length];
-  const peak=birthday?.026:.020;
-  g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(peak,when+.025);g.gain.exponentialRampToValueAtTime(.0001,Math.min(end,when+(birthday?.52:.68)));
-  o.connect(g);g.connect(master);o.start(when);o.stop(Math.min(end+.04,when+.72));sources.push(o);
- }
- return{destination,stop:()=>{try{master.gain.cancelScheduledValues(ac.currentTime);master.gain.setTargetAtTime(.0001,ac.currentTime,.025)}catch(e){};sources.forEach(o=>{try{o.stop()}catch(e){}})}};
+ return{destination,stop:()=>{try{master.gain.cancelScheduledValues(ac.currentTime);master.gain.setTargetAtTime(.0001,ac.currentTime,.02)}catch(e){};sources.forEach(o=>{try{o.stop()}catch(e){}})}};
 }
 async function loadVideoAsset(url){
  const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('image');
