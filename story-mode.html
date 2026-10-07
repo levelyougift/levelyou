@@ -70,7 +70,7 @@ $('generate').onclick=async()=>{
    await post({action:'animate',orderId});
    for(let n=0;n<180;n++){st=await getState();const ready=st.motions.filter(x=>x.status==='ready').length;setWork('Dándoles vida…',ready+' de 5 escenas animadas listas.',68+ready*6);if(st.phase==='ready')break;if(st.motions.some(x=>x.status==='failed'))throw new Error('Una animación ha fallado');await sleep(3000)}
    if(st.phase!=='ready')throw new Error('La animación está tardando demasiado');
-   setWork('Terminado','Tu película ya tiene sus cinco capítulos.',100);await sleep(500);renderResult(st);show('result');
+   setWork('Terminado','Tu película ya tiene sus cinco capítulos.',100);await sleep(500);renderResult(st);show('result');setTimeout(()=>renderMovie(),450);
  }catch(e){console.error(e);$('status').innerHTML='<span class="error">No hemos podido completar esta prueba: '+String(e.message||e)+'</span>';setTimeout(()=>show('creator'),3500)}
 };
 
