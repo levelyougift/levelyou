@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0e1020">
 <meta name="robots" content="noindex,nofollow">
-<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.1">
+<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.1b">
 <title>LevelYou — Tu juego</title>
 <style>
 :root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
@@ -66,26 +66,37 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
 .answerFeedback.miss{border-color:rgba(243,215,161,.22);background:rgba(243,215,161,.06);color:#f5dfb5}
 
 /* Sprint 5.1 — Answer Reactions */
-.reactionLayer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:0}
-.reactionLayer.good{opacity:1;background:radial-gradient(circle at 50% 45%,rgba(125,228,211,.18),rgba(158,175,255,.07) 42%,transparent 70%);animation:s5GlowGood .86s ease forwards}
-.reactionLayer.miss{opacity:1;background:radial-gradient(circle at 50% 50%,transparent 38%,rgba(243,184,120,.13) 66%,rgba(74,28,20,.22) 100%);animation:s5GlowMiss .62s ease forwards}
-.photoViewport.reaction-correct{animation:s5CorrectFrame .86s cubic-bezier(.2,.78,.25,1)}
-.photoViewport.reaction-correct .photo{animation:s5ColorBloom .86s cubic-bezier(.2,.78,.25,1)}
-.photoViewport.reaction-wrong{animation:s5WrongFrame .58s ease}
-.photoViewport.reaction-wrong .photo{animation:s5WrongTone .66s ease}
-.reaction-confetti{position:absolute;left:50%;top:47%;width:7px;height:12px;border-radius:3px;background:var(--cc,#7de4d3);opacity:0;transform:translate(-50%,-50%);animation:s5Confetti .82s cubic-bezier(.15,.78,.28,1) var(--delay,0ms) forwards}
-@keyframes s5CorrectFrame{0%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}42%{transform:scale(1.008);box-shadow:inset 0 0 46px rgba(125,228,211,.16)}100%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}}
-@keyframes s5ColorBloom{0%{filter:saturate(.88) brightness(.96)}38%{filter:saturate(1.28) brightness(1.08)}100%{filter:none}}
-@keyframes s5GlowGood{0%{opacity:0}28%{opacity:1}100%{opacity:0}}
-@keyframes s5WrongFrame{0%,100%{transform:translateX(0)}18%{transform:translateX(-4px)}36%{transform:translateX(4px)}54%{transform:translateX(-2px)}72%{transform:translateX(2px)}}
-@keyframes s5WrongTone{0%{filter:none}30%{filter:saturate(.45) brightness(.86) sepia(.12)}100%{filter:none}}
-@keyframes s5GlowMiss{0%{opacity:0}24%{opacity:1}100%{opacity:0}}
-@keyframes s5Confetti{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.7)}12%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot)) scale(1)}}
+.reactionLayer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:0;isolation:isolate}
+.reactionLayer.good{opacity:1;background:
+ radial-gradient(circle at 50% 44%,rgba(255,255,255,.24) 0 3%,rgba(125,228,211,.18) 12%,rgba(158,175,255,.10) 34%,transparent 68%);
+ animation:s5GlowGood 1.02s ease forwards}
+.reactionLayer.good:before,.reactionLayer.good:after{content:"";position:absolute;left:50%;top:46%;width:86px;height:86px;border-radius:50%;border:3px solid rgba(255,255,255,.78);transform:translate(-50%,-50%) scale(.25);opacity:0;animation:s5Ring .86s cubic-bezier(.16,.75,.22,1) forwards}
+.reactionLayer.good:after{width:126px;height:126px;border-color:rgba(125,228,211,.58);animation-delay:.08s}
+.reactionLayer.miss{opacity:1;background:
+ radial-gradient(circle at 50% 50%,transparent 30%,rgba(129,74,46,.08) 48%,rgba(160,66,34,.18) 71%,rgba(38,12,10,.38) 100%);
+ animation:s5GlowMiss .82s ease forwards}
+.reactionLayer.miss:after{content:"";position:absolute;inset:-18%;background:conic-gradient(from 30deg at 50% 50%,transparent 0 18%,rgba(246,165,94,.12) 22%,transparent 27% 47%,rgba(206,91,45,.10) 51%,transparent 57% 100%);filter:blur(14px);opacity:0;animation:s5EmberWash .78s ease forwards}
+.photoViewport.reaction-correct{animation:s5CorrectFrame 1.02s cubic-bezier(.18,.8,.25,1)}
+.photoViewport.reaction-correct .photo{animation:s5ColorReveal 1.02s cubic-bezier(.18,.8,.25,1)}
+.photoViewport.reaction-wrong{animation:s5WrongFrame .72s ease}
+.photoViewport.reaction-wrong .photo{animation:s5WrongTone .86s ease}
+.reaction-confetti{position:absolute;left:50%;top:47%;width:var(--cw,8px);height:var(--ch,15px);border-radius:var(--cr,3px);background:var(--cc,#7de4d3);opacity:0;box-shadow:0 0 8px color-mix(in srgb,var(--cc,#7de4d3) 35%,transparent);transform:translate(-50%,-50%);animation:s5Confetti 1.08s cubic-bezier(.12,.74,.24,1) var(--delay,0ms) forwards}
+.reaction-spark{position:absolute;left:50%;top:46%;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.95),0 0 20px rgba(125,228,211,.65);opacity:0;transform:translate(-50%,-50%) scale(.5);animation:s5Spark .72s ease var(--delay,0ms) forwards}
+@keyframes s5CorrectFrame{0%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}34%{transform:scale(1.016);box-shadow:inset 0 0 64px rgba(125,228,211,.22)}66%{transform:scale(1.008);box-shadow:inset 0 0 34px rgba(158,175,255,.13)}100%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}}
+@keyframes s5ColorReveal{0%{filter:grayscale(.92) saturate(.35) brightness(.82) contrast(.96)}30%{filter:grayscale(.36) saturate(.82) brightness(.96) contrast(1)}58%{filter:grayscale(0) saturate(1.42) brightness(1.12) contrast(1.04)}100%{filter:none}}
+@keyframes s5GlowGood{0%{opacity:0}18%{opacity:1}54%{opacity:.9}100%{opacity:0}}
+@keyframes s5Ring{0%{opacity:0;transform:translate(-50%,-50%) scale(.28)}20%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(4.2)}}
+@keyframes s5WrongFrame{0%,100%{transform:translateX(0)}12%{transform:translateX(-7px) rotate(-.25deg)}26%{transform:translateX(6px) rotate(.2deg)}42%{transform:translateX(-4px)}58%{transform:translateX(3px)}76%{transform:translateX(-1px)}}
+@keyframes s5WrongTone{0%{filter:none}24%{filter:grayscale(.9) saturate(.28) brightness(.75) contrast(1.08)}58%{filter:grayscale(.72) saturate(.4) brightness(.82) sepia(.10)}100%{filter:none}}
+@keyframes s5GlowMiss{0%{opacity:0}20%{opacity:1}62%{opacity:.9}100%{opacity:0}}
+@keyframes s5EmberWash{0%{opacity:0;transform:scale(.9) rotate(0)}34%{opacity:1}100%{opacity:0;transform:scale(1.08) rotate(5deg)}}
+@keyframes s5Confetti{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.55)}9%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot)) scale(var(--cs,1))}}
+@keyframes s5Spark{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}24%{opacity:1;transform:translate(calc(-50% + var(--sx)),calc(-50% + var(--sy))) scale(1.5)}100%{opacity:0;transform:translate(calc(-50% + var(--sx2)),calc(-50% + var(--sy2))) scale(.6)}}
 @media(prefers-reduced-motion:reduce){
  .photoViewport.reaction-correct,.photoViewport.reaction-wrong,.photoViewport.reaction-correct .photo,.photoViewport.reaction-wrong .photo{animation:none!important}
- .reaction-confetti{display:none!important}
- .reactionLayer.good{animation:none;opacity:.32}
- .reactionLayer.miss{animation:none;opacity:.26}
+ .reaction-confetti,.reaction-spark,.reactionLayer.good:before,.reactionLayer.good:after,.reactionLayer.miss:after{display:none!important}
+ .reactionLayer.good{animation:none;opacity:.34;background:radial-gradient(circle at 50% 45%,rgba(125,228,211,.22),transparent 70%)}
+ .reactionLayer.miss{animation:none;opacity:.28}
 }
 @keyframes feedbackIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 .finish{position:relative;overflow:hidden}
@@ -187,14 +198,19 @@ function playPhotoReaction(correct){
  layer.classList.add(correct?'good':'miss');
  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  if(correct&&!reduced){
-  const pieces=[
-   [-126,-126,-145,'#7de4d3',0],[-88,-162,118,'#f3d7a1',20],[-48,-138,205,'#9eafff',45],[-12,-172,-90,'#ffffff',10],
-   [28,-150,140,'#7de4d3',35],[70,-166,-175,'#f3d7a1',5],[112,-132,88,'#9eafff',55],[136,-82,220,'#ffffff',25],
-   [-144,-64,160,'#9eafff',50],[-102,-92,-210,'#ffffff',15],[92,-94,182,'#7de4d3',40],[148,-36,-120,'#f3d7a1',30]
-  ];
-  pieces.forEach(([dx,dy,rot,color,delay])=>{const p=document.createElement('span');p.className='reaction-confetti';p.style.setProperty('--dx',dx+'px');p.style.setProperty('--dy',dy+'px');p.style.setProperty('--rot',rot+'deg');p.style.setProperty('--cc',color);p.style.setProperty('--delay',delay+'ms');layer.appendChild(p)});
+  const colors=['#7de4d3','#f3d7a1','#9eafff','#ffffff','#ff9fbc','#8ff0c6'];
+  const pieces=Array.from({length:34},(_,n)=>{
+   const angle=((n*137.5)%360)*Math.PI/180;
+   const radius=118+(n%7)*18;
+   const dx=Math.round(Math.cos(angle)*radius);
+   const dy=Math.round(Math.sin(angle)*radius-72-(n%4)*14);
+   return{dx,dy,rot:(n%2?1:-1)*(150+(n*47)%360),color:colors[n%colors.length],delay:(n%8)*18,w:6+(n%4)*2,h:11+(n%5)*3,r:n%3===0?999:3,scale:.8+(n%5)*.12};
+  });
+  pieces.forEach(o=>{const p=document.createElement('span');p.className='reaction-confetti';p.style.setProperty('--dx',o.dx+'px');p.style.setProperty('--dy',o.dy+'px');p.style.setProperty('--rot',o.rot+'deg');p.style.setProperty('--cc',o.color);p.style.setProperty('--delay',o.delay+'ms');p.style.setProperty('--cw',o.w+'px');p.style.setProperty('--ch',o.h+'px');p.style.setProperty('--cr',o.r+'px');p.style.setProperty('--cs',o.scale);layer.appendChild(p)});
+  const sparks=[[-90,-70,-150,-120,0],[-48,-108,-84,-176,60],[0,-124,0,-198,25],[52,-104,92,-168,80],[94,-62,158,-112,35],[-110,-20,-176,-36,95],[112,-12,184,-22,50]];
+  sparks.forEach(([sx,sy,sx2,sy2,delay])=>{const s=document.createElement('span');s.className='reaction-spark';s.style.setProperty('--sx',sx+'px');s.style.setProperty('--sy',sy+'px');s.style.setProperty('--sx2',sx2+'px');s.style.setProperty('--sy2',sy2+'px');s.style.setProperty('--delay',delay+'ms');layer.appendChild(s)});
  }
- photoReactionTimer=setTimeout(resetPhotoReaction,correct?930:720);
+ photoReactionTimer=setTimeout(resetPhotoReaction,correct?1120:900);
 }
 window.addEventListener('levelyou:answer',e=>playPhotoReaction(Boolean(e.detail?.correct)));
 function pick(n,b){if(locked)return;locked=true;const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden');emitLevelYouEvent('levelyou:answer',{correct:ok,index:i,selected:n,correctIndex:x.correct,theme:'classic'})}
