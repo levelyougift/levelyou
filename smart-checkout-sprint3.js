@@ -1,6 +1,6 @@
 (() => {
   const CREATE_ORDER_SPRINT3_URL = 'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/super-api-sprint3';
-  const CHECKOUT_SPRINT3_URL = 'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint3-preview';
+  const CHECKOUT_SPRINT3_URL = 'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint5-preview';
   const MAX_UPLOAD_EDGE = 1920;
   const JPEG_QUALITY = 0.88;
   const MAX_FALLBACK_BYTES = 12 * 1024 * 1024;
@@ -156,7 +156,8 @@
           }
         })),
         dedication: clean(document.querySelector('#dedication')?.value || ''),
-        smart_creator_version: 'sprint3-video-memories-v3.0',
+        occasion: ['classic','birthday'].includes(document.querySelector('#occasion')?.value) ? document.querySelector('#occasion').value : 'classic',
+        smart_creator_version: 'sprint5-theme-v5.2',
         question_tone: typeof window.levelYouQuestionTone === 'function' ? window.levelYouQuestionTone() : 'fun'
       };
 
