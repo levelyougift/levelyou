@@ -25,7 +25,7 @@ const F={
   aiFail:'No hem pogut generar un suggeriment. Pots escriure la pregunta manualment.',
   replace:'Canviar foto',backPhotos:'← Canviar les 5 fotos',prev:'← Anterior',next:'Següent →',
   editorTitle:'Escriu la pregunta',editorDesc:'Fes-la personal i teva. Si et bloqueges, la IA et pot suggerir una versió i tu decideixes sempre el resultat.',
-  review:'Revisar el meu LevelYou →',ready:'preguntes llestes',frame:'🖼 Ajustar enquadrament',frameTitle:'Ajusta com es veurà aquesta foto',frameHelp:'Arrossega la foto i utilitza el zoom. L\'enquadrament s'ajusta automàticament sense bandes negres. Arrossega per recol·locar i usa el zoom si vols acostar-te.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar enquadrament'
+  review:'Revisar el meu LevelYou →',ready:'preguntes llestes',frame:'🖼 Ajustar enquadrament',frameTitle:'Ajusta com es veurà aquesta foto',frameHelp:'Arrossega la foto i utilitza el zoom. L\'enquadrament s\'ajusta automàticament sense bandes negres. Arrossega per recol·locar i usa el zoom si vols acostar-te.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar enquadrament'
  },
  en:{
   question:'Question',a1:'Answer 1',a2:'Answer 2',a3:'Answer 3',correct:'Correct answer',
