@@ -157,7 +157,8 @@
         })),
         dedication: clean(document.querySelector('#dedication')?.value || ''),
         occasion: ['classic','birthday'].includes(document.querySelector('#occasion')?.value) ? document.querySelector('#occasion').value : 'classic',
-        smart_creator_version: 'sprint6-magic-v6.2',
+        smart_creator_version: 'sprint6-magic-v6.4',
+        magic_transform: {status:'pending',index:2,style:'editorial_v1'},
         question_tone: typeof window.levelYouQuestionTone === 'function' ? window.levelYouQuestionTone() : 'fun'
       };
 
