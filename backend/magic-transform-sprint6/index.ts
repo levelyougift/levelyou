@@ -4,7 +4,7 @@ const ORIGIN = "https://levelyougift.github.io";
 const BUCKET = "levelyou-photos";
 const RUNWAY_API = "https://api.dev.runwayml.com/v1";
 const RUNWAY_VERSION = "2024-11-06";
-const MODEL = "gemini_image3_pro";
+const MODEL = "gen4_image_turbo";
 const MAGIC_INDEX = 2;
 const MAGIC_STYLE = "editorial_v1";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -55,6 +55,7 @@ async function startTask(ctx: any, order: any, secret: string) {
   if (existing.status === "failed" && retries >= 1) {
     return { ...existing, fallback: true };
   }
+  const attemptRetryCount = existing.status === "failed" ? retries + 1 : retries;
 
   const paths = Array.isArray(g.photo_paths) ? g.photo_paths : [];
   const sourcePath = paths[MAGIC_INDEX];
@@ -75,7 +76,7 @@ async function startTask(ctx: any, order: any, secret: string) {
     },
     body: JSON.stringify({
       model: MODEL,
-      ratio: "3:4",
+      ratio: "1080:1440",
       promptText: PROMPT,
       referenceImages: [{ uri: signed.signedUrl, tag: "input" }],
     }),
@@ -90,7 +91,7 @@ async function startTask(ctx: any, order: any, secret: string) {
       style: MAGIC_STYLE,
       provider: "runway",
       model: MODEL,
-      retry_count: retries + 1,
+      retry_count: attemptRetryCount,
       failed_at: nowIso(),
       fallback: true,
     };
@@ -105,7 +106,7 @@ async function startTask(ctx: any, order: any, secret: string) {
     provider: "runway",
     model: MODEL,
     task_id: body.id,
-    retry_count: retries,
+    retry_count: attemptRetryCount,
     started_at: nowIso(),
     started_ms: startedAt,
   };
@@ -132,11 +133,10 @@ async function finishTask(ctx: any, order: any, secret: string) {
   }
 
   if (task.status !== "SUCCEEDED" || !Array.isArray(task.output) || !task.output[0]) {
-    const retries = Math.max(0, Number(magic.retry_count) || 0);
     const failed = {
       ...magic,
       status: "failed",
-      retry_count: retries + 1,
+      retry_count: Math.max(0, Number(magic.retry_count) || 0),
       failed_at: nowIso(),
       fallback: true,
       task_error: typeof task.failure === "string" ? task.failure.slice(0, 300) : undefined,
