@@ -1,6 +1,7 @@
 (() => {
   const CREATE_ORDER_SPRINT3_URL = 'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/super-api-sprint3';
   const CHECKOUT_SPRINT3_URL = 'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/checkout-sprint6-preview';
+  const MAGIC_TRANSFORM_URL = 'https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/magic-transform-sprint6';
   const MAX_UPLOAD_EDGE = 1920;
   const JPEG_QUALITY = 0.88;
   const MAX_FALLBACK_BYTES = 12 * 1024 * 1024;
@@ -82,6 +83,20 @@
       await new Promise(resolve => setTimeout(resolve, 700 * (attempt + 1)));
     }
     throw lastError || new Error('Request failed');
+  }
+
+  function kickMagicTransform(orderId) {
+    if (window.LEVELYOU_MAGIC_AI !== true || !orderId) return;
+    try {
+      fetch(MAGIC_TRANSFORM_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({orderId}),
+        keepalive:true
+      }).catch(error=>console.warn('Magic transform start skipped', error));
+    } catch (error) {
+      console.warn('Magic transform start unavailable', error);
+    }
   }
 
   function setBusy(busy) {
@@ -181,6 +196,7 @@
 
       if (btn) btn.textContent = textFor('upload');
       await uploadPhotosReliably(orderData.uploads, blobs);
+      kickMagicTransform(orderData.orderId);
 
       if (btn) btn.textContent = textFor('payment');
       const checkoutResult = await postJson(CHECKOUT_SPRINT3_URL, {orderId:orderData.orderId}, 25000, 1);
