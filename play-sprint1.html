@@ -114,7 +114,7 @@ body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce
  margin:22px auto 2px;max-width:460px;color:#b5bed0;font-size:14px;line-height:1.5
 }
 #createVideo{margin-top:14px}
-#videoStatus{min-height:20px}
+#videoStatus{min-height:20px}.videoProgress{height:5px;margin:10px 0 0;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}.videoProgress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .22s ease}
 .memoryHero{margin-top:22px;padding:24px 22px;border-color:rgba(243,215,161,.25);background:linear-gradient(145deg,rgba(243,215,161,.09),rgba(125,228,211,.07))}
 .memoryHero strong{color:var(--warm)}
 .scoreSecondary{margin:13px 0 0!important;font-size:12px!important;color:#727d94!important;font-weight:750}
@@ -143,7 +143,7 @@ body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce
     <div class="memoryBox memoryHero"><strong id="memoryTitle"></strong><span id="memoryText"></span></div>
     <p class="scoreSecondary" id="score"></p>
     <div class="videoLead" id="videoLead"></div>
-    <button class="btn" id="createVideo"></button><p class="videoStatus hidden" id="videoStatus"></p>
+    <button class="btn" id="createVideo"></button><p class="videoStatus hidden" id="videoStatus"></p><div class="videoProgress hidden" id="videoProgress" aria-hidden="true"><span id="videoProgressBar"></span></div>
     <video class="videoPreview hidden" id="videoPreview" controls playsinline></video>
     <button class="btn hidden" id="saveVideo"></button>
     <button class="btn secondary" id="share"></button><button class="btn secondary" id="again"></button>
@@ -157,9 +157,9 @@ const params=new URLSearchParams(location.search),token=params.get('token')||'';
 let DATA=null,i=0,score=0,locked=false,videoBlob=null,videoFile=null,videoPreviewUrl=null;
 const $=id=>document.getElementById(id);
 const LANG={
- es:{loading:'Preparando tu LevelYou…',badge:'✨ Tu LevelYou',q:'Pregunta',next:'Siguiente recuerdo →',nextFinal:'Ver el final →',correct:'✨ Sí. Esa es.',wrong:'Casi. La respuesta correcta era otra.',finish:'5 recuerdos. Una historia.',score:s=>'Y además, has acertado '+s+' de 5',again:'Volver a jugar',share:'Compartir LevelYou',memoryTitle:'Un mensaje para ti',memoryText:'Estos cinco momentos todavía tienen una última forma de volver.',videoLead:'Tu LevelYou aún guarda una última sorpresa: convierte estos recuerdos en un vídeo para volver a ellos cuando quieras.',createVideo:'Crear mi vídeo recuerdo',creating:'Dando vida a tus recuerdos…',saveVideo:'Guardar / compartir vídeo',videoReady:'Tu vídeo ya está listo.',videoUnsupported:'Este navegador no permite crear el vídeo directamente. Puedes compartir el LevelYou con el botón de abajo.',videoError:'No hemos podido crear el vídeo. El juego sigue disponible y puedes compartirlo.',errorTitle:'No hemos podido abrir este LevelYou',errorText:'Comprueba que el enlace sea correcto e inténtalo de nuevo.',retry:'Reintentar',intro:'Un regalo hecho de recuerdos',outro:'Que nunca se olviden estos momentos'},
- ca:{loading:'Preparant el teu LevelYou…',badge:'✨ El teu LevelYou',q:'Pregunta',next:'Següent record →',nextFinal:'Veure el final →',correct:'✨ Sí. Aquesta és.',wrong:'Gairebé. La resposta correcta era una altra.',finish:'5 records. Una història.',score:s=>'I, a més, has encertat '+s+' de 5',again:'Tornar a jugar',share:'Compartir LevelYou',memoryTitle:'Un missatge per a tu',memoryText:'Aquests cinc moments encara tenen una última manera de tornar.',videoLead:'El teu LevelYou encara guarda una última sorpresa: converteix aquests records en un vídeo per tornar-hi sempre que vulguis.',createVideo:'Crear el meu vídeo record',creating:'Donant vida als teus records…',saveVideo:'Guardar / compartir vídeo',videoReady:'El teu vídeo ja està llest.',videoUnsupported:'Aquest navegador no permet crear el vídeo directament. Pots compartir el LevelYou amb el botó de sota.',videoError:'No hem pogut crear el vídeo. El joc continua disponible i el pots compartir.',errorTitle:'No hem pogut obrir aquest LevelYou',errorText:'Comprova que l’enllaç sigui correcte i torna-ho a provar.',retry:'Torna-ho a provar',intro:'Un regal fet de records',outro:'Que aquests moments no s’oblidin mai'},
- en:{loading:'Preparing your LevelYou…',badge:'✨ Your LevelYou',q:'Question',next:'Next memory →',nextFinal:'See the ending →',correct:'✨ Yes. That’s it.',wrong:'Almost. The correct answer was different.',finish:'5 memories. One story.',score:s=>'And you got '+s+' out of 5',again:'Play again',share:'Share LevelYou',memoryTitle:'A message for you',memoryText:'These five moments still have one more way to come back.',videoLead:'Your LevelYou has one last surprise: turn these memories into a video you can come back to whenever you want.',createVideo:'Create my memory video',creating:'Bringing your memories to life…',saveVideo:'Save / share video',videoReady:'Your video is ready.',videoUnsupported:'This browser cannot create the video directly. You can still share the LevelYou below.',videoError:'We could not create the video. The game is still available and can be shared.',errorTitle:'We could not open this LevelYou',errorText:'Check the link and try again.',retry:'Try again',intro:'A gift made of memories',outro:'May these moments never be forgotten'}
+ es:{loading:'Preparando tu LevelYou…',badge:'✨ Tu LevelYou',q:'Pregunta',next:'Siguiente recuerdo →',nextFinal:'Ver el final →',correct:'✨ Sí. Esa es.',wrong:'Casi. La respuesta correcta era otra.',finish:'5 recuerdos. Una historia.',score:s=>'Y además, has acertado '+s+' de 5',again:'Volver a jugar',share:'Compartir LevelYou',memoryTitle:'Un mensaje para ti',memoryText:'Estos cinco momentos todavía tienen una última forma de volver.',videoLead:'Tu LevelYou aún guarda una última sorpresa: convierte estos recuerdos en un vídeo para volver a ellos cuando quieras.',createVideo:'Crear mi vídeo recuerdo',creating:'Dando vida a tus recuerdos…',rendering:'Montando tu vídeo…',saveVideo:'Guardar / compartir vídeo',videoReady:'Tu vídeo ya está listo.',videoUnsupported:'Este navegador no permite crear el vídeo directamente. Puedes compartir el LevelYou con el botón de abajo.',videoError:'No hemos podido crear el vídeo. El juego sigue disponible y puedes compartirlo.',errorTitle:'No hemos podido abrir este LevelYou',errorText:'Comprueba que el enlace sea correcto e inténtalo de nuevo.',retry:'Reintentar',intro:'Un regalo hecho de recuerdos',outro:'Que nunca se olviden estos momentos'},
+ ca:{loading:'Preparant el teu LevelYou…',badge:'✨ El teu LevelYou',q:'Pregunta',next:'Següent record →',nextFinal:'Veure el final →',correct:'✨ Sí. Aquesta és.',wrong:'Gairebé. La resposta correcta era una altra.',finish:'5 records. Una història.',score:s=>'I, a més, has encertat '+s+' de 5',again:'Tornar a jugar',share:'Compartir LevelYou',memoryTitle:'Un missatge per a tu',memoryText:'Aquests cinc moments encara tenen una última manera de tornar.',videoLead:'El teu LevelYou encara guarda una última sorpresa: converteix aquests records en un vídeo per tornar-hi sempre que vulguis.',createVideo:'Crear el meu vídeo record',creating:'Donant vida als teus records…',rendering:'Muntant el teu vídeo…',saveVideo:'Guardar / compartir vídeo',videoReady:'El teu vídeo ja està llest.',videoUnsupported:'Aquest navegador no permet crear el vídeo directament. Pots compartir el LevelYou amb el botó de sota.',videoError:'No hem pogut crear el vídeo. El joc continua disponible i el pots compartir.',errorTitle:'No hem pogut obrir aquest LevelYou',errorText:'Comprova que l’enllaç sigui correcte i torna-ho a provar.',retry:'Torna-ho a provar',intro:'Un regal fet de records',outro:'Que aquests moments no s’oblidin mai'},
+ en:{loading:'Preparing your LevelYou…',badge:'✨ Your LevelYou',q:'Question',next:'Next memory →',nextFinal:'See the ending →',correct:'✨ Yes. That’s it.',wrong:'Almost. The correct answer was different.',finish:'5 memories. One story.',score:s=>'And you got '+s+' out of 5',again:'Play again',share:'Share LevelYou',memoryTitle:'A message for you',memoryText:'These five moments still have one more way to come back.',videoLead:'Your LevelYou has one last surprise: turn these memories into a video you can come back to whenever you want.',createVideo:'Create my memory video',creating:'Bringing your memories to life…',rendering:'Editing your video…',saveVideo:'Save / share video',videoReady:'Your video is ready.',videoUnsupported:'This browser cannot create the video directly. You can still share the LevelYou below.',videoError:'We could not create the video. The game is still available and can be shared.',errorTitle:'We could not open this LevelYou',errorText:'Check the link and try again.',retry:'Try again',intro:'A gift made of memories',outro:'May these moments never be forgotten'}
 };
 const PREMIUM_LANG={
  es:{introEyebrow:'Han creado algo para ti',introTitle:n=>n?('Esto es para ti, '+n+'.'):'Este LevelYou es para ti.',introText:'Cinco recuerdos te están esperando. Solo hay una forma de descubrir qué han preparado.',start:'Abrir mi LevelYou',finishKicker:'Tu historia, en cinco recuerdos'},
@@ -429,8 +429,9 @@ async function loadVideoAsset(url){
  }finally{URL.revokeObjectURL(objectUrl)}
 }
 async function generateVideo(){
- const status=$('videoStatus'),btn=$('createVideo');
+ const status=$('videoStatus'),btn=$('createVideo'),progress=$('videoProgress'),progressBar=$('videoProgressBar');
  status.classList.remove('hidden');status.textContent=t.creating;btn.disabled=true;
+ progress?.classList.remove('hidden');if(progressBar)progressBar.style.width='3%';
  $('saveVideo').classList.add('hidden');$('videoPreview').classList.add('hidden');
  if(videoPreviewUrl){URL.revokeObjectURL(videoPreviewUrl);videoPreviewUrl=null}
  videoBlob=null;videoFile=null;
@@ -447,6 +448,7 @@ async function generateVideo(){
   for(let n=0;n<videoSequence.length;n++){
    status.textContent=t.creating+' '+(n+1)+'/'+videoSequence.length;
    const asset=await loadVideoAsset(videoSequence[n].photoUrl);imgs.push(asset);backs.push(makeBackdrop(asset));
+   if(progressBar)progressBar.style.width=(5+Math.round(((n+1)/videoSequence.length)*15))+'%';
   }
   const name=DATA.personName||DATA.person_name||'';
   const timing=buildVideoTiming(videoSequence.length);
@@ -471,6 +473,8 @@ async function generateVideo(){
     const introStart=performance.now();
     while(performance.now()-introStart<VIDEO_INTRO_MS){const p=Math.min(1,(performance.now()-introStart)/VIDEO_INTRO_MS);drawIntro(ctx,p,name);await new Promise(requestAnimationFrame)}
     for(let n=0;n<imgs.length;n++){
+     status.textContent=t.rendering+' '+(n+1)+'/'+imgs.length;
+     if(progressBar)progressBar.style.width=(20+Math.round((n/imgs.length)*68))+'%';
      const sceneMs=timing.durations[n],transitionMs=transitionDurationMs(n),start=performance.now();
      while(performance.now()-start<sceneMs){
       const elapsed=performance.now()-start,p=Math.min(1,elapsed/sceneMs);
@@ -487,6 +491,7 @@ async function generateVideo(){
       await new Promise(requestAnimationFrame)
      }
     }
+    if(progressBar)progressBar.style.width='92%';
     const finalMessage=(DATA&&DATA.dedication&&DATA.dedication.trim())?DATA.dedication:t.outro;
     const hasDedication=Boolean(DATA&&DATA.dedication&&DATA.dedication.trim());
     const outroStart=performance.now();
@@ -507,11 +512,12 @@ async function generateVideo(){
   videoBlob=result.blob;
   const ext=videoBlob.type.includes('mp4')?'mp4':'webm';
   videoFile=new File([videoBlob],'LevelYou-'+(name||'recuerdo')+'.'+ext,{type:videoBlob.type});
-  videoPreviewUrl=URL.createObjectURL(videoBlob);$('videoPreview').src=videoPreviewUrl;$('videoPreview').classList.remove('hidden');$('saveVideo').classList.remove('hidden');status.textContent=t.videoReady;
+  videoPreviewUrl=URL.createObjectURL(videoBlob);$('videoPreview').src=videoPreviewUrl;$('videoPreview').classList.remove('hidden');$('saveVideo').classList.remove('hidden');status.textContent=t.videoReady;if(progressBar)progressBar.style.width='100%';setTimeout(()=>progress?.classList.add('hidden'),650);
   emitLevelYouEvent('levelyou:video-generated',{hasAudio:result.hasAudio,theme:currentTheme().id,photoCount:videoSequence.length,duration:totalDurationSec});
  }catch(e){
-  console.error('Sprint4 video generation',e);
-  status.textContent=e&&e.message==='unsupported'?t.videoUnsupported:t.videoError
+  console.error('Sprint5 video generation',e);
+  status.textContent=e&&e.message==='unsupported'?t.videoUnsupported:t.videoError;
+  progress?.classList.add('hidden');if(progressBar)progressBar.style.width='0'
  }finally{
   if(preparedAudio){try{await preparedAudio.close()}catch(e){}}
   btn.disabled=false
