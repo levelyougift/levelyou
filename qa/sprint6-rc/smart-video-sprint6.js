@@ -153,6 +153,29 @@
     }catch(e){return data}
   }
 
+
+  async function autoFramingFor(imageUrl){
+    const fallback={zoom:1,x:0,y:0};
+    try{
+      const im=await imageFromUrl(imageUrl),iw=im.naturalWidth||im.width||1,ih=im.naturalHeight||im.height||1;
+      const W=72,H=Math.min(108,Math.max(48,Math.round(72*ih/iw)));
+      const c=document.createElement('canvas');c.width=W;c.height=H;
+      const x=c.getContext('2d',{willReadFrequently:true});if(!x)return fallback;
+      x.drawImage(im,0,0,W,H);const d=x.getImageData(0,0,W,H).data;
+      const gray=(px,py)=>{const k=(py*W+px)*4;return .2126*d[k]+.7152*d[k+1]+.0722*d[k+2]};
+      let sw=0,sx=0,sy=0;
+      for(let py=1;py<H-1;py+=2)for(let px=1;px<W-1;px+=2){
+        const k=(py*W+px)*4,r=d[k],g=d[k+1],b=d[k+2],sat=Math.max(r,g,b)-Math.min(r,g,b);
+        const edge=Math.abs(gray(px+1,py)-gray(px-1,py))+Math.abs(gray(px,py+1)-gray(px,py-1));
+        const skin=(r>80&&g>35&&b>20&&r>g&&r>b&&Math.abs(r-g)>10&&sat>15)?38:0;
+        const nx=px/(W-1),ny=py/(H-1),center=.45+.55*Math.max(0,1-Math.hypot((nx-.5)*1.25,(ny-.46)*1.05));
+        const w=(edge+skin+2)*center;sw+=w;sx+=w*nx;sy+=w*ny;
+      }
+      const fx=sw?sx/sw:.5,fy=sw?sy/sw:.5;
+      return{zoom:1,x:Math.max(-.72,Math.min(.72,(.5-fx)*1.55)),y:Math.max(-.68,Math.min(.68,(.5-fy)*1.45))};
+    }catch(_){return fallback}
+  }
+
   let processing=false;
   async function addFiles(files){
     const list=[...files].filter(f=>f.type.startsWith('image/'));
@@ -162,7 +185,8 @@
     try{
       for(const file of list){
         const image=await compactFile(file);
-        state.push({image,order:state.length,framing:{zoom:1,x:0,y:0}});
+        const framing=await autoFramingFor(image);
+        state.push({image,order:state.length,framing});
         render();
       }
     }catch(e){console.error('Sprint3 extra photo',e);alert(tx().imageError)}
