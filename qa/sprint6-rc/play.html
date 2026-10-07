@@ -145,6 +145,10 @@ body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce
 @keyframes s6Sheen{0%{opacity:0;transform:translateX(-72%) rotate(2deg)}18%{opacity:1}100%{opacity:0;transform:translateX(72%) rotate(2deg)}}
 @keyframes s6Finale{0%{transform:none}45%{transform:scale(1.115)}100%{transform:none}}
 @media(prefers-reduced-motion:reduce){.photoViewport .photo{transition-duration:.01ms!important;animation:none!important}.magicSheen{display:none!important}}
+
+/* Sprint 6.4 QA panel */
+.qaPanel{position:fixed;right:10px;bottom:10px;z-index:9999;width:min(330px,calc(100vw - 20px));padding:12px;border-radius:16px;background:rgba(7,9,17,.88);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 44px rgba(0,0,0,.28);font-size:11px;line-height:1.45;color:#dce4f2}
+.qaPanel strong{color:#fff}.qaPanel .qaTitle{font-size:12px;font-weight:900;letter-spacing:.05em;margin-bottom:7px}.qaPanel .qaRow{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-top:1px solid rgba(255,255,255,.06)}.qaPanel .qaRow:first-of-type{border-top:0}.qaPanel .qaOk{color:#8ff0c6}.qaPanel .qaWarn{color:#ffd37d}
 </style>
 </head>
 <body>
@@ -209,7 +213,7 @@ function applyPhotoFraming(el,f){
 }
 function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photoUrl){const im=new Image();im.decoding='async';im.src=item.photoUrl}})}catch(e){console.warn('Game photo preload',e)}}
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
-async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
+async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden');initSprint64QA();maybeOpenVideoQA()}catch(e){showError()}}
 
 function levelYouMagicTransform(){
  const backend=DATA?.magicTransform;
@@ -618,7 +622,7 @@ async function generateVideo(){
   const ext=videoBlob.type.includes('mp4')?'mp4':'webm';
   videoFile=new File([videoBlob],'LevelYou-'+(name||'recuerdo')+'.'+ext,{type:videoBlob.type});
   videoPreviewUrl=URL.createObjectURL(videoBlob);$('videoPreview').src=videoPreviewUrl;$('videoPreview').classList.remove('hidden');$('saveVideo').classList.remove('hidden');status.textContent=t.videoReady;if(progressBar)progressBar.style.width='100%';setTimeout(()=>progress?.classList.add('hidden'),650);
-  emitLevelYouEvent('levelyou:video-generated',{hasAudio:result.hasAudio,theme:currentTheme().id,photoCount:videoSequence.length,duration:totalDurationSec});
+  emitLevelYouEvent('levelyou:video-generated',{hasAudio:result.hasAudio,theme:currentTheme().id,photoCount:videoSequence.length,duration:totalDurationSec,aiTransform:Boolean(mt&&mt.status==='ready'&&mt.url),mime:videoBlob.type,bytes:videoBlob.size,width:VIDEO_W,height:VIDEO_H});
  }catch(e){
   console.error('Sprint5 video generation',e);
   status.textContent=e&&e.message==='unsupported'?t.videoUnsupported:t.videoError;
@@ -630,7 +634,42 @@ async function generateVideo(){
 }
 
 $('createVideo').onclick=generateVideo;$('saveVideo').onclick=async()=>{if(!videoBlob||!videoFile)return;if(navigator.canShare&&navigator.share&&navigator.canShare({files:[videoFile]})){try{await navigator.share({files:[videoFile],title:'LevelYou'});return}catch(e){if(e&&e.name==='AbortError')return}}const u=URL.createObjectURL(videoBlob),a=document.createElement('a');a.href=u;a.download=videoFile.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),15000)};
+function initSprint64QA(){
+ const mode=new URLSearchParams(location.search).get('qa')||'';
+ if(!mode)return;
+ const panel=$('qaPanel');if(!panel)return;
+ panel.classList.remove('hidden');
+ $('qaView').textContent=mode;
+ const mt=levelYouMagicTransform();
+ $('qaMagic').textContent=mt?.status||'fallback local';
+ $('qaMagic').className=(mt?.status==='ready')?'qaOk':'qaWarn';
+ $('qaIndex').textContent=Number.isInteger(Number(mt?.index))?String(Number(mt.index)+1):'3';
+ window.addEventListener('levelyou:magic-reveal',e=>{
+  if(e.detail?.ai){$('qaMagic').textContent='ready · reveal IA';$('qaMagic').className='qaOk'}
+ });
+ window.addEventListener('levelyou:video-generated',e=>{
+  const mb=videoBlob?Math.round((videoBlob.size/1024/1024)*10)/10:null;
+  $('qaVideo').textContent=(e.detail?.hasAudio?'audio · ':'sin audio · ')+(mb!==null?mb+' MB · ':'')+Math.round(e.detail?.duration||0)+' s';
+  $('qaVideo').className='qaOk';
+ });
+}
+function maybeOpenVideoQA(){
+ const mode=new URLSearchParams(location.search).get('qa')||'';
+ if(mode!=='video')return false;
+ $('intro').classList.add('hidden');
+ $('shareTop').classList.remove('hidden');
+ done();
+ setTimeout(()=>{document.getElementById('createVideo')?.scrollIntoView({behavior:'smooth',block:'center'})},120);
+ return true;
+}
+initSprint64QA();
 load();
 </script>
-</body>
+<div class="qaPanel hidden" id="qaPanel" aria-live="polite">
+<div class="qaTitle">LEVELYOU · S6.4 QA</div>
+<div class="qaRow"><span>Vista</span><strong id="qaView">—</strong></div>
+<div class="qaRow"><span>Magic transform</span><strong id="qaMagic">—</strong></div>
+<div class="qaRow"><span>Índice IA</span><strong id="qaIndex">—</strong></div>
+<div class="qaRow"><span>Vídeo</span><strong id="qaVideo">pendiente</strong></div>
+</div></body>
 </html>
