@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0e1020">
 <meta name="robots" content="noindex,nofollow">
-<meta name="levelyou-build" content="sprint6-rc-2026-10-07-s6.2-player">
+<meta name="levelyou-build" content="sprint6-rc-2026-10-07-s6.4-ai">
 <title>LevelYou — Tu juego</title>
 <style>
 :root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
@@ -179,7 +179,7 @@ body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce
   <div class="footer">LevelYou · Regalos personalizados</div>
 </div>
 <script>
-const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint5';
+const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint6';
 const MAGIC_API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/magic-transform-sprint6';
 const params=new URLSearchParams(location.search),token=params.get('token')||'';
 let DATA=null,i=0,score=0,locked=false,videoBlob=null,videoFile=null,videoPreviewUrl=null;
