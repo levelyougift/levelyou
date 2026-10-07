@@ -33,7 +33,7 @@
       helper:'Les 5 fotos del joc apareixeran primer. Després es mostraran aquestes fotos en l’ordre que triïs.',
       remove:'Eliminar', up:'↑', down:'↓', adjust:'Ajustar', full:'Foto completa',
       frameTitle:'Ajusta l’enquadrament del vídeo',
-      frameHelp:'Arrossega la foto i utilitza el zoom. L'enquadrament omple automàticament el marc sense bandes negres. Recol·loca-la i amplia-la si cal.',
+      frameHelp:'Arrossega la foto i utilitza el zoom. L\'enquadrament omple automàticament el marc sense bandes negres. Recol·loca-la i amplia-la si cal.',
       reset:'Recentrar', cancel:'Cancel·lar', save:'Desar enquadrament',
       tooMany:'Pots afegir com a màxim 10 fotos addicionals.',
       imageError:'No hem pogut preparar una de les fotos. Prova’n una altra.',
