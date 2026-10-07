@@ -180,6 +180,7 @@ body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce
 </div>
 <script>
 const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint5';
+const MAGIC_API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/magic-transform-sprint6';
 const params=new URLSearchParams(location.search),token=params.get('token')||'';
 let DATA=null,i=0,score=0,locked=false,videoBlob=null,videoFile=null,videoPreviewUrl=null;
 const $=id=>document.getElementById(id);
@@ -213,7 +214,29 @@ function applyPhotoFraming(el,f){
 }
 function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photoUrl){const im=new Image();im.decoding='async';im.src=item.photoUrl}})}catch(e){console.warn('Game photo preload',e)}}
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
-async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden');initSprint64QA();maybeOpenVideoQA()}catch(e){showError()}}
+async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden');initSprint64QA();maybeOpenVideoQA();pollMagicTransform()}catch(e){showError()}}
+
+async function pollMagicTransform(){
+ if(!DATA?.orderId||DATA?.magicTransform?.status!=='running')return;
+ const started=Date.now(),deadline=started+90000;
+ while(Date.now()<deadline&&DATA?.magicTransform?.status==='running'){
+  await sleep(5200+Math.round(Math.random()*800));
+  try{
+   const r=await fetch(MAGIC_API+'?orderId='+encodeURIComponent(DATA.orderId),{method:'GET',cache:'no-store'});
+   const j=await r.json().catch(()=>({}));
+   if(!r.ok||!j?.magic)continue;
+   DATA.magicTransform=j.magic;
+   const panel=document.getElementById('qaMagic');
+   if(panel){panel.textContent=j.magic.status||'—';panel.className=j.magic.status==='ready'?'qaOk':'qaWarn'}
+   if(j.magic.status==='ready'&&j.magic.url){
+    const pre=new Image();pre.decoding='async';pre.src=j.magic.url;
+    emitLevelYouEvent('levelyou:magic-ready',{index:j.magic.index,latencyMs:j.magic.latency_ms||j.magic.latencyMs||null});
+    break;
+   }
+   if(j.magic.status==='failed')break;
+  }catch(e){console.warn('Magic transform polling',e)}
+ }
+}
 
 function levelYouMagicTransform(){
  const backend=DATA?.magicTransform;
