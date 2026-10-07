@@ -31,7 +31,7 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
 .giftIntro p{max-width:470px;margin:0 auto;color:#b4bdcf;line-height:1.55;font-size:15px}
 .giftIntro .btn{margin:28px auto 0;max-width:360px}
 .gameProgress{height:5px;background:rgba(255,255,255,.07);overflow:hidden}.gameProgress span{display:block;height:100%;width:20%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease}
-.photoViewport{width:100%;aspect-ratio:4/3;overflow:hidden;background:#080b14;position:relative}.photo{width:100%;height:100%;aspect-ratio:auto;object-fit:contain;background:#080b14;transform-origin:center center;will-change:transform;pointer-events:none;display:block}.body{padding:20px}
+.photoViewport{width:100%;aspect-ratio:4/3;overflow:hidden;background:#080b14;position:relative}.photo{width:100%;height:100%;aspect-ratio:auto;object-fit:cover;background:#080b14;transform-origin:center center;will-change:transform;pointer-events:none;display:block}.body{padding:20px}
 .badge{background:rgba(125,228,211,.1);color:#baf5eb;border:1px solid rgba(125,228,211,.12)}
 .question{font-size:27px;letter-spacing:-.028em;line-height:1.16;margin:17px 0}
 .answer{border-radius:17px;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09);padding:15px 16px;transition:.18s ease}
@@ -128,22 +128,22 @@ body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce
 .photoViewport{isolation:isolate}
 .photoViewport .photo{transition:filter .85s cubic-bezier(.2,.7,.2,1),transform 1.15s cubic-bezier(.2,.7,.2,1),opacity .5s ease}
 .photoViewport:after{content:"MAGIC REVEAL";position:absolute;left:12px;top:12px;z-index:6;padding:6px 9px;border-radius:999px;background:rgba(6,9,16,.66);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:9px;font-weight:900;letter-spacing:.12em;color:#effffb;opacity:.92}
-.photoViewport.magic-timewarp:not(.magic-revealed) .photo{filter:grayscale(1) contrast(.92) brightness(.82);transform:scale(1.025)}
-.photoViewport.magic-timewarp.magic-revealed .photo{filter:grayscale(0) saturate(1.08) brightness(1.03);transform:scale(1.07)}
-.photoViewport.magic-focus:not(.magic-revealed) .photo{filter:blur(8px) saturate(.72) brightness(.82);transform:scale(1.09)}
-.photoViewport.magic-focus.magic-revealed .photo{filter:blur(0) saturate(1.06) brightness(1.02);transform:scale(1.035)}
-.photoViewport.magic-art:not(.magic-revealed) .photo{filter:grayscale(.35) saturate(.65) contrast(1.05) brightness(.80);transform:scale(1.03)}
-.photoViewport.magic-art.magic-revealed .photo{filter:saturate(1.55) contrast(1.22) brightness(1.03) sepia(.08);transform:scale(1.065)}
-.photoViewport.magic-cinema:not(.magic-revealed) .photo{filter:saturate(.82) contrast(.98) brightness(.82);transform:scale(1.035) translateX(-1%)}
-.photoViewport.magic-cinema.magic-revealed .photo{filter:saturate(1.08) contrast(1.04) brightness(1.02);transform:scale(1.10) translateX(1%);transition-duration:1.8s}
-.photoViewport.magic-finale:not(.magic-revealed) .photo{filter:saturate(.70) brightness(.72) contrast(.94);transform:scale(1.02)}
+.photoViewport.magic-timewarp:not(.magic-revealed) .photo{filter:grayscale(1) contrast(.92) brightness(.82);transform:none}
+.photoViewport.magic-timewarp.magic-revealed .photo{filter:grayscale(0) saturate(1.08) brightness(1.03);transform:none}
+.photoViewport.magic-focus:not(.magic-revealed) .photo{filter:blur(8px) saturate(.72) brightness(.82);transform:none}
+.photoViewport.magic-focus.magic-revealed .photo{filter:blur(0) saturate(1.06) brightness(1.02);transform:none}
+.photoViewport.magic-art:not(.magic-revealed) .photo{filter:grayscale(.35) saturate(.65) contrast(1.05) brightness(.80);transform:none}
+.photoViewport.magic-art.magic-revealed .photo{filter:saturate(1.55) contrast(1.22) brightness(1.03) sepia(.08);transform:none}
+.photoViewport.magic-cinema:not(.magic-revealed) .photo{filter:saturate(.82) contrast(.98) brightness(.82);transform:none translateX(-1%)}
+.photoViewport.magic-cinema.magic-revealed .photo{filter:saturate(1.08) contrast(1.04) brightness(1.02);transform:none;transition-duration:1.8s}
+.photoViewport.magic-finale:not(.magic-revealed) .photo{filter:saturate(.70) brightness(.72) contrast(.94);transform:none}
 .photoViewport.magic-finale.magic-revealed .photo{animation:s6Finale 1.25s cubic-bezier(.18,.8,.18,1) both;filter:saturate(1.14) brightness(1.04) contrast(1.03)}
 .photoViewport .magicSheen{position:absolute;inset:-20%;z-index:3;pointer-events:none;opacity:0;background:linear-gradient(115deg,transparent 37%,rgba(255,255,255,.20) 47%,rgba(125,228,211,.25) 52%,transparent 63%);transform:translateX(-70%) rotate(2deg)}
 .photoViewport.magic-revealed .magicSheen{animation:s6Sheen 1.05s ease-out both}
 #createYours{margin-top:18px;background:linear-gradient(135deg,rgba(243,215,161,.16),rgba(125,228,211,.10));color:#fff;border:1px solid rgba(243,215,161,.24);box-shadow:none}
 .createYoursHint{margin:9px 0 0!important;font-size:11px!important;color:#778197!important}
 @keyframes s6Sheen{0%{opacity:0;transform:translateX(-72%) rotate(2deg)}18%{opacity:1}100%{opacity:0;transform:translateX(72%) rotate(2deg)}}
-@keyframes s6Finale{0%{transform:scale(1.02)}45%{transform:scale(1.115)}100%{transform:scale(1.07)}}
+@keyframes s6Finale{0%{transform:none}45%{transform:scale(1.115)}100%{transform:none}}
 @media(prefers-reduced-motion:reduce){.photoViewport .photo{transition-duration:.01ms!important;animation:none!important}.magicSheen{display:none!important}}
 </style>
 </head>
@@ -200,9 +200,12 @@ function safeFraming(f){
 }
 function applyPhotoFraming(el,f){
  if(!el)return;
- const p=safeFraming(f),travel=50*Math.max(0,p.zoom-1)/Math.max(1,p.zoom);
- el.style.objectFit='contain';
- el.style.transform='translate('+(p.x*travel)+'%,'+(p.y*travel)+'%) scale('+p.zoom+')';
+ const p=safeFraming(f);
+ el.style.objectFit='cover';
+ el.style.objectPosition=(50-p.x*50)+'% '+(50-p.y*50)+'%';
+ el.style.transformOrigin='center center';
+ el.style.transform='scale('+p.zoom+')';
+ el.dataset.frameZoom=String(p.zoom);
 }
 function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photoUrl){const im=new Image();im.decoding='async';im.src=item.photoUrl}})}catch(e){console.warn('Game photo preload',e)}}
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
@@ -225,7 +228,10 @@ function armMagicReveal(){
 function revealMagic(){
  const v=document.querySelector('.photoViewport');if(!v||v.classList.contains('magic-revealed'))return;
  void v.offsetWidth;v.classList.add('magic-revealed');
- emitLevelYouEvent('levelyou:magic-reveal',{index:i,effect:magicEffectFor(i)});
+ const img=$('photo'),p=safeFraming(DATA?.items?.[i]?.framing),effect=magicEffectFor(i);
+ const factor=effect==='finale'?1.055:effect==='cinema'?1.035:effect==='art'?1.025:1.018;
+ if(img)img.style.transform='scale('+(p.zoom*factor)+')';
+ emitLevelYouEvent('levelyou:magic-reveal',{index:i,effect});
 }
 function render(){resetPhotoReaction();armMagicReveal();locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
 function emitLevelYouEvent(name,detail){try{window.dispatchEvent(new CustomEvent(name,{detail}))}catch(e){}}
@@ -381,7 +387,7 @@ function drawPremiumPhoto(ctx,img,backdrop,framing,p,index,total){
  const vignette=ctx.createRadialGradient(VIDEO_W/2,VIDEO_H*.44,130,VIDEO_W/2,VIDEO_H*.48,760);
  vignette.addColorStop(0,'rgba(0,0,0,0)');vignette.addColorStop(1,'rgba(2,4,10,.40)');
  ctx.fillStyle=vignette;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
- const base=Math.min(box.w/(img.width||1),box.h/(img.height||1));
+ const base=Math.max(box.w/(img.width||1),box.h/(img.height||1));
  const profile=index%4,dz=f.zoom>1.7?.016:.046;
  const zoomPhase=profile===1||profile===3?(1-e):e;
  const motionZoom=1+dz*zoomPhase;
