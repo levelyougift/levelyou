@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b15"><meta name="robots" content="noindex,nofollow">
+<title>LevelYou Story — QA</title>
+<style>
+:root{--bg:#090b15;--card:#141827;--txt:#fbfbfd;--muted:#9ea7ba;--accent:#80e5d5;--warm:#f3d7a1;--line:rgba(255,255,255,.1);--bad:#ff9aa9}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% -4%,rgba(128,229,213,.16),transparent 32%),radial-gradient(circle at 94% 8%,rgba(158,175,255,.15),transparent 34%),linear-gradient(180deg,#090b15,#0d111d 52%,#090b15);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.wrap{max-width:760px;margin:auto;padding:20px 15px 48px}.top{display:flex;justify-content:space-between;align-items:center;margin:2px 2px 22px}.brand{font-weight:900;letter-spacing:.13em}.pill{font-size:10px;font-weight:900;letter-spacing:.1em;color:var(--warm);border:1px solid rgba(243,215,161,.2);padding:7px 9px;border-radius:999px}.hero{text-align:center;padding:28px 8px 18px}.ey{font-size:11px;font-weight:900;letter-spacing:.16em;color:var(--warm);text-transform:uppercase}.hero h1{font-size:44px;line-height:1;letter-spacing:-.045em;margin:13px auto 12px;max-width:650px}.hero p{color:#c1c8d7;line-height:1.55;margin:auto;max-width:600px}.card{background:linear-gradient(180deg,rgba(23,28,45,.95),rgba(14,18,31,.97));border:1px solid var(--line);border-radius:26px;padding:20px;margin-top:16px;box-shadow:0 24px 70px rgba(0,0,0,.3)}label{display:block;font-size:12px;font-weight:800;color:#cbd2e1;margin:13px 0 7px}input,textarea,select{width:100%;border:1px solid var(--line);background:#0c101d;color:#fff;border-radius:15px;padding:14px;font:inherit;outline:none}textarea{min-height:94px;resize:vertical}input:focus,textarea:focus,select:focus{border-color:rgba(128,229,213,.55);box-shadow:0 0 0 3px rgba(128,229,213,.08)}.stylegrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.style{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#d7ddec;border-radius:15px;padding:11px 6px;font-size:11px;font-weight:850;min-height:62px}.style.active{background:rgba(128,229,213,.11);border-color:rgba(128,229,213,.45);color:#edfffb}.memory{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:start;padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:20px;background:rgba(255,255,255,.02);margin-top:12px}.pick{position:relative;aspect-ratio:1/1;border:1px dashed rgba(128,229,213,.28);border-radius:17px;overflow:hidden;background:#090c16;display:grid;place-items:center;text-align:center;color:#9aa5ba;font-size:12px;padding:10px}.pick input{position:absolute;inset:0;opacity:0}.pick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.pick span{position:relative;z-index:1}.pick.has span{display:none}.small{font-size:12px;color:var(--muted);line-height:1.45}.btn{appearance:none;border:0;border-radius:18px;min-height:58px;width:100%;padding:14px 18px;font-size:16px;font-weight:900;background:linear-gradient(135deg,#8be9da,#d7f7ef);color:#07120f;margin-top:14px}.btn.secondary{background:rgba(255,255,255,.055);color:#fff;border:1px solid var(--line)}.btn:disabled{opacity:.45}.hidden{display:none!important}.progress{height:7px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-top:14px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#a7b5ff);transition:width .3s}.status{text-align:center;color:#dce3ef;margin:14px 0 0;font-size:14px}.chapter{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#080b14;margin-top:14px}.chapter video,.chapter img{display:block;width:100%;aspect-ratio:9/16;object-fit:cover;max-height:620px;background:#05070d}.chapter .copy{padding:15px}.chapter h3{margin:0 0 5px;font-size:21px}.chapter p{margin:0;color:#b7c0d1;line-height:1.45}.finalVideo{display:block;width:100%;max-height:720px;border-radius:22px;background:#05070d;margin-top:16px;border:1px solid var(--line)}.footer{text-align:center;color:#667087;font-size:12px;margin-top:26px}.error{color:#ffd0d6}
+@media(max-width:600px){.hero h1{font-size:37px}.stylegrid{grid-template-columns:repeat(2,1fr)}.memory{grid-template-columns:1fr}.pick{aspect-ratio:4/3}}
+</style>
+</head><body>
+<div class="wrap">
+<div class="top"><div class="brand">● LEVELYOU</div><span class="pill">STORY MODE · QA</span></div>
+<section id="creator">
+<div class="hero"><div class="ey">5 recuerdos · 1 película</div><h1>Convierte vuestra historia en una película animada.</h1><p>Sube cinco fotos y cuenta brevemente qué pasó. LevelYou dirige el resto: guion, estilo visual, transformación, movimiento y montaje final.</p></div>
+<div class="card">
+<label>¿Para quién es?</label><input id="person" maxlength="50" placeholder="Ej. Cristina">
+<label>Estilo visual de toda la película</label>
+<div class="stylegrid" id="styles">
+<button class="style active" data-style="animated3d">✨ 3D Animated</button><button class="style" data-style="fairytale">🪄 Fairytale</button><button class="style" data-style="anime">🌸 Anime</button><button class="style" data-style="graphic">🖋 Graphic Novel</button><button class="style" data-style="illustrated">🎨 Illustrated Luxe</button>
+</div>
+<label>Mensaje final (opcional)</label><textarea id="dedication" maxlength="220" placeholder="Ej. Gracias por todos estos recuerdos. Y por todos los que vendrán."></textarea>
+</div>
+<div class="card"><div class="ey">Los 5 capítulos</div><p class="small">No hace falta escribir bonito. Cuenta qué pasó y por qué importa; LevelYou lo convierte en narrativa visual.</p><div id="memories"></div><button class="btn" id="generate">Crear mi película ✨</button></div>
+</section>
+
+<section id="working" class="hidden"><div class="card" style="text-align:center;padding:34px 22px"><div style="font-size:42px">✦</div><h2 id="workTitle">Creando vuestra historia…</h2><p class="small" id="workDetail">Preparando los recuerdos.</p><div class="progress"><div class="bar" id="bar"></div></div><div class="status" id="status"></div></div></section>
+
+<section id="result" class="hidden"><div class="hero"><div class="ey">Tu LevelYou Story</div><h1 id="resultTitle">La historia ya cobra vida.</h1><p>Revisa los cinco capítulos. Si te convence, genera el montaje final.</p></div><div id="chapters"></div><div class="card"><button class="btn" id="makeMovie">Generar película final</button><div class="status" id="movieStatus"></div><video class="finalVideo hidden" id="finalVideo" controls playsinline></video><button class="btn secondary hidden" id="saveMovie">Guardar / compartir película</button></div></section>
+<canvas id="canvas" width="720" height="1280" class="hidden"></canvas>
+<div class="footer">LevelYou · Story Mode experimental · Quiz congelado por separado</div>
+</div>
+
+<script>
+const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/story-engine';
+const $=id=>document.getElementById(id);let style='animated3d',files=Array(5).fill(null),orderId='',state=null,finalBlob=null,finalFile=null;
+const memoryBox=i=>'<div class="memory"><label class="pick" id="pick'+i+'"><span>📷 Foto '+(i+1)+'</span><img id="img'+i+'" class="hidden" alt=""><input id="file'+i+'" type="file" accept="image/*"></label><div><label>¿Qué pasó en este recuerdo?</label><textarea id="story'+i+'" maxlength="700" placeholder="'+['Ej. Fue nuestro primer viaje juntos y nos perdimos buscando la playa.','Ej. Esa tarde llovía, pero acabamos riéndonos durante horas.','Ej. Aquí celebramos algo que llevábamos meses esperando.','Ej. Es una foto sencilla, pero me recuerda muchísimo a nosotros.','Ej. Este momento resume todo lo que quiero recordar.'][i]+'"></textarea><div class="small">Escribe como hablarías. La IA se encargará de darle forma.</div></div></div>';
+$('memories').innerHTML=Array.from({length:5},(_,i)=>memoryBox(i)).join('');
+document.querySelectorAll('.style').forEach(b=>b.onclick=()=>{document.querySelectorAll('.style').forEach(x=>x.classList.remove('active'));b.classList.add('active');style=b.dataset.style});
+for(let i=0;i<5;i++)$('file'+i).onchange=e=>{const f=e.target.files?.[0];if(!f)return;files[i]=f;const u=URL.createObjectURL(f);$('img'+i).src=u;$('img'+i).classList.remove('hidden');$('pick'+i).classList.add('has')};
+
+function uuid(){return crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=crypto.getRandomValues(new Uint8Array(1))[0]&15,v=c==='x'?r:(r&3)|8;return v.toString(16)})}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function imageFromFile(file){return new Promise((resolve,reject)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=reject;im.src=u})}
+function blobFromCanvas(c){return new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('encode')),'image/jpeg',.88))}
+async function optimize(file){const im=await imageFromFile(file),max=1920,s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);const x=c.getContext('2d',{alpha:false});x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);return await blobFromCanvas(c)}
+async function post(body){const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'error');return j}
+async function getState(){const r=await fetch(API+'?orderId='+encodeURIComponent(orderId),{cache:'no-store'}),j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'error');state=j.state;return state}
+async function uploadOne(up,blob){const fd=new FormData();fd.append('cacheControl','3600');fd.append('',blob);const r=await fetch(up.signedUrl,{method:'PUT',body:fd});if(!r.ok)throw new Error('upload')}
+function setWork(title,detail,pct){$('workTitle').textContent=title;$('workDetail').textContent=detail;$('bar').style.width=pct+'%';$('status').textContent=detail}
+function show(id){['creator','working','result'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
+
+$('generate').onclick=async()=>{
+ const person=$('person').value.trim(),stories=Array.from({length:5},(_,i)=>$('story'+i).value.trim());
+ if(!person){alert('Escribe para quién es.');return}if(files.some(x=>!x)){alert('Añade las 5 fotos.');return}if(stories.some(x=>x.length<4)){alert('Cuenta brevemente la historia de las 5 fotos.');return}
+ show('working');try{
+   setWork('Preparando las fotos…','Optimizando los cinco recuerdos.',8);
+   const blobs=[];for(const f of files)blobs.push(await optimize(f));
+   orderId=uuid();
+   setWork('Preparando vuestra historia…','Creando el proyecto.',15);
+   const created=await post({action:'create',requestId:orderId,personName:person,language:'es',style,dedication:$('dedication').value.trim(),stories:stories.map(text=>({text})),contentTypes:blobs.map(()=> 'image/jpeg')});
+   setWork('Subiendo recuerdos…','Guardando las fotos de forma segura.',22);
+   for(let i=0;i<5;i++)await uploadOne(created.uploads[i],blobs[i]);
+   setWork('Dirigiendo la historia…','Creando títulos, captions y dirección visual.',30);
+   await post({action:'start',orderId});
+   let st;for(let n=0;n<120;n++){st=await getState();const ready=st.transforms.filter(x=>x.status==='ready').length;setWork('Transformando los recuerdos…',ready+' de 5 ilustraciones listas.',30+ready*7);if(st.phase==='transformed')break;if(st.transforms.some(x=>x.status==='failed'))throw new Error('Una transformación ha fallado');await sleep(2500)}
+   if(st.phase!=='transformed')throw new Error('La transformación está tardando demasiado');
+   setWork('Dándoles vida…','Iniciando las cinco microhistorias animadas.',68);
+   await post({action:'animate',orderId});
+   for(let n=0;n<180;n++){st=await getState();const ready=st.motions.filter(x=>x.status==='ready').length;setWork('Dándoles vida…',ready+' de 5 escenas animadas listas.',68+ready*6);if(st.phase==='ready')break;if(st.motions.some(x=>x.status==='failed'))throw new Error('Una animación ha fallado');await sleep(3000)}
+   if(st.phase!=='ready')throw new Error('La animación está tardando demasiado');
+   setWork('Terminado','Tu película ya tiene sus cinco capítulos.',100);await sleep(500);renderResult(st);show('result');
+ }catch(e){console.error(e);$('status').innerHTML='<span class="error">No hemos podido completar esta prueba: '+String(e.message||e)+'</span>';setTimeout(()=>show('creator'),3500)}
+};
+
+function renderResult(st){$('resultTitle').textContent='La historia de '+st.personName+' ya cobra vida.';$('chapters').innerHTML=st.chapters.map((c,i)=>'<div class="chapter"><video src="'+st.animated[i]+'" controls playsinline muted poster="'+st.transformed[i]+'"></video><div class="copy"><div class="ey">Capítulo '+(i+1)+'</div><h3>'+escapeHtml(c.title)+'</h3><p>'+escapeHtml(c.caption)+'</p></div></div>').join('')}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function wrap(ctx,text,x,y,max,lineH,maxLines){const words=String(text||'').split(/\s+/);let line='',lines=[];for(const w of words){const t=line?line+' '+w:w;if(ctx.measureText(t).width>max&&line){lines.push(line);line=w;if(lines.length>=maxLines-1)break}else line=t}if(line&&lines.length<maxLines)lines.push(line);lines.forEach((l,n)=>ctx.fillText(l,x,y+n*lineH))}
+function bg(ctx){const g=ctx.createLinearGradient(0,0,720,1280);g.addColorStop(0,'#090b15');g.addColorStop(.55,'#12192b');g.addColorStop(1,'#090b15');ctx.fillStyle=g;ctx.fillRect(0,0,720,1280)}
+function cover(ctx,media,w,h,zoom=1){const mw=media.videoWidth||media.naturalWidth||media.width,mh=media.videoHeight||media.naturalHeight||media.height,s=Math.max(w/mw,h/mh)*zoom,dw=mw*s,dh=mh*s;ctx.drawImage(media,(w-dw)/2,(h-dh)/2,dw,dh)}
+async function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=rej;im.src=src})}
+async function loadVid(src){return new Promise((res,rej)=>{const v=document.createElement('video');v.crossOrigin='anonymous';v.muted=true;v.playsInline=true;v.preload='auto';v.onloadeddata=()=>res(v);v.onerror=rej;v.src=src;v.load()})}
+async function renderMovie(){
+ if(!state||state.phase!=='ready')return;const btn=$('makeMovie'),status=$('movieStatus');btn.disabled=true;status.textContent='Montando la película…';finalBlob=null;finalFile=null;
+ try{const canvas=$('canvas');if(!canvas.captureStream||!window.MediaRecorder)throw new Error('Este navegador no permite exportar el vídeo.');const ctx=canvas.getContext('2d',{alpha:false}),stream=canvas.captureStream(24);const mime=['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm'].find(x=>MediaRecorder.isTypeSupported?.(x))||'';const rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:5000000}:{videoBitsPerSecond:5000000}),chunks=[];rec.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};const stopped=new Promise((res,rej)=>{rec.onstop=res;rec.onerror=rej});rec.start(250);
+ const orig=[],anim=[];for(let i=0;i<5;i++){orig.push(await loadImg(state.original[i]));anim.push(await loadVid(state.animated[i]))}
+ let start=performance.now();while(performance.now()-start<1800){bg(ctx);ctx.fillStyle='#80e5d5';ctx.beginPath();ctx.arc(360,410,8,0,Math.PI*2);ctx.fill();ctx.textAlign='center';ctx.fillStyle='#f3d7a1';ctx.font='800 20px -apple-system,Segoe UI,sans-serif';ctx.fillText('LEVELYOU STORY',360,475);ctx.fillStyle='#fff';ctx.font='800 58px -apple-system,Segoe UI,sans-serif';wrap(ctx,'Para '+state.personName,70,585,580,68,2);ctx.fillStyle='#b8c1d1';ctx.font='500 26px -apple-system,Segoe UI,sans-serif';ctx.fillText('Cinco recuerdos. Una película.',360,760);ctx.textAlign='left';await new Promise(requestAnimationFrame)}
+ for(let i=0;i<5;i++){status.textContent='Montando capítulo '+(i+1)+' de 5…';start=performance.now();while(performance.now()-start<1400){const p=(performance.now()-start)/1400;bg(ctx);ctx.save();ctx.globalAlpha=Math.min(1,p/.2);cover(ctx,orig[i],720,1280,1+.025*p);ctx.restore();const g=ctx.createLinearGradient(0,720,0,1280);g.addColorStop(0,'rgba(9,11,21,0)');g.addColorStop(.45,'rgba(9,11,21,.78)');g.addColorStop(1,'rgba(9,11,21,.98)');ctx.fillStyle=g;ctx.fillRect(0,680,720,600);ctx.fillStyle='#f3d7a1';ctx.font='800 18px -apple-system,Segoe UI,sans-serif';ctx.fillText('CAPÍTULO '+(i+1),52,960);ctx.fillStyle='#fff';ctx.font='800 42px -apple-system,Segoe UI,sans-serif';wrap(ctx,state.chapters[i].title,52,1025,616,50,2);ctx.fillStyle='#d5dbe7';ctx.font='500 24px -apple-system,Segoe UI,sans-serif';wrap(ctx,state.chapters[i].caption,52,1140,616,32,3);await new Promise(requestAnimationFrame)}
+   const v=anim[i];v.currentTime=0;await v.play();start=performance.now();while(performance.now()-start<3500){bg(ctx);cover(ctx,v,720,1280,1.01);const gg=ctx.createLinearGradient(0,860,0,1280);gg.addColorStop(0,'rgba(9,11,21,0)');gg.addColorStop(1,'rgba(9,11,21,.84)');ctx.fillStyle=gg;ctx.fillRect(0,820,720,460);ctx.fillStyle='#fff';ctx.font='800 31px -apple-system,Segoe UI,sans-serif';wrap(ctx,state.chapters[i].caption,52,1120,616,38,3);await new Promise(requestAnimationFrame)}v.pause()}
+ start=performance.now();const closing=state.dedication||'Por todos los recuerdos que ya tenemos. Y por los que aún faltan.';while(performance.now()-start<2200){bg(ctx);ctx.textAlign='center';ctx.fillStyle='#f3d7a1';ctx.font='800 17px -apple-system,Segoe UI,sans-serif';ctx.fillText('UN MENSAJE PARA TI',360,390);ctx.fillStyle='#fff';ctx.font='800 40px -apple-system,Segoe UI,sans-serif';wrap(ctx,closing,75,505,570,50,5);ctx.fillStyle='#80e5d5';ctx.font='800 21px -apple-system,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,930);ctx.textAlign='left';await new Promise(requestAnimationFrame)}
+ rec.stop();await stopped;finalBlob=new Blob(chunks,{type:rec.mimeType||'video/webm'});const ext=finalBlob.type.includes('mp4')?'mp4':'webm';finalFile=new File([finalBlob],'LevelYou-Story.'+ext,{type:finalBlob.type});$('finalVideo').src=URL.createObjectURL(finalBlob);$('finalVideo').classList.remove('hidden');$('saveMovie').classList.remove('hidden');status.textContent='Película final lista.';
+ }catch(e){console.error(e);status.textContent=String(e.message||e)}finally{btn.disabled=false}}
+$('makeMovie').onclick=renderMovie;
+$('saveMovie').onclick=async()=>{if(!finalBlob||!finalFile)return;if(navigator.canShare&&navigator.share&&navigator.canShare({files:[finalFile]})){try{await navigator.share({files:[finalFile],title:'LevelYou Story'});return}catch(e){if(e?.name==='AbortError')return}}const u=URL.createObjectURL(finalBlob),a=document.createElement('a');a.href=u;a.download=finalFile.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),15000)};
+</script></body></html>
