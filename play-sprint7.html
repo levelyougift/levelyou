@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b14"><meta name="robots" content="noindex,nofollow">
+<title>LevelYou — Sprint 7 QA</title>
+<style>
+:root{--bg:#080b14;--card:#121726;--muted:#98a2b8;--txt:#fbfcff;--accent:#82e6d7;--warm:#f4dfae;--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% -5%,rgba(130,230,215,.16),transparent 32%),radial-gradient(circle at 100% 14%,rgba(168,180,255,.14),transparent 32%),linear-gradient(180deg,#080b14,#0c101d 52%,#080b14);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:640px;margin:auto;padding:18px 14px 44px}.head{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 18px}.brand{display:flex;gap:10px;align-items:center;font-weight:900;letter-spacing:.12em}.dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#82e6d7,#a8b4ff);box-shadow:0 0 26px rgba(130,230,215,.66)}.pill{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--warm);border:1px solid rgba(244,223,174,.18);border-radius:999px;padding:7px 9px;background:rgba(244,223,174,.05)}
+.card{background:linear-gradient(180deg,rgba(22,27,45,.96),rgba(13,17,30,.98));border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,.36)}.body{padding:18px}.hidden{display:none!important}.stage{position:relative;aspect-ratio:4/3;background:#05070d}.stage canvas{display:block;width:100%;height:100%}.fx{position:absolute;left:14px;top:14px;border:1px solid rgba(255,255,255,.15);background:rgba(6,9,17,.62);backdrop-filter:blur(12px);border-radius:999px;padding:7px 10px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.top{display:flex;justify-content:space-between;gap:12px;align-items:center}.badge{padding:6px 10px;border-radius:999px;background:rgba(130,230,215,.11);color:#aff5ea;font-size:12px;font-weight:800}.count{font-size:12px;color:var(--muted)}h1{font-size:27px;line-height:1.1;margin:13px 0 8px}.small{font-size:13px;color:var(--muted);line-height:1.45}.btn{appearance:none;border:0;width:100%;border-radius:17px;padding:14px 16px;margin-top:10px;font-size:15px;font-weight:900;cursor:pointer;background:linear-gradient(135deg,#8de9db,#d9f7f1);color:#08151a}.btn.secondary{background:rgba(255,255,255,.055);color:#fff;border:1px solid var(--line)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.launcher,.loading,.error{padding:32px 20px;text-align:center}.launcher input{width:100%;margin-top:14px;background:#0c101c;color:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;font:inherit}.spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--accent);border-radius:50%;margin:0 auto 17px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.footer{text-align:center;color:#667087;font-size:12px;margin-top:20px}@media(max-width:430px){.grid{grid-template-columns:1fr}.wrap{padding-left:12px;padding-right:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="head"><div class="brand"><span class="dot"></span> LEVELYOU</div><span class="pill">Sprint 7 · QA</span></div>
+<div id="launcher" class="card launcher hidden"><strong>Magic Effects Engine</strong><p class="small">Pega un enlace LevelYou o su token.</p><input id="tokenInput" placeholder="Enlace o token"><button class="btn" id="openBtn">Abrir LevelYou</button></div>
+<div id="loading" class="card loading"><div class="spinner"></div><strong>Preparando Magic Effects…</strong></div>
+<div id="error" class="card error hidden"><div style="font-size:44px">✦</div><h2>No hemos podido abrir el LevelYou</h2><p class="small">Comprueba el token o que el LevelYou esté pagado.</p><button class="btn secondary" onclick="location.reload()">Reintentar</button></div>
+<div id="qa" class="card hidden">
+  <div class="stage"><canvas id="canvas" width="720" height="540"></canvas><span class="fx" id="fxName">Cinematic Reveal</span></div>
+  <div class="body"><div class="top"><span class="badge" id="badge">✦ Magic Effects Engine</span><span class="count" id="count"></span></div>
+    <h1 id="title">Cinematic Reveal</h1><p class="small" id="desc">Base visual premium sobre la foto original.</p>
+    <div class="grid"><button class="btn" id="cinematic">Cinematic Reveal</button><button class="btn secondary" id="celebration">Celebration Overlay</button><button class="btn secondary" id="sticker">Sticker Pop</button></div>
+    <div class="grid"><button class="btn secondary" id="prev">← Foto anterior</button><button class="btn secondary" id="next">Foto siguiente →</button><button class="btn secondary" id="auto">▶ Demo automática</button></div>
+  </div>
+</div>
+<div class="footer">LevelYou · QA aislada · fotos originales · sin IA generativa</div>
+</div>
+<script src="magic-effects-engine.js?v=7.0.0"></script>
+<script>
+const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint6';
+const $=id=>document.getElementById(id);let DATA=null,index=0,run=0,img=null;
+function only(id){['launcher','loading','error','qa'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
+function tokenFrom(v){const s=String(v||'').trim();if(/^[0-9a-f-]{36}$/i.test(s))return s;try{return new URL(s).searchParams.get('token')||''}catch{return''}}
+async function imgFromUrl(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('image');const b=await r.blob(),u=URL.createObjectURL(b);try{return await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=u})}finally{setTimeout(()=>URL.revokeObjectURL(u),30000)}}
+async function load(token){if(!token){only('launcher');return}if(!/^[0-9a-f-]{36}$/i.test(token)){only('error');return}only('loading');try{const r=await fetch(API+'?token='+encodeURIComponent(token),{cache:'no-store'}),j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'load');DATA=j;index=0;only('qa');await render('cinematic')}catch(e){console.error(e);only('error')}}
+function copy(effect){const d={cinematic:['Cinematic Reveal','Base visual premium: zoom, luz, profundidad aparente y partículas.'],celebration:['Celebration Overlay','Capa de celebración segura: confeti elegante y destellos sin alterar personas.'],sticker:['Sticker Pop','Sticker animado premium y compartible sobre la foto original.']};return d[effect]}
+async function render(effect){if(!DATA)return;const my=++run,x=DATA.items[index],c=copy(effect);$('fxName').textContent=c[0];$('title').textContent=c[0];$('desc').textContent=c[1];$('count').textContent='Foto '+(index+1)+' / '+DATA.items.length;img=await imgFromUrl(x.photoUrl);if(my!==run)return;const effects=effect==='cinematic'?['cinematic']:effect==='celebration'?['cinematic','celebration']:['cinematic','sticker'];await LevelYouMagicEffects.animate($('canvas'),img,{duration:2200,effects,framing:x.framing,index,seed:71+index*19,lang:DATA.language||'es',occasion:DATA.occasion||'classic',celebrationIntensity:1})}
+$('cinematic').onclick=()=>render('cinematic');$('celebration').onclick=()=>render('celebration');$('sticker').onclick=()=>render('sticker');
+$('prev').onclick=()=>{if(!DATA)return;index=(index-1+DATA.items.length)%DATA.items.length;render('cinematic')};$('next').onclick=()=>{if(!DATA)return;index=(index+1)%DATA.items.length;render('cinematic')};
+$('auto').onclick=async()=>{if(!DATA)return;$('auto').disabled=true;for(const effect of ['cinematic','celebration','sticker']){await render(effect);await new Promise(r=>setTimeout(r,350))}$('auto').disabled=false};
+$('openBtn').onclick=()=>{const t=tokenFrom($('tokenInput').value);if(!t)return;$('tokenInput').blur();history.replaceState({},'',location.pathname+'?token='+encodeURIComponent(t));load(t)};
+load(new URLSearchParams(location.search).get('token')||'');
+</script>
+</body></html>
