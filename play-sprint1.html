@@ -148,7 +148,8 @@ function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photo
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
 async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=pt.introEyebrow;$('introTitle').textContent=pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
 function render(){locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
-function pick(n,b){if(locked)return;locked=true;const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden')}
+function emitLevelYouEvent(name,detail){try{window.dispatchEvent(new CustomEvent(name,{detail}))}catch(e){}}
+function pick(n,b){if(locked)return;locked=true;const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden');emitLevelYouEvent('levelyou:answer',{correct:ok,index:i,selected:n,correctIndex:x.correct,theme:'classic'})}
 function done(){$('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finish').classList.remove('reveal');void $('finish').offsetWidth;$('finish').classList.add('reveal');$('finishTitle').textContent=t.finish;$('score').textContent=t.score(score);const hasDed=DATA&&typeof DATA.dedication==='string'&&DATA.dedication.trim();$('memoryTitle').textContent=hasDed?(DATA.language==='ca'?'Un missatge per a tu':DATA.language==='en'?'A message for you':'Un mensaje para ti'):t.memoryTitle;$('memoryText').textContent=hasDed?DATA.dedication:t.memoryText;$('videoLead').textContent=t.videoLead;$('createVideo').textContent=t.createVideo;$('saveVideo').textContent=t.saveVideo;$('again').textContent=t.again;$('share').textContent=t.share;window.scrollTo({top:0,behavior:'smooth'})}
 $('startGame').onclick=()=>{$('intro').classList.add('hidden');$('shareTop').classList.remove('hidden');$('game').classList.remove('hidden');render()};$('next').onclick=()=>{if(i<DATA.items.length-1){i++;render()}else done()};$('again').onclick=()=>{i=0;score=0;$('finish').classList.add('hidden');$('game').classList.remove('hidden');render()};
 async function shareLink(){const d={title:'LevelYou',text:'🎁 Tengo un LevelYou para ti',url:location.href};if(navigator.share){try{await navigator.share(d);return}catch(e){if(e&&e.name==='AbortError')return}}location.href='https://wa.me/?text='+encodeURIComponent('🎁 Tengo un LevelYou para ti: '+location.href)}
@@ -158,6 +159,7 @@ async function imgFromUrl(url){const r=await fetch(url,{cache:'no-store'});if(!r
 
 const VIDEO_W=720,VIDEO_H=1280,VIDEO_FPS=24,VIDEO_BITRATE=4500000;
 const VIDEO_INTRO_MS=1800,VIDEO_MEMORY_MS=2400,VIDEO_OUTRO_MS=3000,VIDEO_TRANSITION_MS=380;
+const VIDEO_THEME='classic';
 const VIDEO_COPY={
  es:{forName:n=>n?('Para '+n):'Para ti',subtitle:'Una historia hecha de momentos',closing:'UN RECUERDO PARA VOLVER SIEMPRE'},
  ca:{forName:n=>n?('Per a '+n):'Per a tu',subtitle:'Una història feta de moments',closing:'UN RECORD PER TORNAR-HI SEMPRE'},
@@ -228,6 +230,39 @@ function drawOutro(ctx,p,message,hasDedication){
  ctx.fillStyle='rgba(125,228,211,.9)';ctx.font='800 18px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,935);
  ctx.restore();
 }
+async function prepareAudioContext(){
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+ try{const ac=new AC();if(ac.state==='suspended')await ac.resume();return ac}catch(e){console.warn('LevelYou audio unavailable',e);return null}
+}
+function createLevelYouSoundtrack(ac,durationSec){
+ if(!ac||typeof ac.createMediaStreamDestination!=='function')return null;
+ const destination=ac.createMediaStreamDestination(),master=ac.createGain(),tone=ac.createBiquadFilter();
+ tone.type='lowpass';tone.frequency.value=3600;tone.Q.value=.25;master.connect(tone);tone.connect(destination);
+ const start=ac.currentTime+.045,end=start+durationSec,fadeOut=Math.max(start+1.4,end-2.6);
+ master.gain.setValueAtTime(.0001,start);master.gain.exponentialRampToValueAtTime(.13,start+1.15);master.gain.setValueAtTime(.13,fadeOut);master.gain.exponentialRampToValueAtTime(.0001,end);
+ const chords=[
+  [130.81,164.81,196.00,246.94],
+  [110.00,130.81,164.81,220.00],
+  [87.31,130.81,174.61,220.00],
+  [98.00,146.83,196.00,246.94]
+ ];
+ const chordLen=4.8,sources=[];
+ for(let t=0,step=0;t<durationSec+.2;t+=chordLen,step++){
+  const chord=chords[step%chords.length],segStart=start+t,segEnd=Math.min(end,segStart+chordLen+.22);
+  chord.forEach((freq,j)=>{
+   const o=ac.createOscillator(),g=ac.createGain();o.type=j===0?'sine':'triangle';o.frequency.value=freq;o.detune.value=(j-1.5)*2.2;
+   g.gain.setValueAtTime(.0001,segStart);g.gain.exponentialRampToValueAtTime(j===0?.022:.014,segStart+.48);g.gain.setValueAtTime(j===0?.018:.011,Math.max(segStart+.5,segEnd-.55));g.gain.exponentialRampToValueAtTime(.0001,segEnd);
+   o.connect(g);g.connect(master);o.start(segStart);o.stop(segEnd+.05);sources.push(o);
+  });
+ }
+ const melody=[523.25,493.88,440.00,392.00,440.00,493.88,523.25,587.33];
+ for(let t=.9,step=0;t<durationSec-1.4;t+=2.4,step++){
+  const when=start+t,o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=melody[step%melody.length];
+  g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(.038,when+.035);g.gain.exponentialRampToValueAtTime(.0001,Math.min(end,when+1.18));
+  o.connect(g);g.connect(master);o.start(when);o.stop(Math.min(end+.05,when+1.22));sources.push(o);
+ }
+ return{destination,stop:()=>{try{master.gain.cancelScheduledValues(ac.currentTime);master.gain.setTargetAtTime(.0001,ac.currentTime,.03)}catch(e){};sources.forEach(o=>{try{o.stop()}catch(e){}})}};
+}
 async function loadVideoAsset(url){
  const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('image');
  const blob=await r.blob(),objectUrl=URL.createObjectURL(blob);
@@ -246,13 +281,10 @@ async function generateVideo(){
  $('saveVideo').classList.add('hidden');$('videoPreview').classList.add('hidden');
  if(videoPreviewUrl){URL.revokeObjectURL(videoPreviewUrl);videoPreviewUrl=null}
  videoBlob=null;videoFile=null;
+ let preparedAudio=null;
  try{
   const canvas=$('videoCanvas');if(!canvas.captureStream||!window.MediaRecorder)throw new Error('unsupported');
-  let mime=['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm'].find(x=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(x))||'';
-  const stream=canvas.captureStream(VIDEO_FPS);
-  const rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:VIDEO_BITRATE}:{videoBitsPerSecond:VIDEO_BITRATE});
-  const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
-  const stopped=new Promise((resolve,reject)=>{rec.onstop=resolve;rec.onerror=()=>reject(new Error('record'))});
+  preparedAudio=await prepareAudioContext();
   const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('unsupported');
   const videoSequence=[
    ...DATA.items.map(item=>({photoUrl:item.photoUrl,framing:item.framing,kind:'game'})),
@@ -264,38 +296,71 @@ async function generateVideo(){
    const asset=await loadVideoAsset(videoSequence[n].photoUrl);imgs.push(asset);backs.push(makeBackdrop(asset));
   }
   const name=DATA.personName||DATA.person_name||'';
-  rec.start(250);
-  const introStart=performance.now();
-  while(performance.now()-introStart<VIDEO_INTRO_MS){const p=Math.min(1,(performance.now()-introStart)/VIDEO_INTRO_MS);drawIntro(ctx,p,name);await new Promise(requestAnimationFrame)}
-  for(let n=0;n<imgs.length;n++){
-   const start=performance.now();
-   while(performance.now()-start<VIDEO_MEMORY_MS){
-    const elapsed=performance.now()-start,p=Math.min(1,elapsed/VIDEO_MEMORY_MS);
-    ctx.fillStyle='#080a13';ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
-    if(n>0&&elapsed<VIDEO_TRANSITION_MS){
-     const mix=easeInOut(elapsed/VIDEO_TRANSITION_MS);
-     ctx.save();ctx.globalAlpha=1-mix;drawPremiumPhoto(ctx,imgs[n-1],backs[n-1],videoSequence[n-1].framing,1,n-1);ctx.restore();
-     ctx.save();ctx.globalAlpha=mix;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n);ctx.restore();
-    }else{
-     const firstFade=n===0?easeInOut(Math.min(1,elapsed/VIDEO_TRANSITION_MS)):1;
-     ctx.save();ctx.globalAlpha=firstFade;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n);ctx.restore();
+  const totalDurationSec=(VIDEO_INTRO_MS+videoSequence.length*VIDEO_MEMORY_MS+VIDEO_OUTRO_MS)/1000;
+
+  async function recordAttempt(useAudio){
+   const canvasStream=canvas.captureStream(VIDEO_FPS);
+   let soundtrack=null,stream=canvasStream,ac=useAudio?preparedAudio:null;
+   if(useAudio&&ac){
+    soundtrack=createLevelYouSoundtrack(ac,totalDurationSec);
+    const audioTrack=soundtrack?.destination?.stream?.getAudioTracks?.()[0];
+    if(audioTrack)stream=new MediaStream([...canvasStream.getVideoTracks(),audioTrack]);else soundtrack=null;
+   }
+   let mime=['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm'].find(x=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(x))||'';
+   let rec;
+   try{rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:VIDEO_BITRATE}:{videoBitsPerSecond:VIDEO_BITRATE})}
+   catch(e){soundtrack?.stop();canvasStream.getTracks().forEach(track=>track.stop());throw e}
+   const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+   const stopped=new Promise((resolve,reject)=>{rec.onstop=resolve;rec.onerror=()=>reject(new Error(useAudio?'record-audio':'record'))});
+   try{
+    rec.start(250);
+    const introStart=performance.now();
+    while(performance.now()-introStart<VIDEO_INTRO_MS){const p=Math.min(1,(performance.now()-introStart)/VIDEO_INTRO_MS);drawIntro(ctx,p,name);await new Promise(requestAnimationFrame)}
+    for(let n=0;n<imgs.length;n++){
+     const start=performance.now();
+     while(performance.now()-start<VIDEO_MEMORY_MS){
+      const elapsed=performance.now()-start,p=Math.min(1,elapsed/VIDEO_MEMORY_MS);
+      ctx.fillStyle='#080a13';ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+      if(n>0&&elapsed<VIDEO_TRANSITION_MS){
+       const mix=easeInOut(elapsed/VIDEO_TRANSITION_MS);
+       ctx.save();ctx.globalAlpha=1-mix;drawPremiumPhoto(ctx,imgs[n-1],backs[n-1],videoSequence[n-1].framing,1,n-1);ctx.restore();
+       ctx.save();ctx.globalAlpha=mix;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n);ctx.restore();
+      }else{
+       const firstFade=n===0?easeInOut(Math.min(1,elapsed/VIDEO_TRANSITION_MS)):1;
+       ctx.save();ctx.globalAlpha=firstFade;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n);ctx.restore();
+      }
+      await new Promise(requestAnimationFrame)
+     }
     }
-    await new Promise(requestAnimationFrame)
+    const finalMessage=(DATA&&DATA.dedication&&DATA.dedication.trim())?DATA.dedication:t.outro;
+    const hasDedication=Boolean(DATA&&DATA.dedication&&DATA.dedication.trim());
+    const outroStart=performance.now();
+    while(performance.now()-outroStart<VIDEO_OUTRO_MS){const p=Math.min(1,(performance.now()-outroStart)/VIDEO_OUTRO_MS);drawOutro(ctx,p,finalMessage,hasDedication);await new Promise(requestAnimationFrame)}
+    rec.stop();await stopped;
+    return{blob:new Blob(chunks,{type:rec.mimeType||'video/webm'}),hasAudio:Boolean(soundtrack)}
+   }finally{
+    soundtrack?.stop();canvasStream.getTracks().forEach(track=>{try{track.stop()}catch(e){}})
    }
   }
-  const finalMessage=(DATA&&DATA.dedication&&DATA.dedication.trim())?DATA.dedication:t.outro;
-  const hasDedication=Boolean(DATA&&DATA.dedication&&DATA.dedication.trim());
-  const outroStart=performance.now();
-  while(performance.now()-outroStart<VIDEO_OUTRO_MS){const p=Math.min(1,(performance.now()-outroStart)/VIDEO_OUTRO_MS);drawOutro(ctx,p,finalMessage,hasDedication);await new Promise(requestAnimationFrame)}
-  rec.stop();await stopped;
-  videoBlob=new Blob(chunks,{type:rec.mimeType||'video/webm'});
+
+  let result;
+  if(preparedAudio){
+   try{result=await recordAttempt(true)}
+   catch(audioError){console.warn('LevelYou audio recording fallback to silent video',audioError);try{await preparedAudio.close()}catch(e){};preparedAudio=null;result=await recordAttempt(false)}
+  }else result=await recordAttempt(false);
+
+  videoBlob=result.blob;
   const ext=videoBlob.type.includes('mp4')?'mp4':'webm';
   videoFile=new File([videoBlob],'LevelYou-'+(name||'recuerdo')+'.'+ext,{type:videoBlob.type});
   videoPreviewUrl=URL.createObjectURL(videoBlob);$('videoPreview').src=videoPreviewUrl;$('videoPreview').classList.remove('hidden');$('saveVideo').classList.remove('hidden');status.textContent=t.videoReady;
+  emitLevelYouEvent('levelyou:video-generated',{hasAudio:result.hasAudio,theme:VIDEO_THEME,photoCount:videoSequence.length,duration:totalDurationSec});
  }catch(e){
   console.error('Sprint4 video generation',e);
   status.textContent=e&&e.message==='unsupported'?t.videoUnsupported:t.videoError
- }finally{btn.disabled=false}
+ }finally{
+  if(preparedAudio){try{await preparedAudio.close()}catch(e){}}
+  btn.disabled=false
+ }
 }
 
 $('createVideo').onclick=generateVideo;$('saveVideo').onclick=async()=>{if(!videoBlob||!videoFile)return;if(navigator.canShare&&navigator.share&&navigator.canShare({files:[videoFile]})){try{await navigator.share({files:[videoFile],title:'LevelYou'});return}catch(e){if(e&&e.name==='AbortError')return}}const u=URL.createObjectURL(videoBlob),a=document.createElement('a');a.href=u;a.download=videoFile.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),15000)};
