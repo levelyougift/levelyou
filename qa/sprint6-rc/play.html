@@ -240,9 +240,14 @@ async function pollMagicTransform(){
    DATA.magicTransform=j.magic;
    const panel=document.getElementById('qaMagic');
    if(panel){panel.textContent=j.magic.status||'—';panel.className=j.magic.status==='ready'?'qaOk':'qaWarn'}
-   if(j.magic.status==='ready'&&j.magic.url){
-    const pre=new Image();pre.decoding='async';pre.src=j.magic.url;
-    emitLevelYouEvent('levelyou:magic-ready',{index:j.magic.index,latencyMs:j.magic.latency_ms||j.magic.latencyMs||null});
+   if(j.magic.status==='ready'){
+    try{
+     const refreshed=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});
+     const full=await refreshed.json().catch(()=>({}));
+     if(refreshed.ok&&full?.magicTransform)DATA.magicTransform=full.magicTransform;
+    }catch(_){}
+    if(DATA?.magicTransform?.url){const pre=new Image();pre.decoding='async';pre.src=DATA.magicTransform.url}
+    emitLevelYouEvent('levelyou:magic-ready',{index:DATA?.magicTransform?.index??j.magic.index,latencyMs:DATA?.magicTransform?.latencyMs||j.magic.latency_ms||j.magic.latencyMs||null});
     break;
    }
    if(j.magic.status==='failed')break;
