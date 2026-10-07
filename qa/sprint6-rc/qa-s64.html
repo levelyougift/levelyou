@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LevelYou · Sprint 6.4 QA</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070a12;color:#eef2f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:28px 18px 56px}.ey{font-size:12px;font-weight:900;letter-spacing:.14em;color:#7de4d3}
+h1{font-size:34px;line-height:1.05;margin:10px 0 12px}.sub{color:#aab4c7;line-height:1.55}.grid{display:grid;gap:14px;margin-top:22px}
+.card{padding:18px;border-radius:20px;background:#101522;border:1px solid rgba(255,255,255,.09)}.card h2{margin:0 0 8px;font-size:18px}.card p{margin:0 0 14px;color:#aab4c7;font-size:13px;line-height:1.5}
+.btn{display:block;text-decoration:none;text-align:center;padding:13px;border-radius:13px;background:#7de4d3;color:#07110f;font-weight:900}.btn.alt{background:#f3d7a1;color:#161108}.btn.v{background:#9eafff;color:#080a13}
+input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#090d16;color:#fff;margin:7px 0 12px}
+.check{margin-top:24px;padding:18px;border-radius:20px;background:#0c111d;border:1px solid rgba(255,255,255,.08);color:#c5ccda;font-size:13px;line-height:1.65}
+.muted{font-size:11px;color:#778197;line-height:1.5;margin-top:16px}
+</style></head><body><main class="wrap">
+<div class="ey">LEVELYOU · S6.4</div><h1>QA en tres capas</h1>
+<p class="sub">Creator, destinatario y vídeo final se validan por separado para evitar que una mejora visual degrade la facilidad de creación o la calidad del render.</p>
+<div class="grid">
+<section class="card"><h2>1 · Creator QA</h2><p>Subida, autoencuadre, preguntas, dedicatoria, fotos extra y preparación del pedido.</p><a class="btn" href="./?qa=creator">Abrir Creator</a></section>
+<section class="card"><h2>2 · Recipient QA</h2><p>Pega un share token de una prueba S6 para abrir exactamente la experiencia que recibe el destinatario.</p><input id="token" placeholder="Share token de QA"><a class="btn alt" id="recipient" href="#">Abrir Recipient</a></section>
+<section class="card"><h2>3 · Video QA</h2><p>Usa el mismo token y salta directamente al final para generar y revisar el vídeo.</p><a class="btn v" id="video" href="#">Abrir Video QA</a></section>
+</div>
+<div class="check"><strong>Criterio de aprobación S6.4</strong><br>Creator sin fricción nueva · reveal premium claramente perceptible · mismo activo IA reutilizado en vídeo · audio/ritmo/encuadre intactos · fallback local si la IA falla.</div>
+<p class="muted">Entorno QA aislado. Sprint 5 permanece congelado.</p>
+</main><script>
+const input=document.getElementById('token');
+function link(mode){const token=input.value.trim();if(!token)return '#';const u=new URL('./play.html',location.href);u.searchParams.set('token',token);u.searchParams.set('qa',mode);return u.href}
+function sync(){document.getElementById('recipient').href=link('recipient');document.getElementById('video').href=link('video')}
+input.addEventListener('input',sync);sync();
+</script></body></html>
