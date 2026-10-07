@@ -6,7 +6,7 @@
 <title>LevelYou — Un regalo que se juega</title>
 <meta name="description" content="Convierte 5 recuerdos en un juego personalizado y un vídeo final para guardar y compartir.">
 <meta name="robots" content="noindex,nofollow">
-<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.2">
+<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.4">
 <meta name="theme-color" content="#0e1020">
 <style>
 :root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
@@ -313,7 +313,7 @@ body.frame-modal-open{overflow:hidden}
     <input id="name" maxlength="28">
     <label><span data-i18n="ageLabel">Edad</span> <span class="small" data-i18n="optional">(opcional)</span></label>
     <input id="age" inputmode="numeric" maxlength="3">
-    <div class="occasion-field">
+    <div class="occasion-field" id="occasionField">
       <label for="occasion" data-i18n="occasionLabel">Ocasión</label>
       <select id="occasion" aria-describedby="occasionHelp">
         <option value="classic" data-i18n="occasionClassic">✨ Clásico / cualquier ocasión</option>
@@ -672,7 +672,8 @@ function renderBuilderTexts(){
 }
 function startBuilder(nextMode){
  mode=nextMode;memoryCount=mode==='full'?5:1;game=[];currentIndex=0;fullEditIndex=0;
- $('#name').value='';$('#age').value='';
+ $('#name').value='';$('#age').value='';if($('#occasion'))$('#occasion').value='classic';
+ $('#occasionField')?.classList.toggle('hidden',mode!=='full');
  $('#previewFlow').classList.toggle('hidden',mode!=='preview');
  $('#fullUploadFlow').classList.toggle('hidden',mode!=='full');
  $('#fullEditFlow').classList.add('hidden');
@@ -895,5 +896,5 @@ if (paymentStatus === 'cancelled') {
   history.replaceState({}, '', window.location.pathname);
 }
 </script>
-<script src="smart-fast-sprint3.js?v=5.2"></script><script src="smart-checkout-sprint3.js?v=5.2"></script><script src="smart-video-sprint3.js?v=5.2"></script></body>
+<script src="smart-fast-sprint3.js?v=5.4"></script><script src="smart-checkout-sprint3.js?v=5.4"></script><script src="smart-video-sprint3.js?v=5.4"></script></body>
 </html>
