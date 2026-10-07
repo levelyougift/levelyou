@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#090b15">
+<title>LevelYou — Sprint 5 Reaction Lab</title>
+<style>
+:root{--bg:#090b15;--card:#121625;--txt:#fbfbfd;--muted:#9ea6ba;--accent:#7de4d3;--accent2:#9eafff;--warm:#f3d7a1;--line:rgba(255,255,255,.10)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transparent 31%),radial-gradient(circle at 92% 10%,rgba(158,175,255,.16),transparent 32%),linear-gradient(180deg,#090b15,#0b0e19 48%,#090b15);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:660px;margin:auto;padding:20px 16px 48px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.brand{font-size:14px;font-weight:900;letter-spacing:.14em}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 26px rgba(125,228,211,.7)}.pill{font-size:11px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);color:#d9deeb;background:rgba(255,255,255,.035)}
+.card{background:linear-gradient(180deg,rgba(23,28,45,.94),rgba(14,18,31,.96));border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 26px 80px rgba(0,0,0,.35)}.body{padding:20px}.kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--warm);font-weight:900}.title{font-size:30px;line-height:1.05;letter-spacing:-.035em;margin:9px 0 7px}.sub{font-size:14px;color:#b3bccf;line-height:1.5;margin:0 0 16px}.upload{position:relative;display:flex;align-items:center;justify-content:center;min-height:76px;border:1px dashed rgba(125,228,211,.28);border-radius:16px;background:rgba(7,10,18,.56);font-size:13px;font-weight:800}.upload input{position:absolute;inset:0;opacity:0}
+.photoViewport{width:100%;aspect-ratio:4/3;overflow:hidden;background:#080b14;position:relative}.photo{width:100%;height:100%;object-fit:contain;display:block;transform-origin:center;will-change:transform}.reactionLayer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:0}
+.reactionLayer.good{opacity:1;background:radial-gradient(circle at 50% 45%,rgba(125,228,211,.18),rgba(158,175,255,.07) 42%,transparent 70%);animation:s5GlowGood .86s ease forwards}
+.reactionLayer.miss{opacity:1;background:radial-gradient(circle at 50% 50%,transparent 38%,rgba(243,184,120,.13) 66%,rgba(74,28,20,.22) 100%);animation:s5GlowMiss .62s ease forwards}
+.photoViewport.reaction-correct{animation:s5CorrectFrame .86s cubic-bezier(.2,.78,.25,1)}.photoViewport.reaction-correct .photo{animation:s5ColorBloom .86s cubic-bezier(.2,.78,.25,1)}
+.photoViewport.reaction-wrong{animation:s5WrongFrame .58s ease}.photoViewport.reaction-wrong .photo{animation:s5WrongTone .66s ease}
+.reaction-confetti{position:absolute;left:50%;top:47%;width:7px;height:12px;border-radius:3px;background:var(--cc,#7de4d3);opacity:0;transform:translate(-50%,-50%);animation:s5Confetti .82s cubic-bezier(.15,.78,.28,1) var(--delay,0ms) forwards}
+@keyframes s5CorrectFrame{0%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}42%{transform:scale(1.008);box-shadow:inset 0 0 46px rgba(125,228,211,.16)}100%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}}@keyframes s5ColorBloom{0%{filter:saturate(.88) brightness(.96)}38%{filter:saturate(1.28) brightness(1.08)}100%{filter:none}}@keyframes s5GlowGood{0%{opacity:0}28%{opacity:1}100%{opacity:0}}@keyframes s5WrongFrame{0%,100%{transform:translateX(0)}18%{transform:translateX(-4px)}36%{transform:translateX(4px)}54%{transform:translateX(-2px)}72%{transform:translateX(2px)}}@keyframes s5WrongTone{0%{filter:none}30%{filter:saturate(.45) brightness(.86) sepia(.12)}100%{filter:none}}@keyframes s5GlowMiss{0%{opacity:0}24%{opacity:1}100%{opacity:0}}@keyframes s5Confetti{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.7)}12%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot)) scale(1)}}
+.q{font-size:23px;font-weight:900;letter-spacing:-.02em;margin:16px 0 12px}.answer{width:100%;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.05);color:#fff;border-radius:16px;padding:15px 16px;margin:8px 0;font-size:15px}.answer.correct{border-color:rgba(125,228,211,.72);background:rgba(125,228,211,.12)}.answer.wrong{border-color:rgba(243,215,161,.6);background:rgba(243,215,161,.08)}.feedback{margin-top:12px;padding:11px 13px;border-radius:14px;font-size:13px;font-weight:800;background:rgba(255,255,255,.035)}.feedback.good{color:#c7fff5}.feedback.miss{color:#f5dfb5}.btn{width:100%;min-height:52px;margin-top:12px;border:0;border-radius:17px;font-weight:900;font-size:15px;background:linear-gradient(135deg,#8be9da,#d7f7ef);color:#07120f}.btn.secondary{background:rgba(255,255,255,.055);color:#fff;border:1px solid var(--line)}.hidden{display:none!important}
+@media(prefers-reduced-motion:reduce){.photoViewport.reaction-correct,.photoViewport.reaction-wrong,.photoViewport.reaction-correct .photo,.photoViewport.reaction-wrong .photo{animation:none!important}.reaction-confetti{display:none!important}.reactionLayer.good{animation:none;opacity:.32}.reactionLayer.miss{animation:none;opacity:.26}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="head"><div class="brand"><span class="dot"></span>LEVELYOU</div><div class="pill">SPRINT 5 · S5.1</div></div>
+<div class="card">
+<div class="body">
+<div class="kicker">Reaction Lab</div>
+<div class="title">Prueba las reacciones del juego</div>
+<p class="sub">Sube una foto opcional y pulsa una respuesta correcta o incorrecta. No se sube ningún archivo ni se crea ningún pedido.</p>
+<label class="upload">📷 Elegir una foto<input id="photoInput" type="file" accept="image/*"></label>
+</div>
+<div class="photoViewport"><img id="photo" class="photo" alt="Foto de prueba"><div class="reactionLayer" id="reaction"></div></div>
+<div class="body">
+<div class="q">¿Qué respuesta quieres probar?</div>
+<button class="answer" id="correct">✨ Respuesta correcta</button>
+<button class="answer" id="wrong">Respuesta incorrecta</button>
+<div class="feedback hidden" id="feedback"></div>
+<button class="btn secondary" id="reset">Resetear</button>
+</div>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);let timer=null;
+function reset(){if(timer){clearTimeout(timer);timer=null}const v=document.querySelector('.photoViewport'),l=$('reaction');v.classList.remove('reaction-correct','reaction-wrong');l.className='reactionLayer';l.innerHTML='';$('correct').className='answer';$('wrong').className='answer';$('feedback').className='feedback hidden';$('feedback').textContent=''}
+function react(ok){reset();const v=document.querySelector('.photoViewport'),l=$('reaction');void v.offsetWidth;v.classList.add(ok?'reaction-correct':'reaction-wrong');l.classList.add(ok?'good':'miss');if(ok&&!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)){const pieces=[[-126,-126,-145,'#7de4d3',0],[-88,-162,118,'#f3d7a1',20],[-48,-138,205,'#9eafff',45],[-12,-172,-90,'#fff',10],[28,-150,140,'#7de4d3',35],[70,-166,-175,'#f3d7a1',5],[112,-132,88,'#9eafff',55],[136,-82,220,'#fff',25],[-144,-64,160,'#9eafff',50],[-102,-92,-210,'#fff',15],[92,-94,182,'#7de4d3',40],[148,-36,-120,'#f3d7a1',30]];pieces.forEach(([dx,dy,rot,color,delay])=>{const p=document.createElement('span');p.className='reaction-confetti';p.style.setProperty('--dx',dx+'px');p.style.setProperty('--dy',dy+'px');p.style.setProperty('--rot',rot+'deg');p.style.setProperty('--cc',color);p.style.setProperty('--delay',delay+'ms');l.appendChild(p)})}$((ok?'correct':'wrong')).classList.add(ok?'correct':'wrong');$('feedback').textContent=ok?'✨ Sí. Esta es la reacción de acierto.':'Esta es la reacción de fallo.';$('feedback').className='feedback '+(ok?'good':'miss');timer=setTimeout(()=>{v.classList.remove('reaction-correct','reaction-wrong');l.className='reactionLayer';l.innerHTML=''},ok?930:720)}
+$('correct').onclick=()=>react(true);$('wrong').onclick=()=>react(false);$('reset').onclick=reset;
+$('photoInput').onchange=e=>{const f=e.target.files?.[0];if(!f)return;const u=URL.createObjectURL(f);$('photo').src=u;$('photo').onload=()=>setTimeout(()=>URL.revokeObjectURL(u),1000)};
+const fallback=document.createElement('canvas');fallback.width=800;fallback.height=600;const x=fallback.getContext('2d');const g=x.createLinearGradient(0,0,800,600);g.addColorStop(0,'#334a68');g.addColorStop(.55,'#9eafff');g.addColorStop(1,'#7de4d3');x.fillStyle=g;x.fillRect(0,0,800,600);x.fillStyle='rgba(255,255,255,.9)';x.textAlign='center';x.font='700 44px -apple-system, BlinkMacSystemFont, Segoe UI';x.fillText('Tu foto aparecerá aquí',400,305);$('photo').src=fallback.toDataURL('image/jpeg',.85);
+</script>
+</body>
+</html>
