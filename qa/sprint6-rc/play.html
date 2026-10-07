@@ -217,8 +217,20 @@ function showError(message){$('loading').classList.add('hidden');$('intro').clas
 async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden');initSprint64QA();maybeOpenVideoQA();pollMagicTransform()}catch(e){showError()}}
 
 async function pollMagicTransform(){
- if(!DATA?.orderId||DATA?.magicTransform?.status!=='running')return;
- const started=Date.now(),deadline=started+90000;
+ if(!DATA?.orderId||!DATA?.magicTransform)return;
+ const injected=levelYouMagicTransform();
+ if(injected?.qa||DATA.magicTransform.status==='ready'||DATA.magicTransform.status==='failed')return;
+
+ try{
+  if(['pending','not_started'].includes(DATA.magicTransform.status||'pending')){
+   const start=await fetch(MAGIC_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:DATA.orderId})});
+   const started=await start.json().catch(()=>({}));
+   if(start.ok&&started?.magic)DATA.magicTransform=started.magic;
+   else return;
+  }
+ }catch(e){console.warn('Magic transform start from recipient',e);return}
+
+ const deadline=Date.now()+90000;
  while(Date.now()<deadline&&DATA?.magicTransform?.status==='running'){
   await sleep(5200+Math.round(Math.random()*800));
   try{
