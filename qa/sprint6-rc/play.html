@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1020">
+<meta name="robots" content="noindex,nofollow">
+<meta name="levelyou-build" content="sprint6-rc-2026-10-07-s6.2-player">
+<title>LevelYou — Tu juego</title>
+<style>
+:root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(105,225,207,.13),transparent 35%),radial-gradient(circle at 100% 20%,rgba(143,167,255,.13),transparent 35%),var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:620px;margin:auto;padding:20px 16px 44px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 20px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.06em}.dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 24px rgba(105,225,207,.6)}
+.shareTop{border:1px solid var(--line);background:#24283f;color:#fff;border-radius:12px;min-height:44px;padding:9px 12px;font-weight:700}.card{background:rgba(23,26,45,.9);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 14px 50px rgba(0,0,0,.24)}.photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#111426}.body{padding:18px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center}.badge{padding:6px 10px;border-radius:999px;background:rgba(105,225,207,.12);color:#a8f3e7;font-weight:700;font-size:12px}.count{color:var(--muted);font-size:12px}.question{font-size:25px;font-weight:800;line-height:1.18;margin:15px 0}.answer{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#1c2034;color:#fff;border-radius:14px;padding:14px;margin:9px 0;font-size:15px}.answer.correct{border-color:rgba(105,225,207,.75);background:rgba(105,225,207,.1)}.answer.wrong{border-color:rgba(255,142,157,.75);background:rgba(255,142,157,.1)}.answer:disabled{opacity:1}
+.btn{appearance:none;border:0;border-radius:16px;padding:15px 18px;width:100%;font-size:16px;font-weight:800;cursor:pointer;margin-top:12px;background:linear-gradient(135deg,var(--accent),#8ce8d9);color:#0d1720}.btn.secondary{background:#24283f;color:#fff;border:1px solid var(--line)}.btn:disabled{opacity:.55;cursor:default}.hidden{display:none!important}.finish{text-align:center;padding:28px 20px}.finish .emoji{font-size:58px}.finish h1{font-size:30px;margin:8px 0}.finish p{color:#d6d9e5;line-height:1.5}.memoryBox{margin:18px 0 4px;padding:16px;border-radius:18px;border:1px solid rgba(105,225,207,.18);background:rgba(105,225,207,.06);text-align:left}.memoryBox strong{display:block;margin-bottom:5px}.memoryBox span{font-size:13px;color:#cbd0df;line-height:1.45}.videoStatus{font-size:13px!important;color:var(--muted)!important;margin:12px 0 0!important}.videoPreview{display:block;width:100%;max-height:520px;background:#05060c;border-radius:18px;margin-top:14px;border:1px solid var(--line)}.footer{text-align:center;color:#7f879e;font-size:12px;margin-top:22px}.loading{padding:42px 22px;text-align:center}.spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.13);border-top-color:var(--accent);border-radius:50%;margin:0 auto 18px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.error{padding:32px 22px;text-align:center}.error h2{margin:0 0 8px}.error p{color:var(--muted);line-height:1.45}@media(max-width:430px){.wrap{padding-left:14px;padding-right:14px}.question{font-size:22px}}
+
+/* Sprint 2.2 — Premium Player */
+:root{--bg:#090b15;--card:#121625;--muted:#9ea6ba;--txt:#fbfbfd;--accent:#7de4d3;--accent2:#9eafff;--warm:#f3d7a1;--line:rgba(255,255,255,.10)}
+body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transparent 31%),radial-gradient(circle at 92% 10%,rgba(158,175,255,.16),transparent 32%),linear-gradient(180deg,#090b15,#0b0e19 48%,#090b15);overflow-x:hidden}
+.wrap{max-width:660px;padding:20px 16px 48px}
+.head{margin:3px 0 20px}.brand{font-size:14px;letter-spacing:.14em}.dot{width:10px;height:10px;box-shadow:0 0 26px rgba(125,228,211,.7)}
+.shareTop{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.1);border-radius:14px}
+.card{background:linear-gradient(180deg,rgba(23,28,45,.94),rgba(14,18,31,.96));border-color:rgba(255,255,255,.1);border-radius:28px;box-shadow:0 26px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.035)}
+.giftIntro{position:relative;overflow:hidden;text-align:center;padding:46px 24px 34px;min-height:520px;display:flex;flex-direction:column;justify-content:center}
+.giftIntro:before{content:"";position:absolute;width:360px;height:360px;left:50%;top:-190px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(125,228,211,.22),rgba(158,175,255,.08) 48%,transparent 70%)}
+.giftIntro>*{position:relative;z-index:1}
+.giftMark{width:72px;height:72px;margin:0 auto 22px;border-radius:24px;display:grid;place-items:center;font-size:32px;background:linear-gradient(145deg,rgba(125,228,211,.16),rgba(158,175,255,.11));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 55px rgba(0,0,0,.28)}
+.giftEyebrow{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--warm);margin-bottom:11px}
+.giftIntro h1{font-size:38px;line-height:1.02;letter-spacing:-.045em;margin:0 auto 13px;max-width:520px}
+.giftIntro p{max-width:470px;margin:0 auto;color:#b4bdcf;line-height:1.55;font-size:15px}
+.giftIntro .btn{margin:28px auto 0;max-width:360px}
+.gameProgress{height:5px;background:rgba(255,255,255,.07);overflow:hidden}.gameProgress span{display:block;height:100%;width:20%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease}
+.photoViewport{width:100%;aspect-ratio:4/3;overflow:hidden;background:#080b14;position:relative}.photo{width:100%;height:100%;aspect-ratio:auto;object-fit:contain;background:#080b14;transform-origin:center center;will-change:transform;pointer-events:none;display:block}.body{padding:20px}
+.badge{background:rgba(125,228,211,.1);color:#baf5eb;border:1px solid rgba(125,228,211,.12)}
+.question{font-size:27px;letter-spacing:-.028em;line-height:1.16;margin:17px 0}
+.answer{border-radius:17px;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09);padding:15px 16px;transition:.18s ease}
+.answer:not(:disabled):hover{border-color:rgba(125,228,211,.35);background:rgba(125,228,211,.055)}
+.answer.correct{border-color:rgba(125,228,211,.72);background:rgba(125,228,211,.12);box-shadow:inset 0 0 0 1px rgba(125,228,211,.08)}
+.answer.wrong{border-color:rgba(255,142,157,.72);background:rgba(255,142,157,.11)}
+.btn{min-height:56px;border-radius:18px;background:linear-gradient(135deg,#8be9da,#d7f7ef);box-shadow:0 14px 38px rgba(125,228,211,.14);transition:transform .16s ease,filter .16s ease}
+.btn:active{transform:scale(.985)}.btn.secondary{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.1);box-shadow:none}
+.finish{padding:36px 22px}.finish .emoji{font-size:48px}.finish h1{font-size:34px;letter-spacing:-.04em;margin:10px 0 4px}
+.finishKicker{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--warm);font-weight:900}
+#score{font-size:13px!important;color:#8791a8!important;margin-top:6px}
+.memoryBox{position:relative;margin:22px 0 8px;padding:22px;border-radius:22px;border-color:rgba(125,228,211,.20);background:linear-gradient(145deg,rgba(125,228,211,.08),rgba(158,175,255,.045));text-align:left}
+.memoryBox:before{content:"“";position:absolute;right:18px;top:4px;font-size:52px;color:rgba(125,228,211,.18);font-family:Georgia,serif}
+.memoryBox strong{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#aab4c8;margin-bottom:10px}
+.memoryBox span{font-size:18px;color:#f0f3f8;line-height:1.5;font-weight:650;letter-spacing:-.015em}
+.videoPreview{border-radius:22px;border-color:rgba(255,255,255,.1);box-shadow:0 18px 55px rgba(0,0,0,.28)}
+.loading{padding:54px 22px}.spinner{width:42px;height:42px;border-color:rgba(255,255,255,.09);border-top-color:var(--accent)}
+.footer{margin-top:28px;color:#667087}
+@media(max-width:430px){.giftIntro{min-height:470px;padding:38px 18px 28px}.giftIntro h1{font-size:33px}.question{font-size:23px}.finish h1{font-size:30px}.memoryBox span{font-size:17px}}
+
+
+/* Sprint 2.6 — Premium Player & Ending */
+#game{transition:opacity .22s ease,transform .22s ease}
+#game.question-enter{animation:questionEnter .34s cubic-bezier(.22,.8,.28,1)}
+@keyframes questionEnter{from{opacity:.35;transform:translateY(7px)}to{opacity:1;transform:none}}
+.answerFeedback{
+ margin:12px 0 2px;padding:11px 13px;border-radius:14px;font-size:13px;font-weight:800;line-height:1.35;
+ border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#cbd2e2;
+ animation:feedbackIn .22s ease
+}
+.answerFeedback.good{border-color:rgba(125,228,211,.25);background:rgba(125,228,211,.08);color:#c7fff5}
+.answerFeedback.miss{border-color:rgba(243,215,161,.22);background:rgba(243,215,161,.06);color:#f5dfb5}
+
+body[data-theme="birthday"]{background:radial-gradient(circle at 12% -5%,rgba(255,159,188,.15),transparent 31%),radial-gradient(circle at 92% 10%,rgba(255,211,125,.15),transparent 32%),linear-gradient(180deg,#0b0b16,#10101c 48%,#0b0b16)}
+body[data-theme="birthday"] .giftMark{background:linear-gradient(145deg,rgba(255,159,188,.18),rgba(255,211,125,.13))}
+body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce8;border-color:rgba(255,211,125,.15)}
+/* Sprint 5.1 — Answer Reactions */
+.reactionLayer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:0;isolation:isolate}
+.reactionLayer.good{opacity:1;background:
+ radial-gradient(circle at 50% 44%,rgba(255,255,255,.24) 0 3%,rgba(125,228,211,.18) 12%,rgba(158,175,255,.10) 34%,transparent 68%);
+ animation:s5GlowGood 1.02s ease forwards}
+.reactionLayer.good:before,.reactionLayer.good:after{content:"";position:absolute;left:50%;top:46%;width:86px;height:86px;border-radius:50%;border:3px solid rgba(255,255,255,.78);transform:translate(-50%,-50%) scale(.25);opacity:0;animation:s5Ring .86s cubic-bezier(.16,.75,.22,1) forwards}
+.reactionLayer.good:after{width:126px;height:126px;border-color:rgba(125,228,211,.58);animation-delay:.08s}
+.reactionLayer.miss{opacity:1;background:
+ radial-gradient(circle at 50% 50%,transparent 30%,rgba(129,74,46,.08) 48%,rgba(160,66,34,.18) 71%,rgba(38,12,10,.38) 100%);
+ animation:s5GlowMiss .82s ease forwards}
+.reactionLayer.miss:after{content:"";position:absolute;inset:-18%;background:conic-gradient(from 30deg at 50% 50%,transparent 0 18%,rgba(246,165,94,.12) 22%,transparent 27% 47%,rgba(206,91,45,.10) 51%,transparent 57% 100%);filter:blur(14px);opacity:0;animation:s5EmberWash .78s ease forwards}
+.photoViewport.reaction-correct{animation:s5CorrectFrame 1.02s cubic-bezier(.18,.8,.25,1)}
+.photoViewport.reaction-correct .photo{animation:s5ColorReveal 1.02s cubic-bezier(.18,.8,.25,1)}
+.photoViewport.reaction-wrong{animation:s5WrongFrame .72s ease}
+.photoViewport.reaction-wrong .photo{animation:s5WrongTone .86s ease}
+.reaction-confetti{position:absolute;left:50%;top:47%;width:var(--cw,8px);height:var(--ch,15px);border-radius:var(--cr,3px);background:var(--cc,#7de4d3);opacity:0;box-shadow:0 0 8px color-mix(in srgb,var(--cc,#7de4d3) 35%,transparent);transform:translate(-50%,-50%);animation:s5Confetti 1.08s cubic-bezier(.12,.74,.24,1) var(--delay,0ms) forwards}
+.reaction-spark{position:absolute;left:50%;top:46%;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.95),0 0 20px rgba(125,228,211,.65);opacity:0;transform:translate(-50%,-50%) scale(.5);animation:s5Spark .72s ease var(--delay,0ms) forwards}
+@keyframes s5CorrectFrame{0%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}34%{transform:scale(1.016);box-shadow:inset 0 0 64px rgba(125,228,211,.22)}66%{transform:scale(1.008);box-shadow:inset 0 0 34px rgba(158,175,255,.13)}100%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}}
+@keyframes s5ColorReveal{0%{filter:grayscale(.92) saturate(.35) brightness(.82) contrast(.96)}30%{filter:grayscale(.36) saturate(.82) brightness(.96) contrast(1)}58%{filter:grayscale(0) saturate(1.42) brightness(1.12) contrast(1.04)}100%{filter:none}}
+@keyframes s5GlowGood{0%{opacity:0}18%{opacity:1}54%{opacity:.9}100%{opacity:0}}
+@keyframes s5Ring{0%{opacity:0;transform:translate(-50%,-50%) scale(.28)}20%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(4.2)}}
+@keyframes s5WrongFrame{0%,100%{transform:translateX(0)}12%{transform:translateX(-7px) rotate(-.25deg)}26%{transform:translateX(6px) rotate(.2deg)}42%{transform:translateX(-4px)}58%{transform:translateX(3px)}76%{transform:translateX(-1px)}}
+@keyframes s5WrongTone{0%{filter:none}24%{filter:grayscale(.9) saturate(.28) brightness(.75) contrast(1.08)}58%{filter:grayscale(.72) saturate(.4) brightness(.82) sepia(.10)}100%{filter:none}}
+@keyframes s5GlowMiss{0%{opacity:0}20%{opacity:1}62%{opacity:.9}100%{opacity:0}}
+@keyframes s5EmberWash{0%{opacity:0;transform:scale(.9) rotate(0)}34%{opacity:1}100%{opacity:0;transform:scale(1.08) rotate(5deg)}}
+@keyframes s5Confetti{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.55)}9%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot)) scale(var(--cs,1))}}
+@keyframes s5Spark{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}24%{opacity:1;transform:translate(calc(-50% + var(--sx)),calc(-50% + var(--sy))) scale(1.5)}100%{opacity:0;transform:translate(calc(-50% + var(--sx2)),calc(-50% + var(--sy2))) scale(.6)}}
+@media(prefers-reduced-motion:reduce){
+ .photoViewport.reaction-correct,.photoViewport.reaction-wrong,.photoViewport.reaction-correct .photo,.photoViewport.reaction-wrong .photo{animation:none!important}
+ .reaction-confetti,.reaction-spark,.reactionLayer.good:before,.reactionLayer.good:after,.reactionLayer.miss:after{display:none!important}
+ .reactionLayer.good{animation:none;opacity:.34;background:radial-gradient(circle at 50% 45%,rgba(125,228,211,.22),transparent 70%)}
+ .reactionLayer.miss{animation:none;opacity:.28}
+}
+@keyframes feedbackIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.finish{position:relative;overflow:hidden}
+.finish:before{
+ content:"";position:absolute;width:340px;height:340px;left:50%;top:-210px;transform:translateX(-50%);
+ border-radius:50%;background:radial-gradient(circle,rgba(125,228,211,.19),rgba(158,175,255,.07) 48%,transparent 70%);pointer-events:none
+}
+.finish>*{position:relative;z-index:1}
+.finish .emoji{filter:drop-shadow(0 8px 24px rgba(125,228,211,.22));animation:finishPop .48s cubic-bezier(.2,.8,.2,1)}
+@keyframes finishPop{from{opacity:0;transform:scale(.82) translateY(6px)}to{opacity:1;transform:none}}
+.finish h1{max-width:500px;margin:10px auto 5px}
+.videoLead{
+ margin:22px auto 2px;max-width:460px;color:#b5bed0;font-size:14px;line-height:1.5
+}
+#createVideo{margin-top:14px}
+#videoStatus{min-height:20px}.videoProgress{height:5px;margin:10px 0 0;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}.videoProgress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .22s ease}
+.memoryHero{margin-top:22px;padding:24px 22px;border-color:rgba(243,215,161,.25);background:linear-gradient(145deg,rgba(243,215,161,.09),rgba(125,228,211,.07))}
+.memoryHero strong{color:var(--warm)}
+.scoreSecondary{margin:13px 0 0!important;font-size:12px!important;color:#727d94!important;font-weight:750}
+.finish.reveal{animation:finishReveal .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes finishReveal{from{opacity:0;transform:translateY(10px) scale(.992)}to{opacity:1;transform:none}}
+#createVideo{box-shadow:0 16px 42px rgba(125,228,211,.18)}
+
+
+/* Sprint 6.2 — Magic Reveal Player */
+.photoViewport{isolation:isolate}
+.photoViewport .photo{transition:filter .85s cubic-bezier(.2,.7,.2,1),transform 1.15s cubic-bezier(.2,.7,.2,1),opacity .5s ease}
+.photoViewport:after{content:"MAGIC REVEAL";position:absolute;left:12px;top:12px;z-index:6;padding:6px 9px;border-radius:999px;background:rgba(6,9,16,.66);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:9px;font-weight:900;letter-spacing:.12em;color:#effffb;opacity:.92}
+.photoViewport.magic-timewarp:not(.magic-revealed) .photo{filter:grayscale(1) contrast(.92) brightness(.82);transform:scale(1.025)}
+.photoViewport.magic-timewarp.magic-revealed .photo{filter:grayscale(0) saturate(1.08) brightness(1.03);transform:scale(1.07)}
+.photoViewport.magic-focus:not(.magic-revealed) .photo{filter:blur(8px) saturate(.72) brightness(.82);transform:scale(1.09)}
+.photoViewport.magic-focus.magic-revealed .photo{filter:blur(0) saturate(1.06) brightness(1.02);transform:scale(1.035)}
+.photoViewport.magic-art:not(.magic-revealed) .photo{filter:grayscale(.35) saturate(.65) contrast(1.05) brightness(.80);transform:scale(1.03)}
+.photoViewport.magic-art.magic-revealed .photo{filter:saturate(1.55) contrast(1.22) brightness(1.03) sepia(.08);transform:scale(1.065)}
+.photoViewport.magic-cinema:not(.magic-revealed) .photo{filter:saturate(.82) contrast(.98) brightness(.82);transform:scale(1.035) translateX(-1%)}
+.photoViewport.magic-cinema.magic-revealed .photo{filter:saturate(1.08) contrast(1.04) brightness(1.02);transform:scale(1.10) translateX(1%);transition-duration:1.8s}
+.photoViewport.magic-finale:not(.magic-revealed) .photo{filter:saturate(.70) brightness(.72) contrast(.94);transform:scale(1.02)}
+.photoViewport.magic-finale.magic-revealed .photo{animation:s6Finale 1.25s cubic-bezier(.18,.8,.18,1) both;filter:saturate(1.14) brightness(1.04) contrast(1.03)}
+.photoViewport .magicSheen{position:absolute;inset:-20%;z-index:3;pointer-events:none;opacity:0;background:linear-gradient(115deg,transparent 37%,rgba(255,255,255,.20) 47%,rgba(125,228,211,.25) 52%,transparent 63%);transform:translateX(-70%) rotate(2deg)}
+.photoViewport.magic-revealed .magicSheen{animation:s6Sheen 1.05s ease-out both}
+#createYours{margin-top:18px;background:linear-gradient(135deg,rgba(243,215,161,.16),rgba(125,228,211,.10));color:#fff;border:1px solid rgba(243,215,161,.24);box-shadow:none}
+.createYoursHint{margin:9px 0 0!important;font-size:11px!important;color:#778197!important}
+@keyframes s6Sheen{0%{opacity:0;transform:translateX(-72%) rotate(2deg)}18%{opacity:1}100%{opacity:0;transform:translateX(72%) rotate(2deg)}}
+@keyframes s6Finale{0%{transform:scale(1.02)}45%{transform:scale(1.115)}100%{transform:scale(1.07)}}
+@media(prefers-reduced-motion:reduce){.photoViewport .photo{transition-duration:.01ms!important;animation:none!important}.magicSheen{display:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><div class="brand"><span class="dot"></span> LEVELYOU</div><button class="shareTop hidden" id="shareTop">Compartir</button></div>
+  <div id="loading" class="card loading"><div class="spinner"></div><strong id="loadingText">Preparando tu LevelYou…</strong></div>
+  <div id="intro" class="card giftIntro hidden">
+    <div class="giftMark">🎁</div>
+    <div class="giftEyebrow" id="introEyebrow">Han creado algo para ti</div>
+    <h1 id="introTitle">Este LevelYou es para ti.</h1>
+    <p id="introText">Cinco recuerdos te están esperando. Solo hay una forma de descubrir qué han preparado.</p>
+    <button class="btn" id="startGame">Abrir mi LevelYou</button>
+  </div>
+  <div id="error" class="card error hidden"><div style="font-size:48px">🎁</div><h2 id="errorTitle">No hemos podido abrir este LevelYou</h2><p id="errorText">Comprueba que el enlace sea correcto e inténtalo de nuevo.</p><button class="btn secondary" onclick="location.reload()" id="retryBtn">Reintentar</button></div>
+  <div id="game" class="card hidden"><div class="gameProgress"><span id="gameProgressBar"></span></div><div class="photoViewport"><img id="photo" class="photo" alt="Recuerdo LevelYou"><div class="magicSheen" aria-hidden="true"></div><div class="reactionLayer" id="photoReaction" aria-hidden="true"></div></div><div class="body"><div class="top"><span class="badge" id="badge"></span><span class="count" id="count"></span></div><div class="question" id="question"></div><div id="answers"></div><div class="answerFeedback hidden" id="answerFeedback"></div><button class="btn hidden" id="next"></button></div></div>
+  <div id="finish" class="card finish hidden">
+    <div class="finishKicker" id="finishKicker">Tu historia, en cinco recuerdos</div>
+    <div class="emoji">✨</div><h1 id="finishTitle"></h1>
+    <div class="memoryBox memoryHero"><strong id="memoryTitle"></strong><span id="memoryText"></span></div>
+    <p class="scoreSecondary" id="score"></p>
+    <div class="videoLead" id="videoLead"></div>
+    <button class="btn" id="createVideo"></button><p class="videoStatus hidden" id="videoStatus"></p><div class="videoProgress hidden" id="videoProgress" aria-hidden="true"><span id="videoProgressBar"></span></div>
+    <video class="videoPreview hidden" id="videoPreview" controls playsinline></video>
+    <button class="btn hidden" id="saveVideo"></button>
+    <button class="btn secondary" id="share"></button><button class="btn secondary" id="again"></button><button class="btn secondary" id="createYours"></button><p class="createYoursHint" id="createYoursHint"></p>
+  </div>
+  <canvas id="videoCanvas" width="720" height="1280" class="hidden"></canvas>
+  <div class="footer">LevelYou · Regalos personalizados</div>
+</div>
+<script>
+const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint5';
+const params=new URLSearchParams(location.search),token=params.get('token')||'';
+let DATA=null,i=0,score=0,locked=false,videoBlob=null,videoFile=null,videoPreviewUrl=null;
+const $=id=>document.getElementById(id);
+const LANG={
+ es:{loading:'Preparando tu LevelYou…',badge:'✨ Tu LevelYou',q:'Pregunta',next:'Siguiente recuerdo →',nextFinal:'Ver el final →',correct:'✨ Sí. Esa es.',wrong:'Casi. La respuesta correcta era otra.',finish:'5 recuerdos. Una historia.',score:s=>'Y además, has acertado '+s+' de 5',again:'Volver a jugar',share:'Compartir LevelYou',memoryTitle:'Un mensaje para ti',memoryText:'Estos cinco momentos todavía tienen una última forma de volver.',videoLead:'Tu LevelYou aún guarda una última sorpresa: convierte estos recuerdos en un vídeo para volver a ellos cuando quieras.',createVideo:'Crear mi vídeo recuerdo',creating:'Dando vida a tus recuerdos…',rendering:'Montando tu vídeo…',saveVideo:'Guardar / compartir vídeo',videoReady:'Tu vídeo ya está listo.',videoUnsupported:'Este navegador no permite crear el vídeo directamente. Puedes compartir el LevelYou con el botón de abajo.',videoError:'No hemos podido crear el vídeo. El juego sigue disponible y puedes compartirlo.',errorTitle:'No hemos podido abrir este LevelYou',errorText:'Comprueba que el enlace sea correcto e inténtalo de nuevo.',retry:'Reintentar',intro:'Un regalo hecho de recuerdos',outro:'Que nunca se olviden estos momentos'},
+ ca:{loading:'Preparant el teu LevelYou…',badge:'✨ El teu LevelYou',q:'Pregunta',next:'Següent record →',nextFinal:'Veure el final →',correct:'✨ Sí. Aquesta és.',wrong:'Gairebé. La resposta correcta era una altra.',finish:'5 records. Una història.',score:s=>'I, a més, has encertat '+s+' de 5',again:'Tornar a jugar',share:'Compartir LevelYou',memoryTitle:'Un missatge per a tu',memoryText:'Aquests cinc moments encara tenen una última manera de tornar.',videoLead:'El teu LevelYou encara guarda una última sorpresa: converteix aquests records en un vídeo per tornar-hi sempre que vulguis.',createVideo:'Crear el meu vídeo record',creating:'Donant vida als teus records…',rendering:'Muntant el teu vídeo…',saveVideo:'Guardar / compartir vídeo',videoReady:'El teu vídeo ja està llest.',videoUnsupported:'Aquest navegador no permet crear el vídeo directament. Pots compartir el LevelYou amb el botó de sota.',videoError:'No hem pogut crear el vídeo. El joc continua disponible i el pots compartir.',errorTitle:'No hem pogut obrir aquest LevelYou',errorText:'Comprova que l’enllaç sigui correcte i torna-ho a provar.',retry:'Torna-ho a provar',intro:'Un regal fet de records',outro:'Que aquests moments no s’oblidin mai'},
+ en:{loading:'Preparing your LevelYou…',badge:'✨ Your LevelYou',q:'Question',next:'Next memory →',nextFinal:'See the ending →',correct:'✨ Yes. That’s it.',wrong:'Almost. The correct answer was different.',finish:'5 memories. One story.',score:s=>'And you got '+s+' out of 5',again:'Play again',share:'Share LevelYou',memoryTitle:'A message for you',memoryText:'These five moments still have one more way to come back.',videoLead:'Your LevelYou has one last surprise: turn these memories into a video you can come back to whenever you want.',createVideo:'Create my memory video',creating:'Bringing your memories to life…',rendering:'Editing your video…',saveVideo:'Save / share video',videoReady:'Your video is ready.',videoUnsupported:'This browser cannot create the video directly. You can still share the LevelYou below.',videoError:'We could not create the video. The game is still available and can be shared.',errorTitle:'We could not open this LevelYou',errorText:'Check the link and try again.',retry:'Try again',intro:'A gift made of memories',outro:'May these moments never be forgotten'}
+};
+const PREMIUM_LANG={
+ es:{introEyebrow:'Han creado algo para ti',introTitle:n=>n?('Esto es para ti, '+n+'.'):'Este LevelYou es para ti.',introText:'Cinco recuerdos te están esperando. Solo hay una forma de descubrir qué han preparado.',start:'Abrir mi LevelYou',finishKicker:'Tu historia, en cinco recuerdos'},
+ ca:{introEyebrow:'Han creat alguna cosa per a tu',introTitle:n=>n?('Això és per a tu, '+n+'.'):'Aquest LevelYou és per a tu.',introText:'Cinc records t’estan esperant. Només hi ha una manera de descobrir què han preparat.',start:'Obrir el meu LevelYou',finishKicker:'La teva història, en cinc records'},
+ en:{introEyebrow:'Someone made something for you',introTitle:n=>n?('This is for you, '+n+'.'):'This LevelYou is for you.',introText:'Five memories are waiting for you. There is only one way to discover what they prepared.',start:'Open my LevelYou',finishKicker:'Your story, in five memories'}
+};
+let pt=PREMIUM_LANG.es;
+let t=LANG.es;
+function safeFraming(f){
+ return{
+  zoom:Math.max(1,Math.min(2.5,Number(f?.zoom)||1)),
+  x:Math.max(-1,Math.min(1,Number(f?.x)||0)),
+  y:Math.max(-1,Math.min(1,Number(f?.y)||0))
+ };
+}
+function applyPhotoFraming(el,f){
+ if(!el)return;
+ const p=safeFraming(f),travel=50*Math.max(0,p.zoom-1)/Math.max(1,p.zoom);
+ el.style.objectFit='contain';
+ el.style.transform='translate('+(p.x*travel)+'%,'+(p.y*travel)+'%) scale('+p.zoom+')';
+}
+function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photoUrl){const im=new Image();im.decoding='async';im.src=item.photoUrl}})}catch(e){console.warn('Game photo preload',e)}}
+function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
+async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
+
+function magicEffectFor(index){
+ const ctx=String(DATA?.items?.[index]?.context||'').toLowerCase();
+ if(index===4)return 'finale';
+ if(index===2)return 'art';
+ if(/niñ|infan|child|beb[eé]|baby|antigua|antic|old photo|blanco y negro|black and white/.test(ctx))return 'timewarp';
+ if(/viaj|trip|vacac|holiday|playa|platja|beach|cala|par[ií]s|roma|london|londres|mallorca|menorca|ibiza/.test(ctx))return 'cinema';
+ if(index===1)return 'focus';
+ return 'timewarp';
+}
+function armMagicReveal(){
+ const v=document.querySelector('.photoViewport');if(!v)return;
+ v.classList.remove('magic-revealed','magic-timewarp','magic-focus','magic-art','magic-cinema','magic-finale');
+ v.classList.add('magic-'+magicEffectFor(i));
+}
+function revealMagic(){
+ const v=document.querySelector('.photoViewport');if(!v||v.classList.contains('magic-revealed'))return;
+ void v.offsetWidth;v.classList.add('magic-revealed');
+ emitLevelYouEvent('levelyou:magic-reveal',{index:i,effect:magicEffectFor(i)});
+}
+function render(){resetPhotoReaction();armMagicReveal();locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
+function emitLevelYouEvent(name,detail){try{window.dispatchEvent(new CustomEvent(name,{detail}))}catch(e){}}
+let photoReactionTimer=null;
+function resetPhotoReaction(){
+ if(photoReactionTimer){clearTimeout(photoReactionTimer);photoReactionTimer=null}
+ const viewport=document.querySelector('.photoViewport'),layer=$('photoReaction');
+ viewport?.classList.remove('reaction-correct','reaction-wrong');
+ if(layer){layer.className='reactionLayer';layer.innerHTML=''}
+}
+function playPhotoReaction(correct){
+ const viewport=document.querySelector('.photoViewport'),layer=$('photoReaction');if(!viewport||!layer)return;
+ resetPhotoReaction();void viewport.offsetWidth;
+ viewport.classList.add(correct?'reaction-correct':'reaction-wrong');
+ layer.classList.add(correct?'good':'miss');
+ const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(correct&&!reduced){
+  const colors=currentTheme().id==='birthday'?['#ff9fbc','#ffd37d','#ffffff','#ff6fa8','#ffe7a8','#c7a8ff']:['#7de4d3','#f3d7a1','#9eafff','#ffffff','#ff9fbc','#8ff0c6'];
+  const pieces=Array.from({length:34},(_,n)=>{
+   const angle=((n*137.5)%360)*Math.PI/180;
+   const radius=118+(n%7)*18;
+   const dx=Math.round(Math.cos(angle)*radius);
+   const dy=Math.round(Math.sin(angle)*radius-72-(n%4)*14);
+   return{dx,dy,rot:(n%2?1:-1)*(150+(n*47)%360),color:colors[n%colors.length],delay:(n%8)*18,w:6+(n%4)*2,h:11+(n%5)*3,r:n%3===0?999:3,scale:.8+(n%5)*.12};
+  });
+  pieces.forEach(o=>{const p=document.createElement('span');p.className='reaction-confetti';p.style.setProperty('--dx',o.dx+'px');p.style.setProperty('--dy',o.dy+'px');p.style.setProperty('--rot',o.rot+'deg');p.style.setProperty('--cc',o.color);p.style.setProperty('--delay',o.delay+'ms');p.style.setProperty('--cw',o.w+'px');p.style.setProperty('--ch',o.h+'px');p.style.setProperty('--cr',o.r+'px');p.style.setProperty('--cs',o.scale);layer.appendChild(p)});
+  const sparks=[[-90,-70,-150,-120,0],[-48,-108,-84,-176,60],[0,-124,0,-198,25],[52,-104,92,-168,80],[94,-62,158,-112,35],[-110,-20,-176,-36,95],[112,-12,184,-22,50]];
+  sparks.forEach(([sx,sy,sx2,sy2,delay])=>{const s=document.createElement('span');s.className='reaction-spark';s.style.setProperty('--sx',sx+'px');s.style.setProperty('--sy',sy+'px');s.style.setProperty('--sx2',sx2+'px');s.style.setProperty('--sy2',sy2+'px');s.style.setProperty('--delay',delay+'ms');layer.appendChild(s)});
+ }
+ photoReactionTimer=setTimeout(resetPhotoReaction,correct?1120:900);
+}
+window.addEventListener('levelyou:answer',e=>playPhotoReaction(Boolean(e.detail?.correct)));
+function pick(n,b){if(locked)return;locked=true;revealMagic();const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden');emitLevelYouEvent('levelyou:answer',{correct:ok,index:i,selected:n,correctIndex:x.correct,theme:currentTheme().id})}
+function done(){$('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finish').classList.remove('reveal');void $('finish').offsetWidth;$('finish').classList.add('reveal');$('finishTitle').textContent=themedCopy()?.finish||t.finish;$('score').textContent=t.score(score);const hasDed=DATA&&typeof DATA.dedication==='string'&&DATA.dedication.trim();$('memoryTitle').textContent=hasDed?(DATA.language==='ca'?'Un missatge per a tu':DATA.language==='en'?'A message for you':'Un mensaje para ti'):t.memoryTitle;$('memoryText').textContent=hasDed?DATA.dedication:t.memoryText;$('videoLead').textContent=t.videoLead;$('createVideo').textContent=t.createVideo;$('saveVideo').textContent=t.saveVideo;$('again').textContent=t.again;$('share').textContent=t.share;const ly=DATA?.language||'es';$('createYours').textContent=ly==='ca'?'Crear el meu LevelYou · 14,90 €':ly==='en'?'Create your LevelYou · €14.90':'Crear mi LevelYou · 14,90 €';$('createYoursHint').textContent=ly==='ca'?'5 fotos. 5 sorpreses. Una felicitació que cobra vida.':ly==='en'?'5 photos. 5 surprises. A greeting that comes alive.':'5 fotos. 5 sorpresas. Una felicitación que cobra vida.';window.scrollTo({top:0,behavior:'smooth'})}
+$('startGame').onclick=()=>{$('intro').classList.add('hidden');$('shareTop').classList.remove('hidden');$('game').classList.remove('hidden');render()};$('next').onclick=()=>{if(i<DATA.items.length-1){i++;render()}else done()};$('again').onclick=()=>{i=0;score=0;$('finish').classList.add('hidden');$('game').classList.remove('hidden');render()};
+async function shareLink(){const d={title:'LevelYou',text:'🎁 Tengo un LevelYou para ti',url:location.href};if(navigator.share){try{await navigator.share(d);return}catch(e){if(e&&e.name==='AbortError')return}}location.href='https://wa.me/?text='+encodeURIComponent('🎁 Tengo un LevelYou para ti: '+location.href)}
+$('share').onclick=shareLink;$('shareTop').onclick=shareLink;$('createYours').onclick=()=>{location.href='./'};
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function imgFromUrl(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('image');const blob=await r.blob();const objectUrl=URL.createObjectURL(blob);try{return await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=objectUrl})}finally{setTimeout(()=>URL.revokeObjectURL(objectUrl),30000)}}
+
+const VIDEO_W=720,VIDEO_H=1280,VIDEO_FPS=24,VIDEO_BITRATE=4500000;
+const VIDEO_INTRO_MS=1800,VIDEO_MEMORY_MS=2400,VIDEO_OUTRO_MS=3000,VIDEO_TRANSITION_MS=380;
+function memoryDurationMs(index,total){
+ const pattern=total<=5?[2250,2450,2300,2500,2250]:total<=10?[2150,2350,2200,2425,2175]:[2050,2250,2150,2350,2100];
+ return pattern[index%pattern.length];
+}
+function transitionDurationMs(index){return [320,410,350][index%3]}
+function buildVideoTiming(count){
+ const durations=Array.from({length:count},(_,i)=>memoryDurationMs(i,count));
+ const starts=[];let acc=VIDEO_INTRO_MS;
+ durations.forEach(ms=>{starts.push(acc/1000);acc+=ms});
+ return{durations,starts,totalMs:acc+VIDEO_OUTRO_MS};
+}
+const THEME_CONFIG={
+ classic:{id:'classic',accent:'#7de4d3',accent2:'#9eafff',warm:'#f3d7a1'},
+ birthday:{id:'birthday',accent:'#ff9fbc',accent2:'#ffd37d',warm:'#fff0b5'}
+};
+const THEME_COPY={
+ es:{birthday:{eyebrow:'Un cumpleaños hecho de recuerdos',title:n=>n?('Feliz cumpleaños, '+n+'.'):'Feliz cumpleaños.',intro:'Cinco recuerdos te esperan. Acierta las preguntas y descubre el final que han preparado para ti.',finish:'Cinco recuerdos. Una celebración.'}},
+ ca:{birthday:{eyebrow:'Un aniversari fet de records',title:n=>n?('Per molts anys, '+n+'.'):'Per molts anys.',intro:'Cinc records t’esperen. Encerta les preguntes i descobreix el final que han preparat per a tu.',finish:'Cinc records. Una celebració.'}},
+ en:{birthday:{eyebrow:'A birthday made of memories',title:n=>n?('Happy Birthday, '+n+'.'):'Happy Birthday.',intro:'Five memories are waiting. Answer the questions and discover the ending made for you.',finish:'Five memories. One celebration.'}}
+};
+function currentTheme(){const id=DATA&&['classic','birthday'].includes(DATA.theme)?DATA.theme:'classic';return THEME_CONFIG[id]||THEME_CONFIG.classic}
+function applyTheme(){
+ const theme=currentTheme();document.body.dataset.theme=theme.id;
+ document.documentElement.style.setProperty('--accent',theme.accent);
+ document.documentElement.style.setProperty('--accent2',theme.accent2);
+ document.documentElement.style.setProperty('--warm',theme.warm);
+}
+function themedCopy(){
+ const l=DATA?.language||'es',theme=currentTheme().id;
+ return THEME_COPY[l]?.[theme]||null;
+}
+const VIDEO_COPY={
+ es:{forName:n=>n?('Para '+n):'Para ti',birthdayName:n=>n?('Feliz cumpleaños, '+n):'Feliz cumpleaños',subtitle:'Una historia hecha de momentos',birthdaySubtitle:'Hoy celebramos todo lo vivido',closing:'UN RECUERDO PARA VOLVER SIEMPRE'},
+ ca:{forName:n=>n?('Per a '+n):'Per a tu',birthdayName:n=>n?('Per molts anys, '+n):'Per molts anys',subtitle:'Una història feta de moments',birthdaySubtitle:'Avui celebrem tot el que hem viscut',closing:'UN RECORD PER TORNAR-HI SEMPRE'},
+ en:{forName:n=>n?('For '+n):'For you',birthdayName:n=>n?('Happy Birthday, '+n):'Happy Birthday',subtitle:'A story made of moments',birthdaySubtitle:'Today we celebrate everything we’ve shared',closing:'A MEMORY TO COME BACK TO'}
+};
+function clamp01(v){return Math.max(0,Math.min(1,v))}
+function easeInOut(v){v=clamp01(v);return v<.5?4*v*v*v:1-Math.pow(-2*v+2,3)/2}
+function roundedRect(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()}
+function wrapCentered(ctx,text,x,y,maxWidth,lineHeight,maxLines=4){
+ const words=String(text||'').trim().split(/\s+/).filter(Boolean),lines=[];let line='';
+ for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;if(lines.length>=maxLines-1)break}else line=test}
+ if(line&&lines.length<maxLines)lines.push(line);
+ lines.forEach((l,n)=>ctx.fillText(l,x,y+n*lineHeight));
+}
+function videoLayout(img){
+ const r=(img.width||1)/(img.height||1);
+ if(r<.82)return{x:48,y:92,w:624,h:1096,radius:30,kind:'portrait'};
+ if(r>1.28)return{x:46,y:238,w:628,h:804,radius:28,kind:'landscape'};
+ return{x:54,y:174,w:612,h:932,radius:30,kind:'square'};
+}
+function makeBackdrop(img){
+ const c=document.createElement('canvas');c.width=360;c.height=640;
+ const x=c.getContext('2d',{alpha:false});if(!x)return c;
+ const iw=img.width||1,ih=img.height||1,scale=Math.max(c.width/iw,c.height/ih),dw=iw*scale,dh=ih*scale;
+ x.save();x.filter='blur(18px) saturate(.86) brightness(.52)';x.drawImage(img,(c.width-dw)/2,(c.height-dh)/2,dw,dh);x.restore();
+ const g=x.createLinearGradient(0,0,0,c.height);g.addColorStop(0,'rgba(7,9,17,.28)');g.addColorStop(.55,'rgba(7,9,17,.18)');g.addColorStop(1,'rgba(7,9,17,.58)');x.fillStyle=g;x.fillRect(0,0,c.width,c.height);
+ return c;
+}
+function drawBirthdayCanvasConfetti(ctx,p,seed=0,intensity=1){
+ if(currentTheme().id!=='birthday')return;
+ const palette=['#ff9fbc','#ffd37d','#ffffff','#c7a8ff','#ff6fa8','#8ff0c6'];
+ ctx.save();
+ for(let n=0;n<Math.round(16*intensity);n++){
+  const phase=(n*0.173+seed*.117)%1,fall=(p*.92+phase)%1;
+  const x=((n*191+seed*83)%680)+20+Math.sin((p+n)*3.1)*14;
+  const y=-60+fall*1420;
+  const sway=Math.sin((p*6)+(n*1.7))*22;
+  const alpha=Math.min(1,Math.max(0,(1-Math.abs(fall-.55)*1.6)))*.78;
+  ctx.globalAlpha=alpha;ctx.fillStyle=palette[(n+seed)%palette.length];
+  ctx.save();ctx.translate(x+sway,y);ctx.rotate((p*5+n)*.8);
+  const w=5+(n%3)*3,h=10+(n%4)*4;
+  if(n%4===0){ctx.beginPath();ctx.arc(0,0,w*.62,0,Math.PI*2);ctx.fill()}else ctx.fillRect(-w/2,-h/2,w,h);
+  ctx.restore();
+ }
+ ctx.restore();
+}
+function drawReelMemoryOverlay(ctx,p,index,total){
+ if(currentTheme().id!=='birthday')return;
+ const lang=DATA?.language||'es',middle=Math.floor(total/2);
+ let label='';
+ if(index===0)label=lang==='ca'?'AVUI CELEBREM':lang==='en'?'TODAY WE CELEBRATE':'HOY CELEBRAMOS';
+ else if(index===middle)label=lang==='ca'?'PER TOTS ELS MOMENTS':lang==='en'?'FOR ALL THE MOMENTS':'POR TODOS LOS MOMENTOS';
+ if(!label)return;
+ const alpha=clamp01((p-.05)/.16)*clamp01((.72-p)/.18);
+ if(alpha<=0)return;
+ ctx.save();ctx.globalAlpha=alpha;ctx.textAlign='center';
+ const w=index===0?300:390,x=(VIDEO_W-w)/2;
+ ctx.fillStyle='rgba(7,9,17,.62)';roundedRect(ctx,x,1040,w,54,27);ctx.fill();
+ ctx.fillStyle='#fff';ctx.font='800 16px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(label,360,1074);
+ ctx.restore();
+}
+function drawTransitionAccent(ctx,mix,index){
+ const strength=Math.sin(Math.PI*clamp01(mix));
+ if(strength<=0)return;
+ const mode=index%3;
+ ctx.save();
+ if(mode===1){
+  ctx.globalAlpha=.11*strength;ctx.fillStyle='#05060c';ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+ }else{
+  ctx.globalAlpha=(currentTheme().id==='birthday'?(mode===2?.19:.12):(mode===2?.075:.035))*strength;
+  const x=index%2===0?0:VIDEO_W,grad=ctx.createLinearGradient(x,0,VIDEO_W-x,VIDEO_H);
+  grad.addColorStop(0,currentTheme().id==='birthday'?'#ffd37d':'#ffffff');grad.addColorStop(.44,'rgba(255,255,255,.12)');grad.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+ }
+ ctx.restore();
+}
+function drawPremiumPhoto(ctx,img,backdrop,framing,p,index,total){
+ const f=safeFraming(framing),box=videoLayout(img),e=easeInOut(p);
+ ctx.drawImage(backdrop,0,0,VIDEO_W,VIDEO_H);
+ const vignette=ctx.createRadialGradient(VIDEO_W/2,VIDEO_H*.44,130,VIDEO_W/2,VIDEO_H*.48,760);
+ vignette.addColorStop(0,'rgba(0,0,0,0)');vignette.addColorStop(1,'rgba(2,4,10,.40)');
+ ctx.fillStyle=vignette;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+ const base=Math.min(box.w/(img.width||1),box.h/(img.height||1));
+ const profile=index%4,dz=f.zoom>1.7?.016:.046;
+ const zoomPhase=profile===1||profile===3?(1-e):e;
+ const motionZoom=1+dz*zoomPhase;
+ const effectiveZoom=f.zoom*motionZoom;
+ const dw=(img.width||1)*base*effectiveZoom,dh=(img.height||1)*base*effectiveZoom;
+ const maxPanX=Math.max(0,(dw-box.w)/2),maxPanY=Math.max(0,(dh-box.h)/2);
+ const travel=10,dirX=[1,-1,-.45,.55][profile],dirY=[-.28,.22,1,-1][profile];
+ const px=f.x*maxPanX+dirX*(e-.5)*travel*(box.kind==='portrait'?.35:1);
+ const py=f.y*maxPanY+dirY*(e-.5)*travel*(box.kind==='landscape'?.35:1);
+ ctx.save();roundedRect(ctx,box.x,box.y,box.w,box.h,box.radius);ctx.clip();
+ ctx.fillStyle='rgba(5,7,14,.72)';ctx.fillRect(box.x,box.y,box.w,box.h);
+ ctx.drawImage(img,box.x+(box.w-dw)/2+px,box.y+(box.h-dh)/2+py,dw,dh);
+ const gloss=ctx.createLinearGradient(0,box.y,0,box.y+box.h);gloss.addColorStop(0,'rgba(255,255,255,.035)');gloss.addColorStop(.68,'rgba(255,255,255,0)');gloss.addColorStop(1,'rgba(0,0,0,.10)');ctx.fillStyle=gloss;ctx.fillRect(box.x,box.y,box.w,box.h);
+ ctx.restore();
+ drawReelMemoryOverlay(ctx,p,index,total);if(currentTheme().id==='birthday'&&(index===0||index===4||index===Math.floor(total/2)))drawBirthdayCanvasConfetti(ctx,p,index,.55);ctx.save();ctx.globalAlpha=.42;ctx.fillStyle='#fff';ctx.font='800 15px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.textAlign='center';ctx.fillText('LEVELYOU',VIDEO_W/2,1228);ctx.restore();
+}
+function drawIntro(ctx,p,name){
+ const e=easeInOut(p),copy=VIDEO_COPY[DATA?.language]||VIDEO_COPY.es;
+ const g=ctx.createLinearGradient(0,0,VIDEO_W,VIDEO_H);g.addColorStop(0,'#080a13');g.addColorStop(.52,'#101727');g.addColorStop(1,'#080a13');ctx.fillStyle=g;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+ const glow=ctx.createRadialGradient(360,430,10,360,430,390);glow.addColorStop(0,'rgba(125,228,211,.16)');glow.addColorStop(.52,'rgba(158,175,255,.07)');glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+ ctx.save();ctx.globalAlpha=clamp01(p/.28)*clamp01((1-p)/.12);ctx.translate(0,(1-e)*14);
+ ctx.fillStyle='#7de4d3';ctx.beginPath();ctx.arc(360,382,6,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#f3d7a1';ctx.textAlign='center';ctx.font='800 17px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,430);
+ ctx.fillStyle='#fff';ctx.font='800 55px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrapCentered(ctx,currentTheme().id==='birthday'?copy.birthdayName(name):copy.forName(name),360,548,590,64,2);
+ ctx.fillStyle='rgba(235,239,248,.72)';ctx.font='500 25px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(currentTheme().id==='birthday'?copy.birthdaySubtitle:copy.subtitle,360,720);
+ ctx.restore();if(currentTheme().id==='birthday')drawBirthdayCanvasConfetti(ctx,p,9,.8);
+}
+function drawOutro(ctx,p,message,hasDedication){
+ const e=easeInOut(p),copy=VIDEO_COPY[DATA?.language]||VIDEO_COPY.es;
+ const g=ctx.createLinearGradient(0,0,VIDEO_W,VIDEO_H);g.addColorStop(0,'#080a13');g.addColorStop(.5,'#12192a');g.addColorStop(1,'#080a13');ctx.fillStyle=g;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+ const glow=ctx.createRadialGradient(360,535,20,360,535,430);glow.addColorStop(0,'rgba(243,215,161,.10)');glow.addColorStop(.6,'rgba(125,228,211,.05)');glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+ ctx.save();ctx.globalAlpha=clamp01(p/.20)*clamp01((1-p)/.10);ctx.translate(0,(1-e)*10);
+ ctx.fillStyle='#f3d7a1';ctx.textAlign='center';ctx.font='800 16px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(copy.closing,360,350);
+ ctx.fillStyle='#fff';ctx.font=(hasDedication?'800 38px':'800 50px')+' -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrapCentered(ctx,message,360,hasDedication?485:520,580,hasDedication?50:61,hasDedication?5:3);
+ ctx.fillStyle=currentTheme().id==='birthday'?'rgba(255,211,125,.96)':'rgba(125,228,211,.9)';ctx.font='800 18px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,935);
+ ctx.restore();if(currentTheme().id==='birthday')drawBirthdayCanvasConfetti(ctx,p,17,.75);
+}
+async function prepareAudioContext(){
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+ try{const ac=new AC();if(ac.state==='suspended')await ac.resume();return ac}catch(e){console.warn('LevelYou audio unavailable',e);return null}
+}
+function createLevelYouSoundtrack(ac,durationSec,memoryStarts=[]){
+ if(!ac||typeof ac.createMediaStreamDestination!=='function')return null;
+ const birthday=currentTheme().id==='birthday';
+ const destination=ac.createMediaStreamDestination(),master=ac.createGain(),musicBus=ac.createGain(),drumBus=ac.createGain();
+ const tone=ac.createBiquadFilter();tone.type='lowpass';tone.frequency.value=birthday?7000:5800;tone.Q.value=.12;
+ musicBus.connect(tone);drumBus.connect(tone);tone.connect(master);master.connect(destination);
+ const start=ac.currentTime+.05,end=start+durationSec,fadeOut=Math.max(start+1.0,end-1.8),sources=[];
+ master.gain.setValueAtTime(.0001,start);master.gain.exponentialRampToValueAtTime(birthday?.16:.125,start+.42);master.gain.setValueAtTime(birthday?.16:.125,fadeOut);master.gain.exponentialRampToValueAtTime(.0001,end);
+ musicBus.gain.value=birthday?.72:.68;drumBus.gain.value=birthday?.80:.52;
+
+ // Sprint 5.6B: clearly upbeat pop/celebration groove. Birthday is intentionally party-like.
+ const bpm=birthday?126:112,beat=60/bpm,bar=beat*4;
+ const chords=birthday?[
+  [261.63,329.63,392.00,523.25], // C
+  [349.23,440.00,523.25,698.46], // F
+  [392.00,493.88,587.33,783.99], // G
+  [261.63,329.63,392.00,659.25]  // C
+ ]:[
+  [293.66,369.99,440.00,587.33], // D
+  [392.00,493.88,587.33,783.99], // G
+  [440.00,554.37,659.25,880.00], // A
+  [392.00,493.88,587.33,783.99]  // G
+ ];
+
+ const addOsc=(when,freq,type,peak,life,bus=musicBus,startFreq=null)=>{
+  const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(startFreq||freq,when);
+  if(startFreq)o.frequency.exponentialRampToValueAtTime(freq,when+Math.min(.09,life*.4));
+  g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(peak,when+.012);g.gain.exponentialRampToValueAtTime(.0001,when+life);
+  o.connect(g);g.connect(bus);o.start(when);o.stop(when+life+.03);sources.push(o);return o;
+ };
+
+ // Major-chord stabs every bar; short envelope keeps the track bright instead of sentimental.
+ for(let t=0,barIndex=0;t<durationSec+.1;t+=bar,barIndex++){
+  const chord=chords[barIndex%chords.length],when=start+t;
+  chord.forEach((freq,j)=>addOsc(when,freq,j===0?'sine':'triangle',j===0?.020:.013,Math.min(bar*.82,1.35),musicBus));
+  // Upbeat off-beat chord hit.
+  const off=when+beat*2.5;
+  if(off<end-.2)chord.slice(1).forEach((freq,j)=>addOsc(off,freq,'triangle',.0075,Math.min(beat*.58,.28),musicBus));
+ }
+
+ // Reusable deterministic noise buffer for claps/hats.
+ const noiseBuffer=ac.createBuffer(1,Math.ceil(ac.sampleRate*.22),ac.sampleRate),noise=noiseBuffer.getChannelData(0);
+ let seed=37;for(let n=0;n<noise.length;n++){seed=(seed*16807)%2147483647;noise[n]=((seed/2147483647)*2-1)*(.96-n/noise.length*.28)}
+ const addNoise=(when,peak,life,highpassFreq,bandFreq=null)=>{
+  const src=ac.createBufferSource(),g=ac.createGain(),hp=ac.createBiquadFilter();src.buffer=noiseBuffer;hp.type='highpass';hp.frequency.value=highpassFreq;
+  src.connect(hp);let last=hp;
+  if(bandFreq){const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=bandFreq;bp.Q.value=.7;hp.connect(bp);last=bp}
+  last.connect(g);g.connect(drumBus);g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(peak,when+.006);g.gain.exponentialRampToValueAtTime(.0001,when+life);
+  src.start(when);src.stop(when+life+.02);sources.push(src);
+ };
+
+ // Four-on-the-floor kick; Birthday stronger. Clap on 2/4, hats on eighth notes.
+ for(let t=0,step=0;t<durationSec-.25;t+=beat,step++){
+  const when=start+t;
+  addOsc(when,52,'sine',birthday?.072:.045,.20,drumBus,128);
+  if(step%4===1||step%4===3)addNoise(when+.01,birthday?.034:.020,.13,700,1800);
+  const hat=when+beat*.5;if(hat<end-.12)addNoise(hat,birthday?.014:.008,.055,5600);
+ }
+
+ // Bright hook: simple ascending major motif, deliberately distinct between Classic and Birthday.
+ const hook=birthday?[523.25,659.25,783.99,1046.50,783.99,659.25,698.46,783.99]:[440.00,493.88,587.33,659.25,587.33,493.88,523.25,587.33];
+ const hookStep=beat*.5;
+ for(let t=beat*.75,step=0;t<durationSec-1.0;t+=hookStep,step++){
+  if(step%2===1&&!birthday)continue;
+  const when=start+t,freq=hook[step%hook.length],peak=birthday?.020:.012;
+  addOsc(when,freq,'triangle',peak,birthday?.16:.22,musicBus);
+ }
+
+ // Accent each visual cut so music and Reel edit feel connected.
+ for(let step=0;step<memoryStarts.length;step++){
+  const when=start+memoryStarts[step]+.02;if(when>end-.15)continue;
+  addOsc(when,birthday?(step%2?1174.66:987.77):(step%2?739.99:659.25),'sine',birthday?.024:.014,.16,musicBus);
+  if(birthday)addNoise(when+.005,.013,.055,6200);
+ }
+
+ return{destination,stop:()=>{try{master.gain.cancelScheduledValues(ac.currentTime);master.gain.setTargetAtTime(.0001,ac.currentTime,.02)}catch(e){};sources.forEach(o=>{try{o.stop()}catch(e){}})}};
+}
+async function loadVideoAsset(url){
+ const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('image');
+ const blob=await r.blob(),objectUrl=URL.createObjectURL(blob);
+ try{
+  const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=objectUrl});
+  const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height,maxEdge=1280,scale=Math.min(1,maxEdge/Math.max(iw,ih));
+  const c=document.createElement('canvas');c.width=Math.max(1,Math.round(iw*scale));c.height=Math.max(1,Math.round(ih*scale));
+  const x=c.getContext('2d',{alpha:false});if(!x)throw new Error('image');
+  x.fillStyle='#090b15';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+  return c;
+ }finally{URL.revokeObjectURL(objectUrl)}
+}
+async function generateVideo(){
+ const status=$('videoStatus'),btn=$('createVideo'),progress=$('videoProgress'),progressBar=$('videoProgressBar');
+ status.classList.remove('hidden');status.textContent=t.creating;btn.disabled=true;
+ progress?.classList.remove('hidden');if(progressBar)progressBar.style.width='3%';
+ $('saveVideo').classList.add('hidden');$('videoPreview').classList.add('hidden');
+ if(videoPreviewUrl){URL.revokeObjectURL(videoPreviewUrl);videoPreviewUrl=null}
+ videoBlob=null;videoFile=null;
+ let preparedAudio=null;
+ try{
+  const canvas=$('videoCanvas');if(!canvas.captureStream||!window.MediaRecorder)throw new Error('unsupported');
+  preparedAudio=await prepareAudioContext();
+  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('unsupported');
+  const videoSequence=[
+   ...DATA.items.map(item=>({photoUrl:item.photoUrl,framing:item.framing,kind:'game'})),
+   ...(Array.isArray(DATA.videoMemories)?DATA.videoMemories.map(item=>({photoUrl:item.photoUrl,framing:item.framing,kind:'video'})):[])
+  ];
+  const imgs=[],backs=[];
+  for(let n=0;n<videoSequence.length;n++){
+   status.textContent=t.creating+' '+(n+1)+'/'+videoSequence.length;
+   const asset=await loadVideoAsset(videoSequence[n].photoUrl);imgs.push(asset);backs.push(makeBackdrop(asset));
+   if(progressBar)progressBar.style.width=(5+Math.round(((n+1)/videoSequence.length)*15))+'%';
+  }
+  const name=DATA.personName||DATA.person_name||'';
+  const timing=buildVideoTiming(videoSequence.length);
+  const totalDurationSec=timing.totalMs/1000;
+
+  async function recordAttempt(useAudio){
+   const canvasStream=canvas.captureStream(VIDEO_FPS);
+   let soundtrack=null,stream=canvasStream,ac=useAudio?preparedAudio:null;
+   if(useAudio&&ac){
+    soundtrack=createLevelYouSoundtrack(ac,totalDurationSec,timing.starts);
+    const audioTrack=soundtrack?.destination?.stream?.getAudioTracks?.()[0];
+    if(audioTrack)stream=new MediaStream([...canvasStream.getVideoTracks(),audioTrack]);else soundtrack=null;
+   }
+   let mime=['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm'].find(x=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(x))||'';
+   let rec;
+   try{rec=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:VIDEO_BITRATE}:{videoBitsPerSecond:VIDEO_BITRATE})}
+   catch(e){soundtrack?.stop();canvasStream.getTracks().forEach(track=>track.stop());throw e}
+   const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+   const stopped=new Promise((resolve,reject)=>{rec.onstop=resolve;rec.onerror=()=>reject(new Error(useAudio?'record-audio':'record'))});
+   try{
+    rec.start(250);
+    const introStart=performance.now();
+    while(performance.now()-introStart<VIDEO_INTRO_MS){const p=Math.min(1,(performance.now()-introStart)/VIDEO_INTRO_MS);drawIntro(ctx,p,name);await new Promise(requestAnimationFrame)}
+    for(let n=0;n<imgs.length;n++){
+     status.textContent=t.rendering+' '+(n+1)+'/'+imgs.length;
+     if(progressBar)progressBar.style.width=(20+Math.round((n/imgs.length)*68))+'%';
+     const sceneMs=timing.durations[n],transitionMs=transitionDurationMs(n),start=performance.now();
+     while(performance.now()-start<sceneMs){
+      const elapsed=performance.now()-start,p=Math.min(1,elapsed/sceneMs);
+      ctx.fillStyle='#080a13';ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
+      if(n>0&&elapsed<transitionMs){
+       const mix=easeInOut(elapsed/transitionMs);
+       ctx.save();ctx.globalAlpha=1-mix;drawPremiumPhoto(ctx,imgs[n-1],backs[n-1],videoSequence[n-1].framing,1,n-1,imgs.length);ctx.restore();
+       ctx.save();ctx.globalAlpha=mix;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n,imgs.length);ctx.restore();
+       drawTransitionAccent(ctx,mix,n);
+      }else{
+       const firstFade=n===0?easeInOut(Math.min(1,elapsed/transitionMs)):1;
+       ctx.save();ctx.globalAlpha=firstFade;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n,imgs.length);ctx.restore();
+      }
+      await new Promise(requestAnimationFrame)
+     }
+    }
+    if(progressBar)progressBar.style.width='92%';
+    const finalMessage=(DATA&&DATA.dedication&&DATA.dedication.trim())?DATA.dedication:t.outro;
+    const hasDedication=Boolean(DATA&&DATA.dedication&&DATA.dedication.trim());
+    const outroStart=performance.now();
+    while(performance.now()-outroStart<VIDEO_OUTRO_MS){const p=Math.min(1,(performance.now()-outroStart)/VIDEO_OUTRO_MS);drawOutro(ctx,p,finalMessage,hasDedication);await new Promise(requestAnimationFrame)}
+    rec.stop();await stopped;
+    return{blob:new Blob(chunks,{type:rec.mimeType||'video/webm'}),hasAudio:Boolean(soundtrack)}
+   }finally{
+    soundtrack?.stop();canvasStream.getTracks().forEach(track=>{try{track.stop()}catch(e){}})
+   }
+  }
+
+  let result;
+  if(preparedAudio){
+   try{result=await recordAttempt(true)}
+   catch(audioError){console.warn('LevelYou audio recording fallback to silent video',audioError);try{await preparedAudio.close()}catch(e){};preparedAudio=null;result=await recordAttempt(false)}
+  }else result=await recordAttempt(false);
+
+  videoBlob=result.blob;
+  const ext=videoBlob.type.includes('mp4')?'mp4':'webm';
+  videoFile=new File([videoBlob],'LevelYou-'+(name||'recuerdo')+'.'+ext,{type:videoBlob.type});
+  videoPreviewUrl=URL.createObjectURL(videoBlob);$('videoPreview').src=videoPreviewUrl;$('videoPreview').classList.remove('hidden');$('saveVideo').classList.remove('hidden');status.textContent=t.videoReady;if(progressBar)progressBar.style.width='100%';setTimeout(()=>progress?.classList.add('hidden'),650);
+  emitLevelYouEvent('levelyou:video-generated',{hasAudio:result.hasAudio,theme:currentTheme().id,photoCount:videoSequence.length,duration:totalDurationSec});
+ }catch(e){
+  console.error('Sprint5 video generation',e);
+  status.textContent=e&&e.message==='unsupported'?t.videoUnsupported:t.videoError;
+  progress?.classList.add('hidden');if(progressBar)progressBar.style.width='0'
+ }finally{
+  if(preparedAudio){try{await preparedAudio.close()}catch(e){}}
+  btn.disabled=false
+ }
+}
+
+$('createVideo').onclick=generateVideo;$('saveVideo').onclick=async()=>{if(!videoBlob||!videoFile)return;if(navigator.canShare&&navigator.share&&navigator.canShare({files:[videoFile]})){try{await navigator.share({files:[videoFile],title:'LevelYou'});return}catch(e){if(e&&e.name==='AbortError')return}}const u=URL.createObjectURL(videoBlob),a=document.createElement('a');a.href=u;a.download=videoFile.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),15000)};
+load();
+</script>
+</body>
+</html>
