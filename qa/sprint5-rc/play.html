@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0e1020">
 <meta name="robots" content="noindex,nofollow">
-<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.1b">
+<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.2">
 <title>LevelYou — Tu juego</title>
 <style>
 :root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
@@ -65,6 +65,9 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
 .answerFeedback.good{border-color:rgba(125,228,211,.25);background:rgba(125,228,211,.08);color:#c7fff5}
 .answerFeedback.miss{border-color:rgba(243,215,161,.22);background:rgba(243,215,161,.06);color:#f5dfb5}
 
+body[data-theme="birthday"]{background:radial-gradient(circle at 12% -5%,rgba(255,159,188,.15),transparent 31%),radial-gradient(circle at 92% 10%,rgba(255,211,125,.15),transparent 32%),linear-gradient(180deg,#0b0b16,#10101c 48%,#0b0b16)}
+body[data-theme="birthday"] .giftMark{background:linear-gradient(145deg,rgba(255,159,188,.18),rgba(255,211,125,.13))}
+body[data-theme="birthday"] .badge{background:rgba(255,159,188,.10);color:#ffdce8;border-color:rgba(255,211,125,.15)}
 /* Sprint 5.1 — Answer Reactions */
 .reactionLayer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:0;isolation:isolate}
 .reactionLayer.good{opacity:1;background:
@@ -150,7 +153,7 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
   <div class="footer">LevelYou · Regalos personalizados</div>
 </div>
 <script>
-const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint3';
+const API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/get-game-sprint5';
 const params=new URLSearchParams(location.search),token=params.get('token')||'';
 let DATA=null,i=0,score=0,locked=false,videoBlob=null,videoFile=null,videoPreviewUrl=null;
 const $=id=>document.getElementById(id);
@@ -181,7 +184,7 @@ function applyPhotoFraming(el,f){
 }
 function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photoUrl){const im=new Image();im.decoding='async';im.src=item.photoUrl}})}catch(e){console.warn('Game photo preload',e)}}
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
-async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=pt.introEyebrow;$('introTitle').textContent=pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
+async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';applyTheme();const tc=themedCopy();$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=tc?.eyebrow||pt.introEyebrow;$('introTitle').textContent=tc?.title?tc.title(DATA.personName||DATA.person_name||''):pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=tc?.intro||pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
 function render(){resetPhotoReaction();locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
 function emitLevelYouEvent(name,detail){try{window.dispatchEvent(new CustomEvent(name,{detail}))}catch(e){}}
 let photoReactionTimer=null;
@@ -198,7 +201,7 @@ function playPhotoReaction(correct){
  layer.classList.add(correct?'good':'miss');
  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  if(correct&&!reduced){
-  const colors=['#7de4d3','#f3d7a1','#9eafff','#ffffff','#ff9fbc','#8ff0c6'];
+  const colors=currentTheme().id==='birthday'?['#ff9fbc','#ffd37d','#ffffff','#ff6fa8','#ffe7a8','#c7a8ff']:['#7de4d3','#f3d7a1','#9eafff','#ffffff','#ff9fbc','#8ff0c6'];
   const pieces=Array.from({length:34},(_,n)=>{
    const angle=((n*137.5)%360)*Math.PI/180;
    const radius=118+(n%7)*18;
@@ -213,8 +216,8 @@ function playPhotoReaction(correct){
  photoReactionTimer=setTimeout(resetPhotoReaction,correct?1120:900);
 }
 window.addEventListener('levelyou:answer',e=>playPhotoReaction(Boolean(e.detail?.correct)));
-function pick(n,b){if(locked)return;locked=true;const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden');emitLevelYouEvent('levelyou:answer',{correct:ok,index:i,selected:n,correctIndex:x.correct,theme:'classic'})}
-function done(){$('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finish').classList.remove('reveal');void $('finish').offsetWidth;$('finish').classList.add('reveal');$('finishTitle').textContent=t.finish;$('score').textContent=t.score(score);const hasDed=DATA&&typeof DATA.dedication==='string'&&DATA.dedication.trim();$('memoryTitle').textContent=hasDed?(DATA.language==='ca'?'Un missatge per a tu':DATA.language==='en'?'A message for you':'Un mensaje para ti'):t.memoryTitle;$('memoryText').textContent=hasDed?DATA.dedication:t.memoryText;$('videoLead').textContent=t.videoLead;$('createVideo').textContent=t.createVideo;$('saveVideo').textContent=t.saveVideo;$('again').textContent=t.again;$('share').textContent=t.share;window.scrollTo({top:0,behavior:'smooth'})}
+function pick(n,b){if(locked)return;locked=true;const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden');emitLevelYouEvent('levelyou:answer',{correct:ok,index:i,selected:n,correctIndex:x.correct,theme:currentTheme().id})}
+function done(){$('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finish').classList.remove('reveal');void $('finish').offsetWidth;$('finish').classList.add('reveal');$('finishTitle').textContent=themedCopy()?.finish||t.finish;$('score').textContent=t.score(score);const hasDed=DATA&&typeof DATA.dedication==='string'&&DATA.dedication.trim();$('memoryTitle').textContent=hasDed?(DATA.language==='ca'?'Un missatge per a tu':DATA.language==='en'?'A message for you':'Un mensaje para ti'):t.memoryTitle;$('memoryText').textContent=hasDed?DATA.dedication:t.memoryText;$('videoLead').textContent=t.videoLead;$('createVideo').textContent=t.createVideo;$('saveVideo').textContent=t.saveVideo;$('again').textContent=t.again;$('share').textContent=t.share;window.scrollTo({top:0,behavior:'smooth'})}
 $('startGame').onclick=()=>{$('intro').classList.add('hidden');$('shareTop').classList.remove('hidden');$('game').classList.remove('hidden');render()};$('next').onclick=()=>{if(i<DATA.items.length-1){i++;render()}else done()};$('again').onclick=()=>{i=0;score=0;$('finish').classList.add('hidden');$('game').classList.remove('hidden');render()};
 async function shareLink(){const d={title:'LevelYou',text:'🎁 Tengo un LevelYou para ti',url:location.href};if(navigator.share){try{await navigator.share(d);return}catch(e){if(e&&e.name==='AbortError')return}}location.href='https://wa.me/?text='+encodeURIComponent('🎁 Tengo un LevelYou para ti: '+location.href)}
 $('share').onclick=shareLink;$('shareTop').onclick=shareLink;
@@ -223,11 +226,30 @@ async function imgFromUrl(url){const r=await fetch(url,{cache:'no-store'});if(!r
 
 const VIDEO_W=720,VIDEO_H=1280,VIDEO_FPS=24,VIDEO_BITRATE=4500000;
 const VIDEO_INTRO_MS=1800,VIDEO_MEMORY_MS=2400,VIDEO_OUTRO_MS=3000,VIDEO_TRANSITION_MS=380;
-const VIDEO_THEME='classic';
+const THEME_CONFIG={
+ classic:{id:'classic',accent:'#7de4d3',accent2:'#9eafff',warm:'#f3d7a1'},
+ birthday:{id:'birthday',accent:'#ff9fbc',accent2:'#ffd37d',warm:'#fff0b5'}
+};
+const THEME_COPY={
+ es:{birthday:{eyebrow:'Un cumpleaños hecho de recuerdos',title:n=>n?('Feliz cumpleaños, '+n+'.'):'Feliz cumpleaños.',intro:'Cinco recuerdos te esperan. Acierta las preguntas y descubre el final que han preparado para ti.',finish:'Cinco recuerdos. Una celebración.'}},
+ ca:{birthday:{eyebrow:'Un aniversari fet de records',title:n=>n?('Per molts anys, '+n+'.'):'Per molts anys.',intro:'Cinc records t’esperen. Encerta les preguntes i descobreix el final que han preparat per a tu.',finish:'Cinc records. Una celebració.'}},
+ en:{birthday:{eyebrow:'A birthday made of memories',title:n=>n?('Happy Birthday, '+n+'.'):'Happy Birthday.',intro:'Five memories are waiting. Answer the questions and discover the ending made for you.',finish:'Five memories. One celebration.'}}
+};
+function currentTheme(){const id=DATA&&['classic','birthday'].includes(DATA.theme)?DATA.theme:'classic';return THEME_CONFIG[id]||THEME_CONFIG.classic}
+function applyTheme(){
+ const theme=currentTheme();document.body.dataset.theme=theme.id;
+ document.documentElement.style.setProperty('--accent',theme.accent);
+ document.documentElement.style.setProperty('--accent2',theme.accent2);
+ document.documentElement.style.setProperty('--warm',theme.warm);
+}
+function themedCopy(){
+ const l=DATA?.language||'es',theme=currentTheme().id;
+ return THEME_COPY[l]?.[theme]||null;
+}
 const VIDEO_COPY={
- es:{forName:n=>n?('Para '+n):'Para ti',subtitle:'Una historia hecha de momentos',closing:'UN RECUERDO PARA VOLVER SIEMPRE'},
- ca:{forName:n=>n?('Per a '+n):'Per a tu',subtitle:'Una història feta de moments',closing:'UN RECORD PER TORNAR-HI SEMPRE'},
- en:{forName:n=>n?('For '+n):'For you',subtitle:'A story made of moments',closing:'A MEMORY TO COME BACK TO'}
+ es:{forName:n=>n?('Para '+n):'Para ti',birthdayName:n=>n?('Feliz cumpleaños, '+n):'Feliz cumpleaños',subtitle:'Una historia hecha de momentos',birthdaySubtitle:'Hoy celebramos todo lo vivido',closing:'UN RECUERDO PARA VOLVER SIEMPRE'},
+ ca:{forName:n=>n?('Per a '+n):'Per a tu',birthdayName:n=>n?('Per molts anys, '+n):'Per molts anys',subtitle:'Una història feta de moments',birthdaySubtitle:'Avui celebrem tot el que hem viscut',closing:'UN RECORD PER TORNAR-HI SEMPRE'},
+ en:{forName:n=>n?('For '+n):'For you',birthdayName:n=>n?('Happy Birthday, '+n):'Happy Birthday',subtitle:'A story made of moments',birthdaySubtitle:'Today we celebrate everything we’ve shared',closing:'A MEMORY TO COME BACK TO'}
 };
 function clamp01(v){return Math.max(0,Math.min(1,v))}
 function easeInOut(v){v=clamp01(v);return v<.5?4*v*v*v:1-Math.pow(-2*v+2,3)/2}
@@ -280,8 +302,8 @@ function drawIntro(ctx,p,name){
  ctx.save();ctx.globalAlpha=clamp01(p/.28)*clamp01((1-p)/.12);ctx.translate(0,(1-e)*14);
  ctx.fillStyle='#7de4d3';ctx.beginPath();ctx.arc(360,382,6,0,Math.PI*2);ctx.fill();
  ctx.fillStyle='#f3d7a1';ctx.textAlign='center';ctx.font='800 17px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,430);
- ctx.fillStyle='#fff';ctx.font='800 55px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrapCentered(ctx,copy.forName(name),360,548,590,64,2);
- ctx.fillStyle='rgba(235,239,248,.72)';ctx.font='500 25px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(copy.subtitle,360,720);
+ ctx.fillStyle='#fff';ctx.font='800 55px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrapCentered(ctx,currentTheme().id==='birthday'?copy.birthdayName(name):copy.forName(name),360,548,590,64,2);
+ ctx.fillStyle='rgba(235,239,248,.72)';ctx.font='500 25px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(currentTheme().id==='birthday'?copy.birthdaySubtitle:copy.subtitle,360,720);
  ctx.restore();
 }
 function drawOutro(ctx,p,message,hasDedication){
@@ -417,7 +439,7 @@ async function generateVideo(){
   const ext=videoBlob.type.includes('mp4')?'mp4':'webm';
   videoFile=new File([videoBlob],'LevelYou-'+(name||'recuerdo')+'.'+ext,{type:videoBlob.type});
   videoPreviewUrl=URL.createObjectURL(videoBlob);$('videoPreview').src=videoPreviewUrl;$('videoPreview').classList.remove('hidden');$('saveVideo').classList.remove('hidden');status.textContent=t.videoReady;
-  emitLevelYouEvent('levelyou:video-generated',{hasAudio:result.hasAudio,theme:VIDEO_THEME,photoCount:videoSequence.length,duration:totalDurationSec});
+  emitLevelYouEvent('levelyou:video-generated',{hasAudio:result.hasAudio,theme:currentTheme().id,photoCount:videoSequence.length,duration:totalDurationSec});
  }catch(e){
   console.error('Sprint4 video generation',e);
   status.textContent=e&&e.message==='unsupported'?t.videoUnsupported:t.videoError
