@@ -6,7 +6,7 @@
 <title>LevelYou — Un regalo que se juega</title>
 <meta name="description" content="Convierte 5 recuerdos en un juego personalizado y un vídeo final para guardar y compartir.">
 <meta name="robots" content="noindex,nofollow">
-<meta name="levelyou-build" content="sprint6-rc-2026-10-07-s6.2">
+<meta name="levelyou-build" content="sprint6-rc-2026-10-07-s6.3-auto-framing">
 <meta name="theme-color" content="#0e1020">
 <style>
 :root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
@@ -196,7 +196,7 @@ body.fast-modal-open{overflow:hidden}
 }
 
 /* Sprint 2.5 — Photo Framing */
-.fast-photo,.game img{object-fit:contain;background:#080b14}
+.fast-photo,.game img{object-fit:cover;background:#080b14}
 .fast-photo-wrap{overflow:hidden;border-radius:20px;background:#080b14}
 .fast-frame-btn{
  position:absolute;left:10px;bottom:10px;z-index:3;appearance:none;border:1px solid rgba(255,255,255,.14);
@@ -896,5 +896,5 @@ if (paymentStatus === 'cancelled') {
   history.replaceState({}, '', window.location.pathname);
 }
 </script>
-<script src="../sprint5-rc/smart-fast-sprint3.js?v=5.4"></script><script src="smart-checkout-sprint6.js?v=6.2"></script><script src="../sprint5-rc/smart-video-sprint3.js?v=5.4"></script><script src="magic-reveal-sprint6.js?v=6.2"></script></body>
+<script src="smart-fast-sprint6.js?v=6.3"></script><script src="smart-checkout-sprint6.js?v=6.2"></script><script src="smart-video-sprint6.js?v=6.3"></script><script src="magic-reveal-sprint6.js?v=6.2"></script></body>
 </html>
