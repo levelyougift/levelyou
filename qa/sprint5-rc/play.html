@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0e1020">
 <meta name="robots" content="noindex,nofollow">
-<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.2">
+<meta name="levelyou-build" content="sprint5-rc-2026-10-07-s5.3">
 <title>LevelYou — Tu juego</title>
 <style>
 :root{--bg:#0e1020;--card:#171a2d;--muted:#a9b0c4;--txt:#f7f8fc;--accent:#69e1cf;--accent2:#8fa7ff;--line:rgba(255,255,255,.09);--danger:#ff8e9d}
@@ -274,6 +274,43 @@ function makeBackdrop(img){
  const g=x.createLinearGradient(0,0,0,c.height);g.addColorStop(0,'rgba(7,9,17,.28)');g.addColorStop(.55,'rgba(7,9,17,.18)');g.addColorStop(1,'rgba(7,9,17,.58)');x.fillStyle=g;x.fillRect(0,0,c.width,c.height);
  return c;
 }
+function drawBirthdayCanvasConfetti(ctx,p,seed=0,intensity=1){
+ if(currentTheme().id!=='birthday')return;
+ const palette=['#ff9fbc','#ffd37d','#ffffff','#c7a8ff','#ff6fa8','#8ff0c6'];
+ ctx.save();
+ for(let n=0;n<Math.round(16*intensity);n++){
+  const phase=(n*0.173+seed*.117)%1,fall=(p*.92+phase)%1;
+  const x=((n*191+seed*83)%680)+20+Math.sin((p+n)*3.1)*14;
+  const y=-60+fall*1420;
+  const sway=Math.sin((p*6)+(n*1.7))*22;
+  const alpha=Math.min(1,Math.max(0,(1-Math.abs(fall-.55)*1.6)))*.78;
+  ctx.globalAlpha=alpha;ctx.fillStyle=palette[(n+seed)%palette.length];
+  ctx.save();ctx.translate(x+sway,y);ctx.rotate((p*5+n)*.8);
+  const w=5+(n%3)*3,h=10+(n%4)*4;
+  if(n%4===0){ctx.beginPath();ctx.arc(0,0,w*.62,0,Math.PI*2);ctx.fill()}else ctx.fillRect(-w/2,-h/2,w,h);
+  ctx.restore();
+ }
+ ctx.restore();
+}
+function drawReelMemoryOverlay(ctx,p,index){
+ if(currentTheme().id!=='birthday'||index!==0)return;
+ const lang=DATA?.language||'es';
+ const label=lang==='ca'?'AVUI CELEBREM':lang==='en'?'TODAY WE CELEBRATE':'HOY CELEBRAMOS';
+ const alpha=clamp01(p/.18)*clamp01((.72-p)/.18);
+ if(alpha<=0)return;
+ ctx.save();ctx.globalAlpha=alpha;ctx.textAlign='center';
+ ctx.fillStyle='rgba(7,9,17,.62)';roundedRect(ctx,210,1040,300,54,27);ctx.fill();
+ ctx.fillStyle='#fff';ctx.font='800 16px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(label,360,1074);
+ ctx.restore();
+}
+function drawTransitionAccent(ctx,mix,index){
+ const strength=Math.sin(Math.PI*clamp01(mix));
+ if(strength<=0)return;
+ ctx.save();ctx.globalAlpha=(currentTheme().id==='birthday'?.16:.055)*strength;
+ const x=index%2===0?0:VIDEO_W,grad=ctx.createLinearGradient(x,0,VIDEO_W-x,VIDEO_H);
+ grad.addColorStop(0,currentTheme().id==='birthday'?'#ffd37d':'#ffffff');grad.addColorStop(.44,'rgba(255,255,255,.12)');grad.addColorStop(1,'rgba(255,255,255,0)');
+ ctx.fillStyle=grad;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);ctx.restore();
+}
 function drawPremiumPhoto(ctx,img,backdrop,framing,p,index){
  const f=safeFraming(framing),box=videoLayout(img),e=easeInOut(p);
  ctx.drawImage(backdrop,0,0,VIDEO_W,VIDEO_H);
@@ -281,19 +318,21 @@ function drawPremiumPhoto(ctx,img,backdrop,framing,p,index){
  vignette.addColorStop(0,'rgba(0,0,0,0)');vignette.addColorStop(1,'rgba(2,4,10,.40)');
  ctx.fillStyle=vignette;ctx.fillRect(0,0,VIDEO_W,VIDEO_H);
  const base=Math.min(box.w/(img.width||1),box.h/(img.height||1));
- const motionZoom=1+(f.zoom>1.7?.018:.042)*e;
+ const profile=index%4,dz=f.zoom>1.7?.016:.046;
+ const zoomPhase=profile===1||profile===3?(1-e):e;
+ const motionZoom=1+dz*zoomPhase;
  const effectiveZoom=f.zoom*motionZoom;
  const dw=(img.width||1)*base*effectiveZoom,dh=(img.height||1)*base*effectiveZoom;
  const maxPanX=Math.max(0,(dw-box.w)/2),maxPanY=Math.max(0,(dh-box.h)/2);
- const drift=(index%2===0?1:-1)*(1-e)*8;
- const px=f.x*maxPanX+(box.kind==='portrait'?drift*.35:drift);
- const py=f.y*maxPanY+(box.kind==='portrait'?drift:-drift*.3);
+ const travel=10,dirX=[1,-1,-.45,.55][profile],dirY=[-.28,.22,1,-1][profile];
+ const px=f.x*maxPanX+dirX*(e-.5)*travel*(box.kind==='portrait'?.35:1);
+ const py=f.y*maxPanY+dirY*(e-.5)*travel*(box.kind==='landscape'?.35:1);
  ctx.save();roundedRect(ctx,box.x,box.y,box.w,box.h,box.radius);ctx.clip();
  ctx.fillStyle='rgba(5,7,14,.72)';ctx.fillRect(box.x,box.y,box.w,box.h);
  ctx.drawImage(img,box.x+(box.w-dw)/2+px,box.y+(box.h-dh)/2+py,dw,dh);
  const gloss=ctx.createLinearGradient(0,box.y,0,box.y+box.h);gloss.addColorStop(0,'rgba(255,255,255,.035)');gloss.addColorStop(.68,'rgba(255,255,255,0)');gloss.addColorStop(1,'rgba(0,0,0,.10)');ctx.fillStyle=gloss;ctx.fillRect(box.x,box.y,box.w,box.h);
  ctx.restore();
- ctx.save();ctx.globalAlpha=.42;ctx.fillStyle='#fff';ctx.font='800 15px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.textAlign='center';ctx.fillText('LEVELYOU',VIDEO_W/2,1228);ctx.restore();
+ drawReelMemoryOverlay(ctx,p,index);if(currentTheme().id==='birthday'&&(index===0||index===4))drawBirthdayCanvasConfetti(ctx,p,index,.55);ctx.save();ctx.globalAlpha=.42;ctx.fillStyle='#fff';ctx.font='800 15px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.textAlign='center';ctx.fillText('LEVELYOU',VIDEO_W/2,1228);ctx.restore();
 }
 function drawIntro(ctx,p,name){
  const e=easeInOut(p),copy=VIDEO_COPY[DATA?.language]||VIDEO_COPY.es;
@@ -304,7 +343,7 @@ function drawIntro(ctx,p,name){
  ctx.fillStyle='#f3d7a1';ctx.textAlign='center';ctx.font='800 17px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,430);
  ctx.fillStyle='#fff';ctx.font='800 55px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrapCentered(ctx,currentTheme().id==='birthday'?copy.birthdayName(name):copy.forName(name),360,548,590,64,2);
  ctx.fillStyle='rgba(235,239,248,.72)';ctx.font='500 25px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(currentTheme().id==='birthday'?copy.birthdaySubtitle:copy.subtitle,360,720);
- ctx.restore();
+ ctx.restore();if(currentTheme().id==='birthday')drawBirthdayCanvasConfetti(ctx,p,9,.8);
 }
 function drawOutro(ctx,p,message,hasDedication){
  const e=easeInOut(p),copy=VIDEO_COPY[DATA?.language]||VIDEO_COPY.es;
@@ -313,8 +352,8 @@ function drawOutro(ctx,p,message,hasDedication){
  ctx.save();ctx.globalAlpha=clamp01(p/.20)*clamp01((1-p)/.10);ctx.translate(0,(1-e)*10);
  ctx.fillStyle='#f3d7a1';ctx.textAlign='center';ctx.font='800 16px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText(copy.closing,360,350);
  ctx.fillStyle='#fff';ctx.font=(hasDedication?'800 38px':'800 50px')+' -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';wrapCentered(ctx,message,360,hasDedication?485:520,580,hasDedication?50:61,hasDedication?5:3);
- ctx.fillStyle='rgba(125,228,211,.9)';ctx.font='800 18px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,935);
- ctx.restore();
+ ctx.fillStyle=currentTheme().id==='birthday'?'rgba(255,211,125,.96)':'rgba(125,228,211,.9)';ctx.font='800 18px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';ctx.fillText('LEVELYOU',360,935);
+ ctx.restore();if(currentTheme().id==='birthday')drawBirthdayCanvasConfetti(ctx,p,17,.75);
 }
 async function prepareAudioContext(){
  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
@@ -340,6 +379,13 @@ function createLevelYouSoundtrack(ac,durationSec){
    g.gain.setValueAtTime(.0001,segStart);g.gain.exponentialRampToValueAtTime(j===0?.022:.014,segStart+.48);g.gain.setValueAtTime(j===0?.018:.011,Math.max(segStart+.5,segEnd-.55));g.gain.exponentialRampToValueAtTime(.0001,segEnd);
    o.connect(g);g.connect(master);o.start(segStart);o.stop(segEnd+.05);sources.push(o);
   });
+ }
+ if(currentTheme().id==='birthday'){
+  for(let t=VIDEO_INTRO_MS/1000,step=0;t<durationSec-2.4;t+=VIDEO_MEMORY_MS/1000,step++){
+   const when=start+t+.04,o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=step%2?987.77:783.99;
+   g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(.018,when+.018);g.gain.exponentialRampToValueAtTime(.0001,when+.22);
+   o.connect(g);g.connect(master);o.start(when);o.stop(when+.24);sources.push(o);
+  }
  }
  const melody=[523.25,493.88,440.00,392.00,440.00,493.88,523.25,587.33];
  for(let t=.9,step=0;t<durationSec-1.4;t+=2.4,step++){
@@ -411,6 +457,7 @@ async function generateVideo(){
        const mix=easeInOut(elapsed/VIDEO_TRANSITION_MS);
        ctx.save();ctx.globalAlpha=1-mix;drawPremiumPhoto(ctx,imgs[n-1],backs[n-1],videoSequence[n-1].framing,1,n-1);ctx.restore();
        ctx.save();ctx.globalAlpha=mix;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n);ctx.restore();
+       drawTransitionAccent(ctx,mix,n);
       }else{
        const firstFade=n===0?easeInOut(Math.min(1,elapsed/VIDEO_TRANSITION_MS)):1;
        ctx.save();ctx.globalAlpha=firstFade;drawPremiumPhoto(ctx,imgs[n],backs[n],videoSequence[n].framing,p,n);ctx.restore();
