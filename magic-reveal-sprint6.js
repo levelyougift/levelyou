@@ -4,8 +4,8 @@
   const COPY = {
     es: {
       tagline: '🎁 5 recuerdos. 5 sorpresas. 1 regalo.',
-      hero: 'Convierte sus fotos en un juego donde los recuerdos cobran vida.',
-      sub: '5 preguntas, revelaciones visuales y un vídeo final para guardar y compartir. En minutos. Sin instalar nada.',
+      hero: 'Convierte 5 fotos en una felicitación premium que se juega y cobra vida.',
+      sub: 'Para cumpleaños, Navidad y momentos especiales: 5 preguntas, revelaciones visuales y un vídeo final para guardar y compartir. En minutos, sin instalar nada.',
       c1: '✓ 5 fotos + 5 preguntas personalizadas',
       c2: '✓ Cada recuerdo se revela con una sorpresa visual',
       c3: '✓ Vídeo final para guardar y compartir',
@@ -14,8 +14,8 @@
     },
     ca: {
       tagline: '🎁 5 records. 5 sorpreses. 1 regal.',
-      hero: 'Converteix les seves fotos en un joc on els records cobren vida.',
-      sub: '5 preguntes, revelacions visuals i un vídeo final per guardar i compartir. En minuts. Sense instal·lar res.',
+      hero: 'Converteix 5 fotos en una felicitació premium que es juga i cobra vida.',
+      sub: 'Per aniversaris, Nadal i moments especials: 5 preguntes, revelacions visuals i un vídeo final per guardar i compartir. En minuts, sense instal·lar res.',
       c1: '✓ 5 fotos + 5 preguntes personalitzades',
       c2: '✓ Cada record es revela amb una sorpresa visual',
       c3: '✓ Vídeo final per guardar i compartir',
@@ -24,8 +24,8 @@
     },
     en: {
       tagline: '🎁 5 memories. 5 surprises. 1 gift.',
-      hero: 'Turn their photos into a game where memories come alive.',
-      sub: '5 questions, visual reveals and a final video to keep and share. Ready in minutes. No app needed.',
+      hero: 'Turn 5 photos into a premium greeting that you can play — and watch come alive.',
+      sub: 'For birthdays, Christmas and special moments: 5 questions, visual reveals and a final video to keep and share. Ready in minutes. No app needed.',
       c1: '✓ 5 photos + 5 personalized questions',
       c2: '✓ Every memory unlocks with a visual surprise',
       c3: '✓ Final video to save and share',
