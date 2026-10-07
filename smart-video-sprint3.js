@@ -69,7 +69,7 @@
       #videoMemoriesSection .video-extra-photo{aspect-ratio:4/3;background:#080b14;overflow:hidden}
       #videoMemoriesSection .video-extra-photo img{width:100%;height:100%;object-fit:contain;transform-origin:center center;display:block}
       #videoMemoriesSection .video-extra-actions{display:grid;grid-template-columns:44px 44px 1fr;gap:6px;padding:8px}
-      #videoMemoriesSection .video-extra-actions button{min-height:38px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.055);color:#fff;font-weight:800}
+      #videoMemoriesSection .video-extra-actions button{min-height:44px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.055);color:#fff;font-weight:800}
       #videoMemoriesSection .video-extra-remove{grid-column:1/-1;color:#ffb9c2!important;background:rgba(255,142,157,.07)!important}
       #videoMemoriesSection .video-extra-upload{position:relative;display:flex;align-items:center;justify-content:center;min-height:92px;border:1px dashed rgba(125,228,211,.28);border-radius:18px;background:rgba(7,10,18,.56);cursor:pointer;text-align:center;padding:16px}
       #videoMemoriesSection .video-extra-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
