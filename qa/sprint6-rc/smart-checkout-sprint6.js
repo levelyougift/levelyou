@@ -58,6 +58,25 @@
     }
   }
 
+  async function selectMagicCandidate(list) {
+    const scored=[];
+    for(let i=0;i<list.length;i++){
+      const memory=list[i],context=String(memory.context||'').toLowerCase();
+      let score=-Math.abs(i-2)*0.1;
+      if(/selfie|retrato|portrait|primer plano|pareja|couple/.test(context))score+=2;
+      if(/grupo|group|amigos|friends|familia|family|equipo|team/.test(context))score-=1.5;
+      try{
+        const img=await loadImage(memory.image);
+        const w=img.naturalWidth||img.width||1,h=img.naturalHeight||img.height||1,r=w/h;
+        if(Math.min(w,h)>=700)score+=1;
+        if(r>=0.62&&r<=1.55)score+=.8;
+      }catch(_){}
+      scored.push({index:i,score});
+    }
+    scored.sort((a,b)=>b.score-a.score);
+    return scored[0]||{index:2,score:0};
+  }
+
   async function postJson(url, body, timeoutMs = 25000, retries = 1) {
     let lastError = null;
     for (let attempt = 0; attempt <= retries; attempt++) {
@@ -143,6 +162,7 @@
     try {
       if (btn) btn.textContent = textFor('optimize');
 
+      const magicCandidate = await selectMagicCandidate(memories);
       const gameBlobs = [];
       for (const memory of memories) gameBlobs.push(await prepareUploadBlob(memory.image));
 
@@ -173,7 +193,7 @@
         dedication: clean(document.querySelector('#dedication')?.value || ''),
         occasion: ['classic','birthday'].includes(document.querySelector('#occasion')?.value) ? document.querySelector('#occasion').value : 'classic',
         smart_creator_version: 'sprint6-magic-v6.4',
-        magic_transform: {status:'pending',index:2,style:'editorial_v1'},
+        magic_transform: {status:'pending',index:magicCandidate.index,style:'editorial_v1',selection:'auto_v1'},
         question_tone: typeof window.levelYouQuestionTone === 'function' ? window.levelYouQuestionTone() : 'fun'
       };
 
