@@ -4,6 +4,8 @@
   // Sprint 6.4 feature gate. If the backend secret is missing, checkout continues normally
   // and the recipient falls back to the local reveal without blocking payment or playback.
   window.LEVELYOU_MAGIC_AI = true;
+  const MAGIC_API='https://ezqfwynowrgcvsfykvkm.supabase.co/functions/v1/magic-transform-sprint6';
+  let backendReady=null;
 
   const params = new URLSearchParams(location.search);
   if (params.get('qa') !== 'creator') return;
@@ -51,11 +53,21 @@
       txt('s64questions', complete + '/5', complete === 5);
       txt('s64frames', validFrames + '/5', validFrames === 5);
       txt('s64extras', extras, true);
-      txt('s64magic', window.LEVELYOU_MAGIC_AI === true ? 'armed' : 'off', window.LEVELYOU_MAGIC_AI === true);
+      const magicLabel=backendReady===true?'backend ready':backendReady===false?'secret pending':(window.LEVELYOU_MAGIC_AI===true?'checking…':'off');
+      txt('s64magic', magicLabel, backendReady===true);
     } catch (_) {}
   }
 
+  async function checkBackend(){
+    try{
+      const r=await fetch(MAGIC_API+'?orderId=',{method:'GET',cache:'no-store'});
+      backendReady=r.status!==503;
+    }catch(_){backendReady=false}
+    refresh();
+  }
+
   refresh();
+  checkBackend();
   document.addEventListener('click', () => setTimeout(refresh, 60), true);
   document.addEventListener('input', () => setTimeout(refresh, 60), true);
   document.addEventListener('change', () => setTimeout(refresh, 60), true);
