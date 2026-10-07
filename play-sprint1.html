@@ -63,6 +63,29 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
 }
 .answerFeedback.good{border-color:rgba(125,228,211,.25);background:rgba(125,228,211,.08);color:#c7fff5}
 .answerFeedback.miss{border-color:rgba(243,215,161,.22);background:rgba(243,215,161,.06);color:#f5dfb5}
+
+/* Sprint 5.1 — Answer Reactions */
+.reactionLayer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:0}
+.reactionLayer.good{opacity:1;background:radial-gradient(circle at 50% 45%,rgba(125,228,211,.18),rgba(158,175,255,.07) 42%,transparent 70%);animation:s5GlowGood .86s ease forwards}
+.reactionLayer.miss{opacity:1;background:radial-gradient(circle at 50% 50%,transparent 38%,rgba(243,184,120,.13) 66%,rgba(74,28,20,.22) 100%);animation:s5GlowMiss .62s ease forwards}
+.photoViewport.reaction-correct{animation:s5CorrectFrame .86s cubic-bezier(.2,.78,.25,1)}
+.photoViewport.reaction-correct .photo{animation:s5ColorBloom .86s cubic-bezier(.2,.78,.25,1)}
+.photoViewport.reaction-wrong{animation:s5WrongFrame .58s ease}
+.photoViewport.reaction-wrong .photo{animation:s5WrongTone .66s ease}
+.reaction-confetti{position:absolute;left:50%;top:47%;width:7px;height:12px;border-radius:3px;background:var(--cc,#7de4d3);opacity:0;transform:translate(-50%,-50%);animation:s5Confetti .82s cubic-bezier(.15,.78,.28,1) var(--delay,0ms) forwards}
+@keyframes s5CorrectFrame{0%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}42%{transform:scale(1.008);box-shadow:inset 0 0 46px rgba(125,228,211,.16)}100%{transform:scale(1);box-shadow:inset 0 0 0 rgba(125,228,211,0)}}
+@keyframes s5ColorBloom{0%{filter:saturate(.88) brightness(.96)}38%{filter:saturate(1.28) brightness(1.08)}100%{filter:none}}
+@keyframes s5GlowGood{0%{opacity:0}28%{opacity:1}100%{opacity:0}}
+@keyframes s5WrongFrame{0%,100%{transform:translateX(0)}18%{transform:translateX(-4px)}36%{transform:translateX(4px)}54%{transform:translateX(-2px)}72%{transform:translateX(2px)}}
+@keyframes s5WrongTone{0%{filter:none}30%{filter:saturate(.45) brightness(.86) sepia(.12)}100%{filter:none}}
+@keyframes s5GlowMiss{0%{opacity:0}24%{opacity:1}100%{opacity:0}}
+@keyframes s5Confetti{0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.7)}12%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot)) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+ .photoViewport.reaction-correct,.photoViewport.reaction-wrong,.photoViewport.reaction-correct .photo,.photoViewport.reaction-wrong .photo{animation:none!important}
+ .reaction-confetti{display:none!important}
+ .reactionLayer.good{animation:none;opacity:.32}
+ .reactionLayer.miss{animation:none;opacity:.26}
+}
 @keyframes feedbackIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 .finish{position:relative;overflow:hidden}
 .finish:before{
@@ -99,7 +122,7 @@ body{background:radial-gradient(circle at 12% -5%,rgba(125,228,211,.15),transpar
     <button class="btn" id="startGame">Abrir mi LevelYou</button>
   </div>
   <div id="error" class="card error hidden"><div style="font-size:48px">🎁</div><h2 id="errorTitle">No hemos podido abrir este LevelYou</h2><p id="errorText">Comprueba que el enlace sea correcto e inténtalo de nuevo.</p><button class="btn secondary" onclick="location.reload()" id="retryBtn">Reintentar</button></div>
-  <div id="game" class="card hidden"><div class="gameProgress"><span id="gameProgressBar"></span></div><div class="photoViewport"><img id="photo" class="photo" alt="Recuerdo LevelYou"></div><div class="body"><div class="top"><span class="badge" id="badge"></span><span class="count" id="count"></span></div><div class="question" id="question"></div><div id="answers"></div><div class="answerFeedback hidden" id="answerFeedback"></div><button class="btn hidden" id="next"></button></div></div>
+  <div id="game" class="card hidden"><div class="gameProgress"><span id="gameProgressBar"></span></div><div class="photoViewport"><img id="photo" class="photo" alt="Recuerdo LevelYou"><div class="reactionLayer" id="photoReaction" aria-hidden="true"></div></div><div class="body"><div class="top"><span class="badge" id="badge"></span><span class="count" id="count"></span></div><div class="question" id="question"></div><div id="answers"></div><div class="answerFeedback hidden" id="answerFeedback"></div><button class="btn hidden" id="next"></button></div></div>
   <div id="finish" class="card finish hidden">
     <div class="finishKicker" id="finishKicker">Tu historia, en cinco recuerdos</div>
     <div class="emoji">✨</div><h1 id="finishTitle"></h1>
@@ -147,8 +170,32 @@ function applyPhotoFraming(el,f){
 function preloadGamePhotos(){try{(DATA?.items||[]).forEach(item=>{if(item?.photoUrl){const im=new Image();im.decoding='async';im.src=item.photoUrl}})}catch(e){console.warn('Game photo preload',e)}}
 function showError(message){$('loading').classList.add('hidden');$('intro').classList.add('hidden');$('game').classList.add('hidden');$('finish').classList.add('hidden');$('shareTop').classList.add('hidden');$('error').classList.remove('hidden');$('errorTitle').textContent=t.errorTitle;$('errorText').textContent=message||t.errorText;$('retryBtn').textContent=t.retry}
 async function load(attempt=0){if(!/^[0-9a-f-]{36}$/i.test(token)){showError();return}try{const r=await fetch(API+'?token='+encodeURIComponent(token),{method:'GET',cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===403&&j?.retryable&&attempt<4){$('loadingText').textContent=t.loading;await sleep(900+attempt*650);return load(attempt+1)}throw new Error(j.error||'Unable to load LevelYou')}DATA=j;t=LANG[DATA.language]||LANG.es;pt=PREMIUM_LANG[DATA.language]||PREMIUM_LANG.es;document.documentElement.lang=DATA.language||'es';$('loadingText').textContent=t.loading;$('shareTop').textContent=t.share;$('introEyebrow').textContent=pt.introEyebrow;$('introTitle').textContent=pt.introTitle(DATA.personName||DATA.person_name||'');$('introText').textContent=pt.introText;$('startGame').textContent=pt.start;$('finishKicker').textContent=pt.finishKicker;preloadGamePhotos();$('loading').classList.add('hidden');$('intro').classList.remove('hidden')}catch(e){showError()}}
-function render(){locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
+function render(){resetPhotoReaction();locked=false;$('next').classList.add('hidden');$('answerFeedback').className='answerFeedback hidden';$('answerFeedback').textContent='';$('game').classList.remove('question-enter');void $('game').offsetWidth;$('game').classList.add('question-enter');$('gameProgressBar').style.width=(((i+1)/DATA.items.length)*100)+'%';const x=DATA.items[i];$('photo').src=x.photoUrl;applyPhotoFraming($('photo'),x.framing);$('badge').textContent=t.badge;$('count').textContent=t.q+' '+(i+1)+' / '+DATA.items.length;$('question').textContent=x.question;const a=$('answers');a.innerHTML='';x.answers.forEach((v,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>pick(n,b);a.appendChild(b)});$('next').textContent=i===DATA.items.length-1?t.nextFinal:t.next}
 function emitLevelYouEvent(name,detail){try{window.dispatchEvent(new CustomEvent(name,{detail}))}catch(e){}}
+let photoReactionTimer=null;
+function resetPhotoReaction(){
+ if(photoReactionTimer){clearTimeout(photoReactionTimer);photoReactionTimer=null}
+ const viewport=document.querySelector('.photoViewport'),layer=$('photoReaction');
+ viewport?.classList.remove('reaction-correct','reaction-wrong');
+ if(layer){layer.className='reactionLayer';layer.innerHTML=''}
+}
+function playPhotoReaction(correct){
+ const viewport=document.querySelector('.photoViewport'),layer=$('photoReaction');if(!viewport||!layer)return;
+ resetPhotoReaction();void viewport.offsetWidth;
+ viewport.classList.add(correct?'reaction-correct':'reaction-wrong');
+ layer.classList.add(correct?'good':'miss');
+ const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(correct&&!reduced){
+  const pieces=[
+   [-126,-126,-145,'#7de4d3',0],[-88,-162,118,'#f3d7a1',20],[-48,-138,205,'#9eafff',45],[-12,-172,-90,'#ffffff',10],
+   [28,-150,140,'#7de4d3',35],[70,-166,-175,'#f3d7a1',5],[112,-132,88,'#9eafff',55],[136,-82,220,'#ffffff',25],
+   [-144,-64,160,'#9eafff',50],[-102,-92,-210,'#ffffff',15],[92,-94,182,'#7de4d3',40],[148,-36,-120,'#f3d7a1',30]
+  ];
+  pieces.forEach(([dx,dy,rot,color,delay])=>{const p=document.createElement('span');p.className='reaction-confetti';p.style.setProperty('--dx',dx+'px');p.style.setProperty('--dy',dy+'px');p.style.setProperty('--rot',rot+'deg');p.style.setProperty('--cc',color);p.style.setProperty('--delay',delay+'ms');layer.appendChild(p)});
+ }
+ photoReactionTimer=setTimeout(resetPhotoReaction,correct?930:720);
+}
+window.addEventListener('levelyou:answer',e=>playPhotoReaction(Boolean(e.detail?.correct)));
 function pick(n,b){if(locked)return;locked=true;const x=DATA.items[i],ok=n===x.correct;Array.from(document.querySelectorAll('.answer')).forEach((el,k)=>{el.disabled=true;if(k===x.correct)el.classList.add('correct')});if(ok)score++;else b.classList.add('wrong');$('answerFeedback').textContent=ok?t.correct:t.wrong;$('answerFeedback').className='answerFeedback '+(ok?'good':'miss');$('next').classList.remove('hidden');emitLevelYouEvent('levelyou:answer',{correct:ok,index:i,selected:n,correctIndex:x.correct,theme:'classic'})}
 function done(){$('game').classList.add('hidden');$('finish').classList.remove('hidden');$('finish').classList.remove('reveal');void $('finish').offsetWidth;$('finish').classList.add('reveal');$('finishTitle').textContent=t.finish;$('score').textContent=t.score(score);const hasDed=DATA&&typeof DATA.dedication==='string'&&DATA.dedication.trim();$('memoryTitle').textContent=hasDed?(DATA.language==='ca'?'Un missatge per a tu':DATA.language==='en'?'A message for you':'Un mensaje para ti'):t.memoryTitle;$('memoryText').textContent=hasDed?DATA.dedication:t.memoryText;$('videoLead').textContent=t.videoLead;$('createVideo').textContent=t.createVideo;$('saveVideo').textContent=t.saveVideo;$('again').textContent=t.again;$('share').textContent=t.share;window.scrollTo({top:0,behavior:'smooth'})}
 $('startGame').onclick=()=>{$('intro').classList.add('hidden');$('shareTop').classList.remove('hidden');$('game').classList.remove('hidden');render()};$('next').onclick=()=>{if(i<DATA.items.length-1){i++;render()}else done()};$('again').onclick=()=>{i=0;score=0;$('finish').classList.add('hidden');$('game').classList.remove('hidden');render()};
