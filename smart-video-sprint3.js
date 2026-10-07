@@ -7,8 +7,8 @@
   const V = {
     es:{
       kicker:'Haz el final todavía más especial',
-      title:'Añade recuerdos solo para el vídeo',
-      desc:'Puedes añadir hasta 10 fotos más. No tendrás que escribir preguntas ni usar IA.',
+      title:'Añade más momentos al vídeo final',
+      desc:'Puedes sumar hasta 10 fotos más. Es opcional: no tendrás que escribir nuevas preguntas ni usar IA.',
       add:'＋ Añadir fotos al vídeo',
       skip:'Continuar sin añadir',
       continue:'Continuar al pago',
@@ -24,8 +24,8 @@
     },
     ca:{
       kicker:'Fes el final encara més especial',
-      title:'Afegeix records només per al vídeo',
-      desc:'Pots afegir fins a 10 fotos més. No hauràs d’escriure preguntes ni utilitzar IA.',
+      title:'Afegeix més moments al vídeo final',
+      desc:'Pots sumar fins a 10 fotos més. És opcional: no hauràs d’escriure noves preguntes ni utilitzar IA.',
       add:'＋ Afegir fotos al vídeo',
       skip:'Continuar sense afegir',
       continue:'Continuar al pagament',
@@ -41,8 +41,8 @@
     },
     en:{
       kicker:'Make the ending even more special',
-      title:'Add memories just for the video',
-      desc:'You can add up to 10 more photos. No questions or AI required.',
+      title:'Add more moments to the final video',
+      desc:'You can add up to 10 more photos. It is optional: no extra questions or AI required.',
       add:'＋ Add photos to the video',
       skip:'Continue without adding',
       continue:'Continue to payment',
