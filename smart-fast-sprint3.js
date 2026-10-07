@@ -12,7 +12,7 @@ const F={
   complete:'Completa las 5 preguntas y sus tres respuestas antes de revisar el juego.',
   aiFail:'No hemos podido generar una sugerencia. Puedes escribir la pregunta manualmente.',
   replace:'Cambiar foto',backPhotos:'← Cambiar las 5 fotos',prev:'← Anterior',next:'Siguiente →',
-  editorTitle:'Escribe la pregunta',editorDesc:'Hazla personal, divertida o imposible de entender para quien no conozca la historia.',
+  editorTitle:'Escribe la pregunta',editorDesc:'Hazla personal y tuya. Si te bloqueas, la IA puede sugerirte una versión y tú decides siempre el resultado.',
   review:'Revisar mi LevelYou →',ready:'preguntas listas',frame:'🖼 Ajustar encuadre',frameTitle:'Ajusta cómo se verá esta foto',frameHelp:'Arrastra la foto y usa el zoom. Si no haces nada, se verá completa sin recortes.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar encuadre'
  },
  ca:{
@@ -24,7 +24,7 @@ const F={
   complete:'Completa les 5 preguntes i les tres respostes abans de revisar el joc.',
   aiFail:'No hem pogut generar un suggeriment. Pots escriure la pregunta manualment.',
   replace:'Canviar foto',backPhotos:'← Canviar les 5 fotos',prev:'← Anterior',next:'Següent →',
-  editorTitle:'Escriu la pregunta',editorDesc:'Fes-la personal, divertida o impossible d’entendre per a qui no conegui la història.',
+  editorTitle:'Escriu la pregunta',editorDesc:'Fes-la personal i teva. Si et bloqueges, la IA et pot suggerir una versió i tu decideixes sempre el resultat.',
   review:'Revisar el meu LevelYou →',ready:'preguntes llestes',frame:'🖼 Ajustar enquadrament',frameTitle:'Ajusta com es veurà aquesta foto',frameHelp:'Arrossega la foto i utilitza el zoom. Si no fas res, es veurà completa sense retalls.',frameZoom:'Zoom',frameReset:'Recentrar',frameSave:'Guardar enquadrament'
  },
  en:{
@@ -36,7 +36,7 @@ const F={
   complete:'Complete all 5 questions and their three answers before reviewing the game.',
   aiFail:'We could not generate a suggestion. You can still write the question manually.',
   replace:'Change photo',backPhotos:'← Change the 5 photos',prev:'← Previous',next:'Next →',
-  editorTitle:'Write the question',editorDesc:'Make it personal, funny or impossible to understand unless you know the story.',
+  editorTitle:'Write the question',editorDesc:'Make it personal and yours. If you get stuck, AI can suggest a version and you always decide the final result.',
   review:'Review my LevelYou →',ready:'questions ready',frame:'🖼 Adjust framing',frameTitle:'Adjust how this photo will appear',frameHelp:'Drag the photo and use zoom. If you do nothing, the full photo stays visible without cropping.',frameZoom:'Zoom',frameReset:'Recenter',frameSave:'Save framing'
  }
 };
