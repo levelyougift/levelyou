@@ -16,4 +16,4 @@ jobs:
         with:
           node-version: '22'
       - name: Run isolated V3 validation tests
-        run: node --test backend/v3-draft/v3-validation.test.mjs
+        run: node --test backend/v3-draft/*.test.mjs
