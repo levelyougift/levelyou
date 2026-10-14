@@ -43,5 +43,35 @@ async function run(label,options){
 }
 await run('desktop with secret',{detail:true});
 await run('mobile without secret',{viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+async function extra(label,fn){try{await fn();console.log('PASS',label)}catch(e){failed++;console.error('FAIL',label,e)}}
+await extra('photo survives export',async()=>{
+ const context=await browser.newContext({acceptDownloads:true});const page=await context.newPage();
+ await page.goto(source);await page.locator('#name').fill('Cris');await page.locator('#memory').fill('La playa');await page.locator('#dedication').fill('Gracias');
+ const photo=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9lC98AAAAASUVORK5CYII=','base64');
+ await page.locator('#photo').setInputFiles({name:'foto.png',mimeType:'image/png',buffer:photo});
+ const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#create').click()]);
+ const html=await readFile(await download.path(),'utf8');assert.match(html,/data:image\/png;base64,/);
+ const dir=await mkdtemp(join(tmpdir(),'levelyou-photo-'));const path=join(dir,'gift.html');await writeFile(path,html);
+ const receiver=await context.newPage();await receiver.goto('file://'+path);await receiver.locator('#toMemory').click();
+ assert.equal(await receiver.locator('#photoDisplay').isVisible(),true);
+ await context.close();
+});
+await extra('invalid fields block preview',async()=>{
+ const context=await browser.newContext();const page=await context.newPage();await page.goto(source);
+ await page.locator('#preview').click();
+ assert.equal(await page.locator('#builder').isVisible(),true);
+ assert.match(await page.locator('#error').innerText(),/Completa/);
+ await context.close();
+});
+await extra('injection-like text remains inert',async()=>{
+ const context=await browser.newContext({acceptDownloads:true});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(source);await page.locator('#name').fill('Cris');await page.locator('#memory').fill('</script><img src=x onerror=alert(1)>');await page.locator('#dedication').fill('Mensaje');
+ const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#create').click()]);
+ const html=await readFile(await download.path(),'utf8');
+ const dir=await mkdtemp(join(tmpdir(),'levelyou-escape-'));const path=join(dir,'gift.html');await writeFile(path,html);
+ const receiver=await context.newPage();receiver.on('pageerror',e=>errors.push(e.message));await receiver.goto('file://'+path);await receiver.locator('#toMemory').click();
+ assert.equal(await receiver.locator('#memoryDisplay').innerText(),'</script><img src=x onerror=alert(1)>');
+ assert.deepEqual(errors,[]);await context.close();
+});
 await browser.close();
 if(failed)process.exitCode=1;
