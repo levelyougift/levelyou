@@ -43,6 +43,7 @@ async function run(label,options){
 }
 await run('desktop with secret',{detail:true});
 await run('mobile without secret',{viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+await run('compact mobile 320px',{viewport:{width:320,height:640},isMobile:true,hasTouch:true});
 async function extra(label,fn){try{await fn();console.log('PASS',label)}catch(e){failed++;console.error('FAIL',label,e)}}
 await extra('photo survives export',async()=>{
  const context=await browser.newContext({acceptDownloads:true});const page=await context.newPage();
