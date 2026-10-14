@@ -1,0 +1,19 @@
+name: LEVEL YOU V3 draft validation
+on:
+  push:
+    paths:
+      - 'backend/v3-draft/**'
+      - '.github/workflows/v3-draft-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run isolated V3 validation tests
+        run: node --test backend/v3-draft/v3-validation.test.mjs
