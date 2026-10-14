@@ -1,9 +1,9 @@
-import {chromium} from 'playwright';
+import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdtemp} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
-const browser=await chromium.launch({headless:true});
+let browser=await chromium.launch({headless:true});
 const source='file://'+resolve('test-v3/v3-candidate.html');
 let failed=0;
 async function run(label,options){
@@ -75,4 +75,5 @@ await extra('injection-like text remains inert',async()=>{
  assert.deepEqual(errors,[]);await context.close();
 });
 await browser.close();
+try{browser=await webkit.launch({headless:true});await run('WebKit mobile recipient',{viewport:{width:390,height:844},isMobile:true,hasTouch:true});await browser.close()}catch(e){failed++;console.error('FAIL WebKit',e);try{await browser.close()}catch{}}
 if(failed)process.exitCode=1;
