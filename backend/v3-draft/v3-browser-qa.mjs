@@ -1,0 +1,47 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import {readFile,writeFile,mkdtemp} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
+const browser=await chromium.launch({headless:true});
+const source='file://'+resolve('test-v3/v3-candidate.html');
+let failed=0;
+async function run(label,options){
+ const context=await browser.newContext({acceptDownloads:true,...options});
+ const page=await context.newPage(),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ try{
+  await page.goto(source);
+  await page.locator('#name').fill('Cris');
+  await page.locator('#memory').fill('Una tarde junto al mar');
+  await page.locator('#dedication').fill('Siempre contigo');
+  if(options?.detail)await page.locator('#detail').fill('Nuestro secreto');
+  await page.locator('#preview').click();
+  assert.equal(await page.locator('#welcome').isVisible(),true);
+  await page.locator('#backToEdit').click();
+  assert.equal(await page.locator('#builder').isVisible(),true);
+  const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#create').click()]);
+  const html=await readFile(await download.path(),'utf8');
+  assert.ok(html.includes('gift-data'));
+  const dir=await mkdtemp(join(tmpdir(),'levelyou-'));
+  const file=join(dir,'regalo.html');await writeFile(file,html);
+  const receiver=await context.newPage();receiver.on('pageerror',e=>errors.push(e.message));
+  await receiver.goto('file://'+file);
+  assert.equal(await receiver.locator('#welcome').isVisible(),true);
+  assert.equal(await receiver.locator('#backToEdit').count(),0);
+  await receiver.locator('#toMemory').click();
+  await receiver.locator('#toDetail').click();
+  if(options?.detail){assert.equal(await receiver.locator('#detailScene').isVisible(),true);await receiver.locator('#toFinal').click()}
+  assert.equal(await receiver.locator('#finalScene').isVisible(),true);
+  assert.match(await receiver.locator('#dedicationDisplay').innerText(),/Siempre contigo/);
+  await receiver.locator('#replay').click();
+  assert.equal(await receiver.locator('#welcome').isVisible(),true);
+  assert.deepEqual(errors,[]);
+  if(options?.isMobile)assert.equal(await receiver.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
+  console.log('PASS',label);
+ }catch(e){failed++;console.error('FAIL',label,e)}finally{await context.close()}
+}
+await run('desktop with secret',{detail:true});
+await run('mobile without secret',{viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+await browser.close();
+if(failed)process.exitCode=1;
