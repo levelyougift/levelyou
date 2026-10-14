@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ebe6dc">
+<title>LEVEL YOU V4 — La foto que falta</title>
+<style>
+:root{
+  --ink:#161616;--paper:#f3efe8;--muted:#6d6a65;--glass:rgba(247,243,236,.72);
+  --ease:cubic-bezier(.22,.85,.28,1);--ease2:cubic-bezier(.76,0,.24,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#d7d0c5;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;overscroll-behavior:none}
+body{min-height:100dvh}
+button{font:inherit}
+.app{position:relative;min-height:100dvh;overflow:hidden;background:var(--paper)}
+.scene{position:absolute;inset:0;min-height:100dvh;display:grid;opacity:0;pointer-events:none;transform:scale(1.018);transition:opacity .75s var(--ease),transform 1.05s var(--ease)}
+.scene.active{opacity:1;pointer-events:auto;transform:scale(1)}
+.brand{position:absolute;z-index:40;top:max(18px,env(safe-area-inset-top));left:22px;font-size:10px;font-weight:760;letter-spacing:.28em;text-transform:uppercase;color:currentColor;mix-blend-mode:difference;filter:invert(1);opacity:.76}
+.sound{position:absolute;z-index:50;top:max(12px,env(safe-area-inset-top));right:14px;width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.38);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:grid;place-items:center;color:#111;cursor:pointer}
+.sound svg{width:16px;height:16px}
+.intro{place-items:center;text-align:center;background:#e7dfd3;color:#111}
+.intro-bg{position:absolute;inset:-7%;background:
+ linear-gradient(145deg,rgba(242,232,216,.15),rgba(89,129,141,.14)),
+ url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=84") center/cover;
+ filter:blur(27px) saturate(.76);transform:scale(1.1);opacity:.62}
+.intro-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(240,234,224,.18),rgba(231,223,211,.84) 72%,#e7dfd3 100%)}
+.intro-content{position:relative;z-index:2;width:min(88vw,520px);padding:32px}
+.kicker{margin:0 0 18px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:720;color:#5e5b56}
+.recipient{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-weight:400;font-size:clamp(54px,14vw,88px);line-height:.96;letter-spacing:-.055em;margin:0}
+.intro-line{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-size:clamp(22px,6vw,34px);line-height:1.23;max-width:420px;margin:24px auto 34px;letter-spacing:-.025em}
+.enter{appearance:none;border:0;background:#171716;color:#f5f0e8;border-radius:999px;padding:15px 25px;font-weight:720;font-size:14px;letter-spacing:.01em;box-shadow:0 14px 34px rgba(0,0,0,.14);cursor:pointer}
+.hint{margin:18px 0 0;font-size:11px;color:#78736c}
+.memory{background:#111;color:white}
+.photo-wrap{position:absolute;inset:0;overflow:hidden;background:#222}
+.memory-photo{position:absolute;inset:-2%;width:104%;height:104%;object-fit:cover;filter:saturate(.9) contrast(1.02);transform:scale(1.065);transition:transform 5.8s linear}
+.memory.active .memory-photo{transform:scale(1.01)}
+.photo-wrap::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12) 0%,rgba(0,0,0,.02) 42%,rgba(0,0,0,.62) 100%)}
+.memory-content{position:relative;z-index:5;align-self:end;padding:0 24px calc(34px + env(safe-area-inset-bottom));max-width:650px;width:100%;margin:auto}
+.memory-index{font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:760;opacity:.72;margin-bottom:12px}
+.memory-title{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-size:clamp(34px,9vw,52px);line-height:1.02;letter-spacing:-.04em;margin:0 0 14px;max-width:530px;text-wrap:balance}
+.memory-caption{font-size:15px;line-height:1.5;max-width:500px;margin:0;color:rgba(255,255,255,.88)}
+.discover{display:flex;align-items:center;gap:10px;margin-top:20px;color:#fff;font-size:12px;font-weight:700;opacity:.82}
+.discover i{width:30px;height:30px;border:1px solid rgba(255,255,255,.58);border-radius:50%;display:grid;place-items:center;font-style:normal}
+.secret-card{position:absolute;z-index:20;left:18px;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));padding:24px;border-radius:26px;background:rgba(246,242,235,.93);color:#1a1918;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 22px 60px rgba(0,0,0,.28);transform:translateY(135%);transition:transform .7s var(--ease)}
+.memory.secret-open .secret-card{transform:translateY(0)}
+.secret-label{font-size:10px;text-transform:uppercase;letter-spacing:.2em;font-weight:780;color:#787169}
+.secret-text{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-size:24px;line-height:1.22;letter-spacing:-.02em;margin:10px 0 18px}
+.close-secret{border:0;background:#1b1a18;color:white;padding:12px 17px;border-radius:999px;font-weight:700}
+.next-zone{position:absolute;z-index:10;right:0;top:0;width:26%;height:100%;cursor:pointer}
+.progress{position:absolute;z-index:30;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:6px}
+.dot{width:18px;height:2px;background:rgba(255,255,255,.35);overflow:hidden}
+.dot::after{content:"";display:block;width:100%;height:100%;background:#fff;transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.dot.done::after,.dot.on::after{transform:scaleX(1)}
+.bridge{background:#e9e2d8;color:#191817;place-items:center;text-align:center}
+.bridge::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 25%,rgba(104,151,158,.22),transparent 34%),radial-gradient(circle at 78% 65%,rgba(201,139,112,.22),transparent 31%)}
+.bridge-inner{position:relative;z-index:2;padding:34px 28px;width:min(92vw,620px)}
+.bridge h2{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-weight:400;font-size:clamp(38px,10vw,64px);line-height:1.03;letter-spacing:-.045em;margin:0}
+.bridge .twist{margin-top:24px;font-size:clamp(18px,5vw,24px);opacity:0;transform:translateY(10px);transition:opacity 1s .7s var(--ease),transform 1s .7s var(--ease)}
+.bridge.active .twist{opacity:1;transform:none}
+.continue-ghost{margin-top:34px;border:1px solid rgba(20,20,20,.24);background:rgba(255,255,255,.34);padding:13px 18px;border-radius:999px;font-weight:720}
+.mosaic{background:#d9d4cc;color:#181817;place-items:center}
+.mosaic-inner{width:min(94vw,680px);padding:62px 14px 24px}
+.mosaic-copy{text-align:center;margin:0 auto 18px;max-width:480px}
+.mosaic-copy p{margin:0 0 7px;font-size:11px;text-transform:uppercase;letter-spacing:.2em;font-weight:780;color:#625e59}
+.mosaic-copy h2{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-size:clamp(32px,8vw,48px);line-height:1.02;font-weight:400;margin:0;letter-spacing:-.04em}
+.grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1.08fr .92fr;gap:8px;height:min(66vh,620px)}
+.tile{position:relative;border-radius:24px;overflow:hidden;background:#c6c0b7;box-shadow:0 18px 42px rgba(49,43,37,.12)}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile:nth-child(1){transform:rotate(-1deg)}
+.tile:nth-child(2){transform:translateY(10px) rotate(1deg)}
+.tile:nth-child(3){transform:translateY(-4px) rotate(.7deg)}
+.missing{border:1px solid rgba(35,32,29,.28);background:
+ radial-gradient(circle at 30% 25%,rgba(255,255,255,.72),transparent 32%),
+ linear-gradient(145deg,#d9d1c7,#b8c1c0);display:grid;place-items:center;text-align:center;cursor:pointer}
+.missing::before{content:"";position:absolute;inset:10px;border-radius:18px;border:1px dashed rgba(30,28,26,.22)}
+.missing-pulse{position:relative;z-index:3;width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,.68);display:grid;place-items:center;font-size:28px;box-shadow:0 0 0 0 rgba(255,255,255,.45);animation:pulse 2.2s infinite}
+.missing span{position:absolute;bottom:20px;left:16px;right:16px;z-index:3;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+@keyframes pulse{70%{box-shadow:0 0 0 18px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+.reveal{background:#e9e5dd;color:#171716;text-align:center;place-items:center}
+.reveal-ambient{position:absolute;inset:-16%;background:
+ radial-gradient(circle at 22% 28%,rgba(103,158,165,.42),transparent 29%),
+ radial-gradient(circle at 78% 68%,rgba(206,133,105,.39),transparent 28%),
+ radial-gradient(circle at 60% 18%,rgba(201,184,133,.28),transparent 24%);
+ filter:blur(22px);animation:drift 9s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(-2%,2%,0) scale(1.05)}}
+.reveal-inner{position:relative;z-index:2;width:min(90vw,610px);padding:36px 24px}
+.reveal-small{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:760;color:#5c5a56}
+.reveal h2{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-size:clamp(36px,9vw,58px);font-weight:400;line-height:1.03;letter-spacing:-.045em;margin:16px 0 30px}
+.future-frame{position:relative;margin:0 auto 28px;width:min(78vw,420px);aspect-ratio:4/5;border-radius:30px;padding:1px;background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(40,40,40,.13));box-shadow:0 35px 80px rgba(71,58,45,.18)}
+.future-inner{position:absolute;inset:1px;border-radius:29px;overflow:hidden;background:rgba(248,246,241,.56);display:grid;place-items:center;padding:28px}
+.future-inner::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.85),transparent 30%),linear-gradient(155deg,rgba(104,155,161,.23),rgba(209,147,118,.21))}
+.future-text{position:relative;z-index:2;font-family:Iowan Old Style,Baskerville,Georgia,serif;font-size:clamp(27px,7vw,38px);line-height:1.14;letter-spacing:-.035em}
+.reveal-note{font-size:15px;line-height:1.5;max-width:470px;margin:0 auto;color:#514e4a}
+.to-final{margin-top:26px;border:0;background:#171716;color:white;border-radius:999px;padding:14px 20px;font-weight:720}
+.final{background:#f0ece5;color:#171716;align-items:center;text-align:center}
+.final-bg{position:absolute;inset:0;opacity:.28;display:grid;grid-template-columns:repeat(2,1fr)}
+.final-bg img{width:100%;height:50dvh;object-fit:cover;filter:grayscale(.12) saturate(.7);opacity:.54}
+.final-bg::after{content:"";position:absolute;inset:0;background:rgba(240,236,229,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.final-inner{position:relative;z-index:2;width:min(90vw,620px);padding:70px 24px 40px;margin:auto}
+.final-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.2em;font-weight:780;color:#65615b}
+.final-message{font-family:Iowan Old Style,Baskerville,Georgia,serif;font-size:clamp(34px,9vw,54px);font-weight:400;line-height:1.08;letter-spacing:-.04em;margin:18px auto 28px}
+.count{font-size:13px;color:#5f5b55;margin-bottom:28px}
+.count strong{font-weight:780;color:#171716}
+.replay{border:1px solid rgba(20,20,20,.22);background:rgba(255,255,255,.38);padding:13px 18px;border-radius:999px;font-weight:720}
+.swipe-hint{position:absolute;z-index:12;right:20px;bottom:calc(34px + env(safe-area-inset-bottom));font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.68}
+.fade-up{opacity:0;transform:translateY(14px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.active .fade-up{opacity:1;transform:none}
+.active .delay1{transition-delay:.18s}.active .delay2{transition-delay:.38s}.active .delay3{transition-delay:.62s}
+@media(min-width:760px){
+ .memory-content{padding-left:42px;padding-right:42px}
+ .grid{gap:12px}
+ .mosaic-inner{padding-top:68px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+ .memory-photo{transform:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="brand">LEVEL YOU</div>
+  <button class="sound" id="sound" aria-label="Activar o desactivar ambiente sonoro" title="Ambiente sonoro">
+    <svg id="soundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 9v6h4l5 4V5L9 9H5Z"/><path id="waves" d="M17 9c1.3 1.7 1.3 4.3 0 6M19.5 6.5c2.8 3.1 2.8 7.9 0 11"/></svg>
+  </button>
+
+  <section class="scene intro active" data-scene="intro">
+    <div class="intro-bg"></div><div class="intro-shade"></div>
+    <div class="intro-content">
+      <p class="kicker fade-up">Una historia para ti</p>
+      <h1 class="recipient fade-up delay1">Cris.</h1>
+      <p class="intro-line fade-up delay2">Hay algo aquí que solo tú puedes reconocer.</p>
+      <button class="enter fade-up delay3" id="enter">Entrar</button>
+      <p class="hint fade-up delay3">Mejor con sonido · también funciona en silencio</p>
+    </div>
+  </section>
+
+  <section class="scene memory" data-scene="m0" data-index="0">
+    <div class="photo-wrap"><img class="memory-photo" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=84" alt="Mar junto a una playa"></div>
+    <div class="memory-content">
+      <div class="memory-index fade-up">Recuerdo 01</div>
+      <h2 class="memory-title fade-up delay1">Ese día en que el tiempo parecía ir más lento.</h2>
+      <p class="memory-caption fade-up delay2">No fue el lugar. Fue cómo nos sentimos estando allí.</p>
+      <div class="discover fade-up delay3" data-secret-open><i>+</i><span>Hay algo que solo nosotros sabemos</span></div>
+    </div>
+    <div class="secret-card">
+      <div class="secret-label">Solo nosotros</div>
+      <p class="secret-text">Nos reímos durante diez minutos por algo que nadie más habría entendido.</p>
+      <button class="close-secret" data-secret-close>Seguir</button>
+    </div>
+    <div class="next-zone" data-next aria-label="Siguiente recuerdo"></div>
+    <div class="swipe-hint">desliza ←</div>
+    <div class="progress"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div>
+  </section>
+
+  <section class="scene memory" data-scene="m1" data-index="1">
+    <div class="photo-wrap"><img class="memory-photo" src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1800&q=84" alt="Paisaje de montaña"></div>
+    <div class="memory-content">
+      <div class="memory-index fade-up">Recuerdo 02</div>
+      <h2 class="memory-title fade-up delay1">No estaba en ningún plan.</h2>
+      <p class="memory-caption fade-up delay2">Y quizá por eso acabó siendo uno de esos días que se quedan.</p>
+    </div>
+    <div class="next-zone" data-next aria-label="Siguiente recuerdo"></div>
+    <div class="swipe-hint">desliza ←</div>
+    <div class="progress"><i class="dot done"></i><i class="dot on"></i><i class="dot"></i></div>
+  </section>
+
+  <section class="scene memory" data-scene="m2" data-index="2">
+    <div class="photo-wrap"><img class="memory-photo" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1800&q=84" alt="Personas compartiendo un momento"></div>
+    <div class="memory-content">
+      <div class="memory-index fade-up">Recuerdo 03</div>
+      <h2 class="memory-title fade-up delay1">Si pudiera guardar un instante, sería uno así.</h2>
+      <p class="memory-caption fade-up delay2">Porque las mejores cosas casi nunca parecen importantes mientras están pasando.</p>
+    </div>
+    <div class="next-zone" data-next aria-label="Continuar"></div>
+    <div class="swipe-hint">desliza ←</div>
+    <div class="progress"><i class="dot done"></i><i class="dot done"></i><i class="dot on"></i></div>
+  </section>
+
+  <section class="scene bridge" data-scene="bridge">
+    <div class="bridge-inner">
+      <h2 class="fade-up">Podría haberte traído aquí solo para recordar todo esto.</h2>
+      <p class="twist">Pero no era eso.</p>
+      <button class="continue-ghost fade-up delay3" id="toMosaic">Entonces, ¿qué era?</button>
+    </div>
+  </section>
+
+  <section class="scene mosaic" data-scene="mosaic">
+    <div class="mosaic-inner">
+      <div class="mosaic-copy">
+        <p class="fade-up">Nuestra historia</p>
+        <h2 class="fade-up delay1">Hay algo que todavía no está aquí.</h2>
+      </div>
+      <div class="grid fade-up delay2">
+        <div class="tile"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=82" alt=""></div>
+        <div class="tile"><img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=82" alt=""></div>
+        <div class="tile"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=82" alt=""></div>
+        <button class="tile missing" id="missing" aria-label="Descubrir la fotografía que falta"><div class="missing-pulse">＋</div><span>Tócala</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene reveal" data-scene="reveal">
+    <div class="reveal-ambient"></div>
+    <div class="reveal-inner">
+      <div class="reveal-small fade-up">La foto que falta</div>
+      <h2 class="fade-up delay1">Esta fotografía todavía no existe.</h2>
+      <div class="future-frame fade-up delay2">
+        <div class="future-inner">
+          <div class="future-text">Todavía nos falta ver amanecer juntos en Menorca.</div>
+        </div>
+      </div>
+      <p class="reveal-note fade-up delay3">Quiero que algún día esta fotografía esté aquí.</p>
+      <button class="to-final fade-up delay3" id="toFinal">Una última cosa</button>
+    </div>
+  </section>
+
+  <section class="scene final" data-scene="final">
+    <div class="final-bg">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=74" alt="">
+      <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=74" alt="">
+      <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=74" alt="">
+      <div></div>
+    </div>
+    <div class="final-inner">
+      <div class="final-kicker fade-up">Para Cris</div>
+      <div class="final-message fade-up delay1">Gracias por todos los recuerdos que ya tenemos. Y por los que todavía nos faltan.</div>
+      <div class="count fade-up delay2"><strong>3 recuerdos.</strong> 1 pendiente.</div>
+      <button class="replay fade-up delay3" id="replay">Volver a vivirlo</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const scenes=[...document.querySelectorAll('.scene')];
+  let current='intro', startX=0, muted=false, audio=null, master=null;
+  const $=s=>document.querySelector(s);
+  function show(name){
+    const next=document.querySelector('[data-scene="'+name+'"]');
+    if(!next)return;
+    scenes.forEach(s=>s.classList.remove('active','secret-open'));
+    requestAnimationFrame(()=>next.classList.add('active'));
+    current=name;
+  }
+  function startAmbient(){
+    if(audio||muted)return;
+    try{
+      audio=new (window.AudioContext||window.webkitAudioContext)();
+      master=audio.createGain(); master.gain.value=.038; master.connect(audio.destination);
+      const tones=[174.61,220,261.63];
+      tones.forEach((f,i)=>{
+        const o=audio.createOscillator(), g=audio.createGain(), filter=audio.createBiquadFilter();
+        o.type=i===1?'sine':'triangle';o.frequency.value=f/2;
+        filter.type='lowpass';filter.frequency.value=520;
+        g.gain.value=.22/(i+1);
+        o.connect(filter);filter.connect(g);g.connect(master);o.start();
+      });
+    }catch(e){}
+  }
+  function toggleSound(){
+    muted=!muted;
+    $('#waves').style.display=muted?'none':'';
+    if(muted&&audio)audio.suspend();
+    else { if(!audio) startAmbient(); else audio.resume(); }
+  }
+  function nextFromMemory(){
+    if(current==='m0')show('m1');
+    else if(current==='m1')show('m2');
+    else if(current==='m2')show('bridge');
+  }
+  $('#enter').addEventListener('click',()=>{startAmbient();show('m0')});
+  $('#sound').addEventListener('click',toggleSound);
+  document.querySelectorAll('[data-next]').forEach(x=>x.addEventListener('click',nextFromMemory));
+  document.querySelectorAll('[data-secret-open]').forEach(x=>x.addEventListener('click',e=>{
+    e.stopPropagation();x.closest('.memory').classList.add('secret-open');
+    if(navigator.vibrate)navigator.vibrate(18);
+  }));
+  document.querySelectorAll('[data-secret-close]').forEach(x=>x.addEventListener('click',e=>{
+    e.stopPropagation();x.closest('.memory').classList.remove('secret-open');
+    setTimeout(nextFromMemory,180);
+  }));
+  $('#toMosaic').addEventListener('click',()=>show('mosaic'));
+  $('#missing').addEventListener('click',()=>{
+    if(navigator.vibrate)navigator.vibrate([20,35,26]);
+    show('reveal');
+  });
+  $('#toFinal').addEventListener('click',()=>show('final'));
+  $('#replay').addEventListener('click',()=>show('intro'));
+  document.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    if(dx < -58 && /^m\d$/.test(current)) nextFromMemory();
+  },{passive:true});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'&&/^m\d$/.test(current))nextFromMemory();
+    if(e.key==='Escape'){
+      const s=document.querySelector('.memory.secret-open'); if(s)s.classList.remove('secret-open');
+    }
+  });
+})();
+</script>
+</body>
+</html>
