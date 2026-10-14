@@ -17,7 +17,7 @@ async function run(label,options){
   await page.locator('#dedication').fill('Siempre contigo');
   if(options?.detail)await page.locator('#detail').fill('Nuestro secreto');
   await page.locator('#preview').click();
-  assert.equal(await page.locator('#welcome').isVisible(),true);
+  assert.equal(await page.locator('#welcome').isVisible(),true);assert.equal(await page.locator('#previewNotice').isVisible(),true);
   await page.locator('#backToEdit').click();
   assert.equal(await page.locator('#builder').isVisible(),true);
   const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#create').click()]);
@@ -28,7 +28,7 @@ async function run(label,options){
   const receiver=await context.newPage();receiver.on('pageerror',e=>errors.push(e.message));
   await receiver.goto('file://'+file);
   assert.equal(await receiver.locator('#welcome').isVisible(),true);
-  assert.equal(await receiver.locator('#backToEdit').count(),0);
+  assert.equal(await receiver.locator('#backToEdit').count(),0);assert.equal(await receiver.locator('#previewNotice').isVisible(),false);
   await receiver.locator('#toMemory').click();
   await receiver.locator('#toDetail').click();
   if(options?.detail){assert.equal(await receiver.locator('#detailScene').isVisible(),true);await receiver.locator('#toFinal').click()}
